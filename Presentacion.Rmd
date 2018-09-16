@@ -1,21 +1,347 @@
 ---
-title: "Modelos de TRI para cuestionarios de elección forzosa"
+title:
 author: "Daniel Morillo"
-date: "19 de octubre de 2018"
-output: ioslides_presentation
+date: "`r format(lubridate::today(), '%d de %B de %Y')`"
+output:
+  revealjs::revealjs_presentation:
+    transition: slide
+    transitionSpeed: slow
+    theme: solarized
+    incremental: true
+    fig_width: 7
+    fig_height: 4.5
+    fig_caption: false
+    self_contained: false
+    reveal_plugins: ["notes"]
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+library(tidyverse)
+library(magrittr)
+library(htmltools)
+library(DT)
+
+source("R/Rmarkdown_code.R", encoding = 'UTF-8')
+
+knitr::opts_chunk$set(
+  cache = FALSE, results = 'asis',
+  message = FALSE, warning = FALSE, echo = FALSE
+)
+
+knitr::read_chunk(lines = readLines("R/Presentacion.R", encoding = 'UTF-8'))
 
 ```
 
-# Modelos de TRI para cuestionarios de elección forzosa
 
-## Introducción
+## {data-background="www/********************.jpg" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
 
-```{r cars, echo = TRUE}
-summary(cars)
+```{r title}
+
+tags$style(
+  type = "text/css",
+  ".reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }"
+)
+
+h1("Modelos de TRI para cuestionarios de elección forzosa")
+br()
+
 ```
 
+### Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud
+
+#### Por: Daniel Morillo
+#### Supervisores: Francisco José Abad, Iwin Leenen
+#### Tutor: Vicente Ponsoda
+
+```{r date}
+
+br()
+lubridate::today() %>% format('%d de %B de %Y') %>% h5
+
+```
+
+
+Notes:
+
+Buenos días.
+Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado
+evaluar el trabajo de mi tesis y estar hoy presentes para emitir su juicio
+experto sobre ella, y a todas las personas presentes por estar aquí y darme la
+oportunidad de exponer públicamente los resultados de mi investigación
+predoctoral.
+
+Quería empezar diciendo esto dado que, cuando estaba preparando esta defensa,
+una buena amiga mía, que además tiene experiencia, me preguntó cuál era el
+público objetivo de mi exposición. En ese momento caí en la cuenta de que
+estaba dando por sentado la necesidad de exponer mi trabajo ante los miembros
+del tribunal.
+Sin embargo, esta defensa es un acto público y, como tal, considero que es el
+momento idóneo para rendir cuentas ante la sociedad el valor del trabajo
+académico.
+Además creo que es una responsabilidad académica defender el valor del
+conocimiento científico, más a día de hoy que este valor está muy cuestionado y
+la sociedad necesita que restauremos su confianza en nuestra labor.
+
+Por lo tanto, y sin olvidar por supuesto al tribunal, aprovechando que el acto
+se puede realizar en castellano, dado que todos los miembros del tribunal son
+hispanohablantes, quisiera hacer una presentación que ayude al público presente
+a entender el trabajo que he realizado, durante los tres años y medio que
+estuve empleado como investigador predoctoral en esta universidad y durante el
+último año que he continuado con la investigación, y también durante los dos
+primeros años en los que fui becario de la Cátedra de Modelos y Aplicaciones
+Psicométricas, lo cual me permitió iniciarme en la investigación.
+Espero que con esto pueda responder, al menos en parte, los cientos de veces
+que me han preguntado en qué trabajaba o de qué iba mi tesis, y las únicas
+respuestas que he sido capaz de dar eran más bien verborrea científica plagada
+de tecnicismos, totalmente incomprensible, así que a ver si esta vez lo hago
+mejor.
+
+
+# Introducción
+
+
+## Cuestionarios de autoinforme
+
+```{r sample_GS_items}
+
+br()
+h4("Me intereso por la gente")
+render_response_scale()
+
+br()
+h4("Estoy relajado la mayor parte del tiempo")
+render_response_scale()
+
+br()
+p(
+  style = "font-size:0.6em",
+  "Fuente: ",
+  a(
+    href = "https://ipip.ori.org/SpanishBig-FiveFactorMarkers.htm",
+    "International Personality Item Pool"
+  )
+)
+
+```
+
+
+Notes:
+
+Un cuestionario es un instrumento que usamos para medir características de las
+personas, como la personalidad, preferencias, actitudes, etc.
+Llamamos a estos rasgos "no cognitivos", puesto que no exigen un nivel de
+aptitud cognitiva para dar una respuesta correcta.
+Más bien, requieren emitir un juicio de preferencia o acuerdo con una de las
+opciones de respuesta, no habiendo opciones correctas ni incorrectas.
+
+En los cuestionarios clásicos, o de tipo "Likert" como solemos llamarlos, la
+persona evaluada ha de seleccionar la opción que mejor se corresponde con su
+grado de acuerdo con un ítem, como en estos ejemplos.
+Estos dos ítems miden sendos rasgos de personalidad.
+El primero mide un rasgo que denominamos "Estabilidad emocional".
+Consiste más o menos en tener control sobre las propias emociones.
+El segundo, llamado "Amabilidad", implica ser capaz de empatizar y ponerse en
+el lugar de otras personas.
+
+Ahora bien, supongamos que queremos crear un cuestionario para una oposición a
+la policía.
+No es difícil imaginar que las personas candidatas van a tender a responder de
+forma que den una mejor imagen de sí mismas.
+Esto es lo que llamamos "manejo de la impresión", y resulta en un sesgo de
+respuesta, es decir, una tendencia a mostrar más acuerdo del que mostrarían si
+no hubiese consecuencias en juego para ellas, con los ítems que manifiestan
+características socialmente aceptables.
+
+
+## El formato de elección forzosa
+
+
+
+
+## En qué consiste
+
+
+## Ventajas (aducidas)
+
+- Control de los sesgos de respuesta
+
+  
+## Controversia
+
+- Control de sesgos
+
+- Ipsatividad
+
+
+# Aplicación de la TRI al formato de elección forzosa multidimensional
+
+
+## Modelos
+
+- TIRT
+
+- MUPP
+
+- Otros
+
+
+# Justificación {data-transition="fade"}
+
+
+## Propuesta del modelo MUPP-2PL
+
+
+## Estudios
+
+- Estudio 1
+
+- Estudio 2
+
+- Estudio 3
+
+
+# Propuesta del modelo MUPP-2PL
+
+
+## Formulación
+
+
+## Propiedades
+
+- Indeterminación de los parámetros de posición de los ítems
+
+- Indeterminación rotacional para $D = 2$
+
+- Indeterminación empírica
+
+- Equivalencia de parámetros con ítems en formato dicotómico
+
+
+## Parámetros multidimensionales
+
+
+## Representación gráfica
+
+- Superficio de respuesta al bloque
+
+- Representación vectorial
+
+- Polaridad
+
+- Bloques unidimensionales:
+  - Equivalencia con el modelo 2PL
+  - Indeterminación del parámetro de escala
+  - Justificación para no usarlos
+
+
+## Relación con otros modelos de dominancia
+
+- TIRT
+
+- MCLM
+
+
+# Propuesta de estimación Bayesiana
+
+
+## Ventajas (e inconvenientes)
+
+
+## Descripción del algoritmo
+
+- Restricciones de identificación (distribuciones previas)
+  - Parámetros incidentales
+  - Parámetros estructurales
+    - Ítems
+    - Correlaciones latentes
+    
+- Inicialización
+
+- Iteración "M-H dentro de Gibbs":
+Permite reducir la dimensionalidad de cada iteración
+
+
+# Objetivos
+
+
+## Estudio 1
+
+- Estudiar la esimación del modelo
+  - Estimación Bayesiana
+  - Condiciones favorables y desfavorables
+    - Proporción de bloques heteropolares
+    - Sin bloques unidimensionales
+    
+- Comparar con estimación factorial propuesta para el modelo TIRT
+
+- Poner a prueba estimación con datos empíricos
+
+
+## Estudio 2
+
+- Determinar las condiciones óptimas para diseñar FCQs resistentes a los sesgos
+
+- Comprobar y diagnosticar las propiedades del modelo ante dichas condiciones
+
+- Poner a prueba la estimación del modelo en condiciones críticas, dado el
+diseño óptimo
+
+
+## Estudio 3
+
+- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
+
+
+
+<h4>Árbol de desagregación</h4>
+<br>
+```{r ********************, dependson="********************", results='asis'}
+```
+
+
+## ******************** {data-transition="fade"}
+
+<h4>********************</h4>
+<br>
+<center>
+```{r ********************, dependson="********************"}
+
+```
+</center>
+
+
+## ******************** {data-transition="fade-in slide-out"}
+
+
+
+##
+
+<br>
+<br>
+<br>
+<h1>********************</h1>
+
+
+## ******************** {data-transition="slide-in fade-out"}
+
+### ********************
+
+> - 
+
+> - 
+
+
+## ******************** {data-transition="slide-in none-out"}
+
+
+## Gracias por su atención {data-background="www/********************.jpg" data-background-position='50% 70%' data-background-size='50% auto' data-background-transition='slide'}
+
+### Daniel Morillo (2018)

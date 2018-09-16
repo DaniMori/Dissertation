@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Daniel Morillo" />
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="Presentacion_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="Presentacion_files/reveal.js-3.3.0.1/css/theme/solarized.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2" data-background="www/********************.jpg" data-background-position="50% 80%" data-background-size="50% auto" data-background-transition="slide">
+<h2></h2>
+<p><style type="text/css">.reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }</style><h1>Modelos de TRI para cuestionarios de elección forzosa</h1><br/></p>
+<h3 id="tesis-doctoral-enviada-para-la-obtencion-del-titulo-de-doctor-en-psicologia-clinica-y-de-la-salud">Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud</h3>
+<h4 id="por-daniel-morillo">Por: Daniel Morillo</h4>
+<h4 id="supervisores-francisco-jose-abad-iwin-leenen">Supervisores: Francisco José Abad, Iwin Leenen</h4>
+<h4 id="tutor-vicente-ponsoda">Tutor: Vicente Ponsoda</h4>
+<p><br/><h5>16 de septiembre de 2018</h5></p>
+<p id="section-1"></p>
+<p>Notes:</p>
+<p>Buenos días. Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado evaluar el trabajo de mi tesis y estar hoy presentes para emitir su juicio experto sobre ella, y a todas las personas presentes por estar aquí y darme la oportunidad de exponer públicamente los resultados de mi investigación predoctoral.</p>
+<p>Quería empezar diciendo esto dado que, cuando estaba preparando esta defensa, una buena amiga mía, que además tiene experiencia, me preguntó cuál era el público objetivo de mi exposición. En ese momento caí en la cuenta de que estaba dando por sentado la necesidad de exponer mi trabajo ante los miembros del tribunal. Sin embargo, esta defensa es un acto público y, como tal, considero que es el momento idóneo para rendir cuentas ante la sociedad el valor del trabajo académico. Además creo que es una responsabilidad académica defender el valor del conocimiento científico, más a día de hoy que este valor está muy cuestionado y la sociedad necesita que restauremos su confianza en nuestra labor.</p>
+<p>Por lo tanto, y sin olvidar por supuesto al tribunal, aprovechando que el acto se puede realizar en castellano, dado que todos los miembros del tribunal son hispanohablantes, quisiera hacer una presentación que ayude al público presente a entender el trabajo que he realizado, durante los tres años y medio que estuve empleado como investigador predoctoral en esta universidad y durante el último año que he continuado con la investigación, y también durante los dos primeros años en los que fui becario de la Cátedra de Modelos y Aplicaciones Psicométricas, lo cual me permitió iniciarme en la investigación. Espero que con esto pueda responder, al menos en parte, los cientos de veces que me han preguntado en qué trabajaba o de qué iba mi tesis, y las únicas respuestas que he sido capaz de dar eran más bien verborrea científica plagada de tecnicismos, totalmente incomprensible, así que a ver si esta vez lo hago mejor.</p>
+</section>
+<section><section id="introduccion" class="titleslide slide level1"><h1>Introducción</h1></section><section id="cuestionarios-de-autoinforme" class="slide level2">
+<h2>Cuestionarios de autoinforme</h2>
+<p><br/><h4>Me intereso por la gente</h4></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Muy en desacuerdo</th>
+<th style="text-align: center;">En desacuerdo</th>
+<th style="text-align: center;">Neutral</th>
+<th style="text-align: center;">De acuerdo</th>
+<th style="text-align: center;">Muy de acuerdo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">5</td>
+</tr>
+</tbody>
+</table>
+<p><br/><h4>Estoy relajado la mayor parte del tiempo</h4></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Muy en desacuerdo</th>
+<th style="text-align: center;">En desacuerdo</th>
+<th style="text-align: center;">Neutral</th>
+<th style="text-align: center;">De acuerdo</th>
+<th style="text-align: center;">Muy de acuerdo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">5</td>
+</tr>
+</tbody>
+</table>
+<p><br/><p style="font-size:0.6em">
+Fuente: 
+<a href="https://ipip.ori.org/SpanishBig-FiveFactorMarkers.htm">International Personality Item Pool</a>
+</p></p>
+</section><section id="sesgos-de-respuesta" class="slide level2">
+<h2>Sesgos de respuesta</h2>
+</section><section id="en-que-consiste" class="slide level2">
+<h2>En qué consiste</h2>
+</section><section id="ventajas-aducidas" class="slide level2">
+<h2>Ventajas (aducidas)</h2>
+<ul>
+<li class="fragment">Control de los sesgos de respuesta</li>
+</ul>
+</section><section id="controversia" class="slide level2">
+<h2>Controversia</h2>
+<ul>
+<li class="fragment"><p>Control de sesgos</p></li>
+<li class="fragment"><p>Ipsatividad</p></li>
+</ul>
+</section></section>
+<section><section id="aplicacion-de-la-tri-al-formato-de-eleccion-forzosa-multidimensional" class="titleslide slide level1"><h1>Aplicación de la TRI al formato de elección forzosa multidimensional</h1></section><section id="modelos" class="slide level2">
+<h2>Modelos</h2>
+<ul>
+<li class="fragment"><p>TIRT</p></li>
+<li class="fragment"><p>MUPP</p></li>
+<li class="fragment"><p>Otros</p></li>
+</ul>
+</section></section>
+<section><section id="justificacion" class="titleslide slide level1" data-transition="fade"><h1>Justificación</h1></section><section id="propuesta-del-modelo-mupp-2pl" class="slide level2">
+<h2>Propuesta del modelo MUPP-2PL</h2>
+</section><section id="estudios" class="slide level2">
+<h2>Estudios</h2>
+<ul>
+<li class="fragment"><p>Estudio 1</p></li>
+<li class="fragment"><p>Estudio 2</p></li>
+<li class="fragment"><p>Estudio 3</p></li>
+</ul>
+</section></section>
+<section><section id="propuesta-del-modelo-mupp-2pl-1" class="titleslide slide level1"><h1>Propuesta del modelo MUPP-2PL</h1></section><section id="formulacion" class="slide level2">
+<h2>Formulación</h2>
+</section><section id="propiedades" class="slide level2">
+<h2>Propiedades</h2>
+<ul>
+<li class="fragment"><p>Indeterminación de los parámetros de posición de los ítems</p></li>
+<li class="fragment"><p>Indeterminación rotacional para <span class="math inline">\(D = 2\)</span></p></li>
+<li class="fragment"><p>Indeterminación empírica</p></li>
+<li class="fragment"><p>Equivalencia de parámetros con ítems en formato dicotómico</p></li>
+</ul>
+</section><section id="parametros-multidimensionales" class="slide level2">
+<h2>Parámetros multidimensionales</h2>
+</section><section id="representacion-grafica" class="slide level2">
+<h2>Representación gráfica</h2>
+<ul>
+<li class="fragment"><p>Superficio de respuesta al bloque</p></li>
+<li class="fragment"><p>Representación vectorial</p></li>
+<li class="fragment"><p>Polaridad</p></li>
+<li class="fragment">Bloques unidimensionales:</li>
+<li class="fragment">Equivalencia con el modelo 2PL</li>
+<li class="fragment">Indeterminación del parámetro de escala</li>
+<li class="fragment"><p>Justificación para no usarlos</p></li>
+</ul>
+</section><section id="relacion-con-otros-modelos-de-dominancia" class="slide level2">
+<h2>Relación con otros modelos de dominancia</h2>
+<ul>
+<li class="fragment"><p>TIRT</p></li>
+<li class="fragment"><p>MCLM</p></li>
+</ul>
+</section></section>
+<section><section id="propuesta-de-estimacion-bayesiana" class="titleslide slide level1"><h1>Propuesta de estimación Bayesiana</h1></section><section id="ventajas-e-inconvenientes" class="slide level2">
+<h2>Ventajas (e inconvenientes)</h2>
+</section><section id="descripcion-del-algoritmo" class="slide level2">
+<h2>Descripción del algoritmo</h2>
+<ul>
+<li class="fragment">Restricciones de identificación (distribuciones previas)</li>
+<li class="fragment">Parámetros incidentales</li>
+<li class="fragment">Parámetros estructurales
+<ul>
+<li class="fragment">Ítems</li>
+<li class="fragment">Correlaciones latentes</li>
+</ul></li>
+<li class="fragment"><p>Inicialización</p></li>
+<li class="fragment"><p>Iteración “M-H dentro de Gibbs”: Permite reducir la dimensionalidad de cada iteración</p></li>
+</ul>
+</section></section>
+<section><section id="objetivos" class="titleslide slide level1"><h1>Objetivos</h1></section><section id="estudio-1" class="slide level2">
+<h2>Estudio 1</h2>
+<ul>
+<li class="fragment">Estudiar la esimación del modelo</li>
+<li class="fragment">Estimación Bayesiana</li>
+<li class="fragment">Condiciones favorables y desfavorables
+<ul>
+<li class="fragment">Proporción de bloques heteropolares</li>
+<li class="fragment">Sin bloques unidimensionales</li>
+</ul></li>
+<li class="fragment"><p>Comparar con estimación factorial propuesta para el modelo TIRT</p></li>
+<li class="fragment"><p>Poner a prueba estimación con datos empíricos</p></li>
+</ul>
+</section><section id="estudio-2" class="slide level2">
+<h2>Estudio 2</h2>
+<ul>
+<li class="fragment"><p>Determinar las condiciones óptimas para diseñar FCQs resistentes a los sesgos</p></li>
+<li class="fragment"><p>Comprobar y diagnosticar las propiedades del modelo ante dichas condiciones</p></li>
+<li class="fragment"><p>Poner a prueba la estimación del modelo en condiciones críticas, dado el diseño óptimo</p></li>
+</ul>
+</section><section id="estudio-3" class="slide level2">
+<h2>Estudio 3</h2>
+<ul>
+<li class="fragment">Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL</li>
+</ul>
+<h4>
+Árbol de desagregación
+</h4>
+<p><br></p>
+</section><section id="section-2" class="slide level2" data-transition="fade">
+<h2>********************</h2>
+<h4>
+********************
+</h4>
+<br>
+<center>
+</center>
+</section><section id="section-3" class="slide level2" data-transition="fade-in slide-out">
+<h2>********************</h2>
+</section><section id="section-4" class="slide level2">
+<h2></h2>
+<br> <br> <br>
+<h1>
+********************
+</h1>
+</section><section id="section-5" class="slide level2" data-transition="slide-in fade-out">
+<h2>********************</h2>
+<h3 id="section-6">********************</h3>
+<ul>
+<li></li>
+</ul>
+<ul>
+<li></li>
+</ul>
+</section><section id="section-7" class="slide level2" data-transition="slide-in none-out">
+<h2>********************</h2>
+</section><section id="gracias-por-su-atencion" class="slide level2" data-background="www/********************.jpg" data-background-position="50% 70%" data-background-size="50% auto" data-background-transition="slide">
+<h2>Gracias por su atención</h2>
+<h3 id="daniel-morillo-2018">Daniel Morillo (2018)</h3>
+</section></section>
+    </div>
+  </div>
+
+  <script src="Presentacion_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="Presentacion_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'Presentacion_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
