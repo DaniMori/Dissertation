@@ -15,28 +15,32 @@ output:
     reveal_plugins: ["notes"]
 editor_options:
   chunk_output_type: console
+bibliography: "res/dissertation_bibliography.bib"
+csl: "res/apa-old-doi-prefix.csl"
 ---
 
 ```{r setup, include=FALSE}
 
 library(tidyverse)
 library(magrittr)
+library(knitr)
 library(htmltools)
+library(crosstalk)
 library(DT)
 
-source("R/Rmarkdown_code.R", encoding = 'UTF-8')
+"R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
-knitr::opts_chunk$set(
+opts_chunk$set(
   cache = FALSE, results = 'asis',
   message = FALSE, warning = FALSE, echo = FALSE
 )
 
-knitr::read_chunk(lines = readLines("R/Presentacion.R", encoding = 'UTF-8'))
+"R/Presentacion.R" %>% readLines(encoding = 'UTF-8') %>% read_chunk(lines = .)
 
 ```
 
 
-## {data-background="www/********************.jpg" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
+## {data-background="res/LOGO_UAM_NEGRO_VARIANTE.TIF" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
 
 ```{r title}
 
@@ -78,137 +82,137 @@ experto sobre ella, y a todas las personas presentes por estar aquí y darme la
 oportunidad de exponer públicamente los resultados de mi investigación
 predoctoral.
 
-Quería empezar diciendo esto dado que, cuando estaba preparando esta defensa,
-una buena amiga mía, que además tiene experiencia, me preguntó cuál era el
-público objetivo de mi exposición. En ese momento caí en la cuenta de que
-estaba dando por sentado la necesidad de exponer mi trabajo ante los miembros
-del tribunal.
-Sin embargo, esta defensa es un acto público y, como tal, considero que es el
-momento idóneo para rendir cuentas ante la sociedad el valor del trabajo
-académico.
-Además creo que es una responsabilidad académica defender el valor del
-conocimiento científico, más a día de hoy que este valor está muy cuestionado y
-la sociedad necesita que restauremos su confianza en nuestra labor.
-
-Por lo tanto, y sin olvidar por supuesto al tribunal, aprovechando que el acto
-se puede realizar en castellano, dado que todos los miembros del tribunal son
-hispanohablantes, quisiera hacer una presentación que ayude al público presente
-a entender el trabajo que he realizado, durante los tres años y medio que
-estuve empleado como investigador predoctoral en esta universidad y durante el
-último año que he continuado con la investigación, y también durante los dos
-primeros años en los que fui becario de la Cátedra de Modelos y Aplicaciones
-Psicométricas, lo cual me permitió iniciarme en la investigación.
-Espero que con esto pueda responder, al menos en parte, los cientos de veces
-que me han preguntado en qué trabajaba o de qué iba mi tesis, y las únicas
-respuestas que he sido capaz de dar eran más bien verborrea científica plagada
-de tecnicismos, totalmente incomprensible, así que a ver si esta vez lo hago
-mejor.
 
 
-# Introducción
+---
 
+```{r introduction}
 
-## Cuestionarios de autoinforme
-
-```{r sample_GS_items}
-
-br()
-h4("Me intereso por la gente")
-render_response_scale()
-
-br()
-h4("Estoy relajado la mayor parte del tiempo")
-render_response_scale()
-
-br()
-p(
-  style = "font-size:0.6em",
-  "Fuente: ",
-  a(
-    href = "https://ipip.ori.org/SpanishBig-FiveFactorMarkers.htm",
-    "International Personality Item Pool"
-  )
+main_layout(
+  "Introducción",
+  "El formato de Elección Forzosa y los modelos de TRI"
 )
 
 ```
 
 
-Notes:
+## El formato de Elección Forzosa
 
-Un cuestionario es un instrumento que usamos para medir características de las
-personas, como la personalidad, preferencias, actitudes, etc.
-Llamamos a estos rasgos "no cognitivos", puesto que no exigen un nivel de
-aptitud cognitiva para dar una respuesta correcta.
-Más bien, requieren emitir un juicio de preferencia o acuerdo con una de las
-opciones de respuesta, no habiendo opciones correctas ni incorrectas.
+- Formato de respuesta para cuestionarios
 
-En los cuestionarios clásicos, o de tipo "Likert" como solemos llamarlos, la
-persona evaluada ha de seleccionar la opción que mejor se corresponde con su
-grado de acuerdo con un ítem, como en estos ejemplos.
-Estos dos ítems miden sendos rasgos de personalidad.
-El primero mide un rasgo que denominamos "Estabilidad emocional".
-Consiste más o menos en tener control sobre las propias emociones.
-El segundo, llamado "Amabilidad", implica ser capaz de empatizar y ponerse en
-el lugar de otras personas.
-
-Ahora bien, supongamos que queremos crear un cuestionario para una oposición a
-la policía.
-No es difícil imaginar que las personas candidatas van a tender a responder de
-forma que den una mejor imagen de sí mismas.
-Esto es lo que llamamos "manejo de la impresión", y resulta en un sesgo de
-respuesta, es decir, una tendencia a mostrar más acuerdo del que mostrarían si
-no hubiese consecuencias en juego para ellas, con los ítems que manifiestan
-características socialmente aceptables.
-
-
-## El formato de elección forzosa
-
-
-
-
-## En qué consiste
-
-
-## Ventajas (aducidas)
+- Evaluación no cognitiva
 
 - Control de los sesgos de respuesta
 
-  
-## Controversia
-
-- Control de sesgos
-
-- Ipsatividad
+- Aumento de validez
 
 
-# Aplicación de la TRI al formato de elección forzosa multidimensional
+
+## El formato de Elección Forzosa multidimensional
+
+- Agrupamiento de indicadores de distintas dimensiones
+
+- Medición simultánea de varios constructos
+
+- Puntuaciones ipsativas
 
 
-## Modelos
+## Ipsatividad
 
-- TIRT
+<!-- TODO: Referencias -->
 
-- MUPP
+- Puntuaciones intra-persona
 
-- Otros
+- Estructura factorial distorsionada
 
+- Fiabilidad reducida
 
-# Justificación {data-transition="fade"}
+- Validez predictiva reducida
 
-
-## Propuesta del modelo MUPP-2PL
-
-
-## Estudios
-
-- Estudio 1
-
-- Estudio 2
-
-- Estudio 3
+- No comparables entre personas
 
 
-# Propuesta del modelo MUPP-2PL
+## Aplicación de la Teoría de Respuesta al Ítem
+
+- Modelo "Multi-Unidimensional Pairwise Preference" [@stark_irt_2005]
+
+- Modelo "TRI Thurstoniana" [@brown_item_2011]
+
+
+## Justificación: Propuesta del modelo MUPP-2PL
+
+- Simplificación del modelo MUPP
+
+- Variante tipo _domnancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
+
+- Abordaje teórico
+
+- Propuesta de método de estimación
+
+
+Notes:
+
+Modelos de dominancia se consideran más apropiados para ítems de personalidad (en general)
+
+Modelo más parsimonioso, y más sencillo de abordar teóricamente
+
+
+## Estructura
+
+- Estudio 1: Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo
+
+- Estudio 2: Evaluación y mitigación de problemas pscométricos en el diseño de
+cuestionarios de elección forzosa multidimensionales para selección de personal
+
+- Estudio 3: Comprobación del supuesto de invarianza del modelo MUPP-2PL
+
+
+Notes:
+
+El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
+la estimación del mismo mediante el método Bayesiano propuesto.
+Se han utilizado para ello diferentes condiciones consideradas más, o menos favorables,
+en función de las propiedades teóricas del modelo y de consideraciones aportadas por la
+literatura previa.
+Asimismo, como veremos existe una equivalencia práctica entre el modelo MUPP-2PL
+y el modelo TIRT.  Esto nos permite comparar los dos métodos de estimación, el
+Bayesiano, basado en información completa, y el método frecuentista, basado en
+Análisis Factorial Confirmatorio de la información bivariada.
+
+
+---
+
+```{r study_1}
+
+main_layout(
+  "Estudio 1",
+  "Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo"
+)
+
+```
+
+
+## Objetivos
+
+- Estudiar la esimación del modelo
+    - Estimación Bayesiana
+    - Condiciones favorables y desfavorables
+        - Proporción de bloques heteropolares
+        - Sin bloques unidimensionales
+    
+- Comparar con estimación factorial propuesta para el modelo TIRT
+
+- Poner a prueba estimación con datos empíricos
+
+
+## Modelo MUPP-2PL
+
+- Supuesto de medida:
+
+$$
+P_i(Y_{ij} = 1 | \theta) = \Phi_L(a_i\theta_j + d_i)
+$$
+
 
 
 ## Formulación
@@ -269,20 +273,7 @@ características socialmente aceptables.
 Permite reducir la dimensionalidad de cada iteración
 
 
-# Objetivos
-
-
 ## Estudio 1
-
-- Estudiar la esimación del modelo
-  - Estimación Bayesiana
-  - Condiciones favorables y desfavorables
-    - Proporción de bloques heteropolares
-    - Sin bloques unidimensionales
-    
-- Comparar con estimación factorial propuesta para el modelo TIRT
-
-- Poner a prueba estimación con datos empíricos
 
 
 ## Estudio 2

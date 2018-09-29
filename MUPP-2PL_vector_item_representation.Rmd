@@ -1,0 +1,86 @@
+---
+title: "Representación de ítems MUPP-2PL mediante ítems en coordenadas cartesianas oblicuas"
+output: html_notebook
+---
+
+```{r setup, message=FALSE}
+
+library(tidyverse)
+library(magrittr)
+
+```
+
+
+De la tesis se extrae (ecuaciones 3.2 a 3.9), a partir de los parámetros del MUPP-2PL, el procedimiento para obtener la representación de un ítem en coordenadas cartesianas:
+
+1. Calcular los parámetros multidimensionales: MBL, MBS, y cos (alpha).
+2. Calcular las coordenadas del origen y el extremo del vector.
+3. Proyectar dichas coordenadas en el espacio ortogonal.
+
+Este procedimiento se representa mediante la siguiente función
+
+```{r plot_MUPP_2PL_item_vector_function}
+
+#' Plot a MUPP-2PL item as a vector in a 2-dimensional space.
+#'
+#' @param item_params MUPP-2PL item parameters, given as a data.frame with 3 (double) columns: scale.1, scale.2, location
+#' @param cor double 1-length vector with the correlation of the latent space
+#'
+#' @return a ggplot of the item
+plot_MUPP_2PL_item_vector <- function(item_params, cor) {
+  
+  item_params_MCLM <- item_params %>% mutate(scale.2 = -scale.2)
+  
+  cor_matrix <- matrix(c(1, cor, cor, 1), nrow = 2)
+  
+  scales <- item_params_MCLM %>% select(scale.1, scale.2) %>% as.matrix
+  
+  MBS <- scales %>% { . %*% cor_matrix %*% t(.) } %>% as.double %>% sqrt
+  
+  MBL <- -item_params_MCLM %>% pull(location) %>% divide_by(MBS)
+  
+  directions <- (scales %*% cor_matrix) / MBS
+  
+  origin <- (MBL * directions) %>% t
+  end <- origin + ((MBS * directions) %>% t)
+  
+  rotation <- matrix(c(1, cor, 0, sqrt(1 - cor^2)), nrow = 2) %>% solve
+  
+  orth_origin <- rotation %*% origin
+  orth_end <- rotation %*% end
+  
+  coords <- rbind(orth_origin, orth_end) %>% t %>% as_tibble
+  
+  MBL %>% print
+  MBS %>% print
+  directions %>% print
+  coords %>% as.matrix %>% print
+  
+  coords %>% ggplot(mapping = aes(x = V1, y = V2, xend = V3, yend = V4, color = "red")) +
+    scale_y_continuous(limits = c(-3, 3)) +
+    scale_x_continuous(limits = c(-3, 3)) +
+    geom_hline(yintercept = 0) +
+    (if(cor == 0) geom_vline(xintercept = 0) else geom_abline(slope = cor %>% acos %>% tan, intercept = 0)) +
+    geom_segment(arrow = arrow())
+}
+
+```
+
+
+Se pone a prueba la función con diversos items:
+
+
+```{r plot_items, fig.height=6, fig.width=6}
+
+items <- data.frame(
+  scale.1  = c(2, 2  , -1.5,  .5,  0),
+  scale.2  = c(2, -.5,  1.5, 0  , -2.2),
+  location = c(0, 1  ,  -.8, 1  ,  -.4)
+)
+
+cor <- .5
+
+items[1, ] %>% plot_MUPP_2PL_item_vector(cor = cor)
+
+```
+
