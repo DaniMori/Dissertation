@@ -1,0 +1,338 @@
+---
+title:
+author: "Daniel Morillo"
+date: "`r format(lubridate::today(), '%d de %B de %Y')`"
+output:
+  revealjs::revealjs_presentation:
+    transition: slide
+    transitionSpeed: slow
+    theme: solarized
+    incremental: true
+    fig_width: 7
+    fig_height: 4.5
+    fig_caption: false
+    self_contained: false
+    reveal_plugins: ["notes"]
+editor_options:
+  chunk_output_type: console
+bibliography: "res/dissertation_bibliography.bib"
+csl: "res/apa-old-doi-prefix.csl"
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(magrittr)
+library(knitr)
+library(htmltools)
+library(crosstalk)
+library(DT)
+
+"R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
+
+opts_chunk$set(
+  cache = FALSE, results = 'asis',
+  message = FALSE, warning = FALSE, echo = FALSE
+)
+
+"R/Presentacion.R" %>% readLines(encoding = 'UTF-8') %>% read_chunk(lines = .)
+
+```
+
+
+## {data-background="res/LOGO_UAM_NEGRO_VARIANTE.TIF" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
+
+```{r title}
+
+tags$style(
+  type = "text/css",
+  ".reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }"
+)
+
+h1("Modelos de TRI para cuestionarios de elección forzosa")
+br()
+
+```
+
+### Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud
+
+#### Por: Daniel Morillo
+#### Supervisores: Francisco José Abad, Iwin Leenen
+#### Tutor: Vicente Ponsoda
+
+```{r date}
+
+br()
+lubridate::today() %>% format('%d de %B de %Y') %>% h5
+
+```
+
+
+Notes:
+
+Buenos días.
+Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado
+evaluar el trabajo de mi tesis y estar hoy presentes para emitir su juicio
+experto sobre ella, y a todas las personas presentes por estar aquí y darme la
+oportunidad de exponer públicamente los resultados de mi investigación
+predoctoral.
+
+
+
+---
+
+```{r introduction}
+
+main_layout(
+  "Introducción",
+  "El formato de Elección Forzosa y los modelos de TRI"
+)
+
+```
+
+
+## El formato de Elección Forzosa
+
+- Formato de respuesta para cuestionarios
+
+- Evaluación no cognitiva
+
+- Control de los sesgos de respuesta
+
+- Aumento de validez
+
+
+
+## El formato de Elección Forzosa multidimensional
+
+- Agrupamiento de indicadores de distintas dimensiones
+
+- Medición simultánea de varios constructos
+
+- Puntuaciones ipsativas
+
+
+## Ipsatividad
+
+<!-- TODO: Referencias -->
+
+- Puntuaciones intra-persona
+
+- Estructura factorial distorsionada
+
+- Fiabilidad reducida
+
+- Validez predictiva reducida
+
+- No comparables entre personas
+
+
+## Aplicación de la Teoría de Respuesta al Ítem
+
+- Modelo "Multi-Unidimensional Pairwise Preference" [@stark_irt_2005]
+
+- Modelo "TRI Thurstoniana" [@brown_item_2011]
+
+
+## Justificación: Propuesta del modelo MUPP-2PL
+
+- Simplificación del modelo MUPP
+
+- Variante tipo _domnancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
+
+- Abordaje teórico
+
+- Propuesta de método de estimación
+
+
+Notes:
+
+Modelos de dominancia se consideran más apropiados para ítems de personalidad (en general)
+
+Modelo más parsimonioso, y más sencillo de abordar teóricamente
+
+
+## Estructura
+
+- Estudio 1: Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo
+
+- Estudio 2: Evaluación y mitigación de problemas pscométricos en el diseño de
+cuestionarios de elección forzosa multidimensionales para selección de personal
+
+- Estudio 3: Comprobación del supuesto de invarianza del modelo MUPP-2PL
+
+
+Notes:
+
+El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
+la estimación del mismo mediante el método Bayesiano propuesto.
+Se han utilizado para ello diferentes condiciones consideradas más, o menos favorables,
+en función de las propiedades teóricas del modelo y de consideraciones aportadas por la
+literatura previa.
+Asimismo, como veremos existe una equivalencia práctica entre el modelo MUPP-2PL
+y el modelo TIRT.  Esto nos permite comparar los dos métodos de estimación, el
+Bayesiano, basado en información completa, y el método frecuentista, basado en
+Análisis Factorial Confirmatorio de la información bivariada.
+
+
+---
+
+```{r study_1}
+
+main_layout(
+  "Estudio 1",
+  "Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo"
+)
+
+```
+
+
+## Objetivos
+
+- Estudiar la esimación del modelo
+    - Estimación Bayesiana
+    - Condiciones favorables y desfavorables
+        - Proporción de bloques heteropolares
+        - Sin bloques unidimensionales
+    
+- Comparar con estimación factorial propuesta para el modelo TIRT
+
+- Poner a prueba estimación con datos empíricos
+
+
+## Modelo MUPP-2PL
+
+- Supuesto de medida:
+
+$$
+P_i(Y_{ij} = 1 | \theta) = \Phi_L(a_i\theta_j + d_i)
+$$
+
+
+
+## Formulación
+
+
+## Propiedades
+
+- Indeterminación de los parámetros de posición de los ítems
+
+- Indeterminación rotacional para $D = 2$
+
+- Indeterminación empírica
+
+- Equivalencia de parámetros con ítems en formato dicotómico
+
+
+## Parámetros multidimensionales
+
+
+## Representación gráfica
+
+- Superficio de respuesta al bloque
+
+- Representación vectorial
+
+- Polaridad
+
+- Bloques unidimensionales:
+  - Equivalencia con el modelo 2PL
+  - Indeterminación del parámetro de escala
+  - Justificación para no usarlos
+
+
+## Relación con otros modelos de dominancia
+
+- TIRT
+
+- MCLM
+
+
+# Propuesta de estimación Bayesiana
+
+
+## Ventajas (e inconvenientes)
+
+
+## Descripción del algoritmo
+
+- Restricciones de identificación (distribuciones previas)
+  - Parámetros incidentales
+  - Parámetros estructurales
+    - Ítems
+    - Correlaciones latentes
+    
+- Inicialización
+
+- Iteración "M-H dentro de Gibbs":
+Permite reducir la dimensionalidad de cada iteración
+
+
+## Estudio 1
+
+
+## Estudio 2
+
+- Determinar las condiciones óptimas para diseñar FCQs resistentes a los sesgos
+
+- Comprobar y diagnosticar las propiedades del modelo ante dichas condiciones
+
+- Poner a prueba la estimación del modelo en condiciones críticas, dado el
+diseño óptimo
+
+
+## Estudio 3
+
+- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
+
+
+
+<h4>Árbol de desagregación</h4>
+<br>
+```{r ********************, dependson="********************", results='asis'}
+```
+
+
+## ******************** {data-transition="fade"}
+
+<h4>********************</h4>
+<br>
+<center>
+```{r ********************, dependson="********************"}
+
+```
+</center>
+
+
+## ******************** {data-transition="fade-in slide-out"}
+
+
+
+##
+
+<br>
+<br>
+<br>
+<h1>********************</h1>
+
+
+## ******************** {data-transition="slide-in fade-out"}
+
+### ********************
+
+> - 
+
+> - 
+
+
+## ******************** {data-transition="slide-in none-out"}
+
+
+## Gracias por su atención {data-background="www/********************.jpg" data-background-position='50% 70%' data-background-size='50% auto' data-background-transition='slide'}
+
+### Daniel Morillo (2018)

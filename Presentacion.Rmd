@@ -1,79 +1,72 @@
 ---
-title:
+title: "Modelos de TRI para<br>cuestionarios de elección forzosa"
 author: "Daniel Morillo"
 date: "`r format(lubridate::today(), '%d de %B de %Y')`"
 output:
-  revealjs::revealjs_presentation:
-    transition: slide
-    transitionSpeed: slow
-    theme: solarized
-    incremental: true
-    fig_width: 7
+  ioslides_presentation:
+    css: res/styles.css
+    fig_width: 5
     fig_height: 4.5
-    fig_caption: false
-    self_contained: false
-    reveal_plugins: ["notes"]
-editor_options:
-  chunk_output_type: console
+    incremental: true
+    logo: res/LOGO_UAM_NEGRO_VARIANTE.JPG
+    theme: simplex
+    transition: slower
+    widescreen: true
+runtime: shiny
 bibliography: "res/dissertation_bibliography.bib"
 csl: "res/apa-old-doi-prefix.csl"
+editor_options:
+  chunk_output_type: console
 ---
+
 
 ```{r setup, include=FALSE}
 
 library(tidyverse)
 library(magrittr)
 library(knitr)
-library(htmltools)
-library(crosstalk)
-library(DT)
+library(shiny)
+library(shinyWidgets)
 
 "R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
 opts_chunk$set(
-  cache = FALSE, results = 'asis',
+  cache = TRUE, results = 'asis',
   message = FALSE, warning = FALSE, echo = FALSE
 )
+
+init_ggplot()
 
 "R/Presentacion.R" %>% readLines(encoding = 'UTF-8') %>% read_chunk(lines = .)
 
 ```
 
 
-## {data-background="res/LOGO_UAM_NEGRO_VARIANTE.TIF" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
+---
 
-```{r title}
+<center>
+<br>
 
-tags$style(
-  type = "text/css",
-  ".reveal p {
-    text-align: left;
-  }
-  .reveal ul {
-    display: block;
-  }"
-)
+### <b>
 
-h1("Modelos de TRI para cuestionarios de elección forzosa")
-br()
+### Modelos de TRI para cuestionarios de elección forzosa
 
-```
+### </b>
 
-### Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud
+<br>
 
-#### Por: Daniel Morillo
-#### Supervisores: Francisco José Abad, Iwin Leenen
-#### Tutor: Vicente Ponsoda
+#### Tesis doctoral enviada para la obtención del título de<br>Doctor en Psicología Clínica y de la Salud
 
-```{r date}
+<br>
 
-br()
-lubridate::today() %>% format('%d de %B de %Y') %>% h5
+##### Por: Daniel Morillo
 
-```
+###### Supervisores: Francisco José Abad, Iwin Leenen
+###### Tutor: Vicente Ponsoda
 
+</center>
 
-Notes:
+<div class="notes">
 
 Buenos días.
 Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado
@@ -82,18 +75,9 @@ experto sobre ella, y a todas las personas presentes por estar aquí y darme la
 oportunidad de exponer públicamente los resultados de mi investigación
 predoctoral.
 
+</div>
 
-
----
-
-```{r introduction}
-
-main_layout(
-  "Introducción",
-  "El formato de Elección Forzosa y los modelos de TRI"
-)
-
-```
+# Introducción:<br>El formato de elección Forzosa y los modelos de TRI
 
 
 ## El formato de Elección Forzosa
@@ -105,7 +89,6 @@ main_layout(
 - Control de los sesgos de respuesta
 
 - Aumento de validez
-
 
 
 ## El formato de Elección Forzosa multidimensional
@@ -143,18 +126,20 @@ main_layout(
 
 - Simplificación del modelo MUPP
 
-- Variante tipo _domnancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
+- Variante tipo _dominancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
 
 - Abordaje teórico
 
 - Propuesta de método de estimación
 
 
-Notes:
+<div class="notes">
 
 Modelos de dominancia se consideran más apropiados para ítems de personalidad (en general)
 
 Modelo más parsimonioso, y más sencillo de abordar teóricamente
+
+</div>
 
 
 ## Estructura
@@ -166,8 +151,10 @@ cuestionarios de elección forzosa multidimensionales para selección de persona
 
 - Estudio 3: Comprobación del supuesto de invarianza del modelo MUPP-2PL
 
+- Conclusiones
 
-Notes:
+
+<div class="notes">
 
 El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
 la estimación del mismo mediante el método Bayesiano propuesto.
@@ -179,160 +166,395 @@ y el modelo TIRT.  Esto nos permite comparar los dos métodos de estimación, el
 Bayesiano, basado en información completa, y el método frecuentista, basado en
 Análisis Factorial Confirmatorio de la información bivariada.
 
+</div>
 
----
 
-```{r study_1}
+# Estudio 1:<br>Variante de dominancia dentro del marco MUPP: formulación y estimación Markov Chain-Monte Carlo"
 
-main_layout(
-  "Estudio 1",
-  "Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo"
+
+## Objetivos
+
+- Propuesta teórica del modelo
+
+- Propuesta de algoritmo Markov Chain-Monte Carlo (estimación Bayesiana conjunta)
+
+- Comparar con estimación factorial
+
+- Poner a prueba estimación con datos empíricos
+
+
+<div class="notes">
+
+Estudio de simulación para comprobar las condiciones (sobre todo las
+supuestamente desfavorables)
+
+</div>
+
+
+## Modelo MUPP-2PL
+
+Supuesto de independencia MUPP [@stark_irt_2005]:
+
+<br>
+
+<center>
+$$
+\textrm{P}_i(Y_{ij} = 1) = \frac{\textrm{P}_i(X_{i_1j} = 1) \textrm{P}_i(X_{i_2j} = 0)}{\textrm{P}_i(X_{i_1j} = 1) \textrm{P}_i(X_{i_2j} = 0) + \textrm{P}_i(X_{i_1j} = 0) \textrm{P}_i(X_{i_2j} = 1)}
+$$
+</center>
+
+
+## Modelo MUPP-2PL
+
+Supuesto de medida: 2PL [@birnbaum_latent_1968]
+
+<div class="columns-2">
+
+<br>
+
+$$
+\textrm{P}_i(X_{ij} = 1 | \theta_j) = \Phi_L(a_i\theta_j + b_i)
+$$
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+```{r 2PL, fig.width=5, fig.height=4.5}
+
+theta_vector <- seq(-3, 3, 0.1)
+
+probs <- irf_2PL(theta_vector, 1.8, 0)
+
+irf <- tibble(
+  theta = theta_vector,
+  prob  = probs,
+  lab   = paste0(
+    "P<sub>i</sub>(", theta %>% format(digits = 1), ") = ", prob %>% round(3)
+  )
+)
+
+irf_plot <- irf %>% ggplot(
+  mapping = aes(x = theta, y = prob, text = lab, group = NA)
+) + geom_path(color = "darkblue", size = 1) +
+  ggtitle("Curva característica del ítem") +
+  scale_x_continuous(expand = expand_scale()) +
+  scale_y_continuous(expand = expand_scale(.01)) +
+  theme_bw()
+
+irf_plot %>% ggplotly(tooltip = "text") %>%
+  layout(
+    xaxis = list(title = TeX("\\textrm{P}_i(X_{ij} = 1 | \\theta_j)")),
+    yaxis = list(title = TeX("\\theta_j"))
+  ) %>% plotly_conf
+
+```
+
+</div>
+
+
+## Modelo MUPP-2PL
+
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+
+```{r MUPP_2PL_BRF_vector_applet, cache=FALSE}
+
+INIT_BLOCK <- tibble(
+  a1 = 1, a2 = 1, l = 0, pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
+)
+DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
+
+block <- reactive(
+  {
+    tibble(
+      a1 = input$a1_adjust, a2 = input$a2_adjust, l = input$l_adjust,
+      pol1 = input$item_1_polarity, pol2 = input$item_2_polarity,
+      dim1 = input$item_1_dim, dim2 = input$item_2_dim
+    )
+  }
+)
+
+pov <- reactive(
+  {
+    DEFAULT_POV
+  }
+)
+# block %>% plot_MUPP_2PL_brf
+# block %>% plot_MUPP_2PL_vectors(cor = 0)
+
+fluidRow(
+  column(4, plotlyOutput(outputId = "MUPP_2PL_brf_view")),
+  column(4, plotOutput(outputId = "MUPP_2PL_vector_view")),
+  column(
+    4,
+    br(),
+    br(),
+    fluidRow(
+      column(
+        6, align = "center",
+        sliderInput(
+          "a1_adjust", label = HTML("<em>a<sub>i</sub></em><sub>1</sub>"), 0, 2,
+          value = INIT_BLOCK$a2, step = 0.1
+        )
+      ),
+      column(
+        3,
+        radioButtons(
+          "item_1_polarity", label = "Polaridad:", selected = INIT_BLOCK$pol1,
+          choiceNames = c("+", "-"), choiceValues = c("+", "-")
+        )
+      ),
+      column(
+        3,
+        radioButtons(
+          "item_1_dim", label = "Dimensión:", selected = INIT_BLOCK$dim1,
+          choiceNames = c("1", "2"),
+          choiceValues = c("theta_1", "theta_2")
+        )
+      )
+    ),
+    fluidRow(
+      column(
+        6, align = "center",
+        sliderInput(
+          "a2_adjust", label = HTML("<em>a<sub>i</sub></em><sub>2</sub>"), 0, 2,
+          value = INIT_BLOCK$a2, step = 0.1
+        )
+      ),
+      column(
+        3,
+        radioButtons(
+          "item_2_polarity", label = HTML("&nbsp;"), selected = INIT_BLOCK$pol2,
+          choiceNames = c("+", "-"), choiceValues = c("+", "-")
+        )
+      ),
+      column(
+        3,
+        radioButtons(
+          "item_2_dim", label = HTML("&nbsp;"), selected = INIT_BLOCK$dim2,
+          choiceNames = c("1", "2"),
+          choiceValues = c("theta_1", "theta_2")
+        )
+      )
+    ),
+    fluidRow(
+      align = "center",
+      sliderInput(
+        "l_adjust", label = HTML("<em>l<sub>i</sub></em>"), -2, 2,
+        value = INIT_BLOCK$l, step = 0.1, width = "90%"
+      )
+    )
+  )
+)
+
+output$MUPP_2PL_brf_view <- renderPlotly(
+  block() %>% plot_MUPP_2PL_brf(pov = pov())
+)
+output$MUPP_2PL_vector_view <- renderPlot(
+  block() %>% plot_MUPP_2PL_vectors(cor = 0)
 )
 
 ```
 
 
-## Objetivos
+<div class = "notes">
 
-- Estudiar la esimación del modelo
-    - Estimación Bayesiana
-    - Condiciones favorables y desfavorables
-        - Proporción de bloques heteropolares
-        - Sin bloques unidimensionales
-    
-- Comparar con estimación factorial propuesta para el modelo TIRT
+Algebraicamente equivalence a un modelo logístico multidimensional compensatorio
 
-- Poner a prueba estimación con datos empíricos
+- Bloques heteropolares / homopolares
 
+- Bloques unidimensionales
 
-## Modelo MUPP-2PL
+Si los dos ítems del bloque miden el mismo rasgo latente, se reduce nuevamente
+a un modelo logístico de 2 parámetros, con una indeterminación adicional que
+afecta a los parámetros de escala.
 
-- Supuesto de medida:
-
-$$
-P_i(Y_{ij} = 1 | \theta) = \Phi_L(a_i\theta_j + d_i)
-$$
+</div>
 
 
+## Estimación Bayesiana
 
-## Formulación
+- Algoritmo Markov Chain-Monte Carlo: muestreo Metropolis-within-Gibbs
 
+- Información completa (vs. bivariada)
 
-## Propiedades
+- Estimación conjunta
 
-- Indeterminación de los parámetros de posición de los ítems
-
-- Indeterminación rotacional para $D = 2$
-
-- Indeterminación empírica
-
-- Equivalencia de parámetros con ítems en formato dicotómico
+- Estadísticos "Expected a Posteriori"
 
 
-## Parámetros multidimensionales
+<div class="notes">
+
+Previsiblemente, información completa mejor recuperación del espacio latente.
+
+Estimación conjunta, mayor precisión en la estimación de la incertidumbre de los
+parámetros incidentales.
+
+</div>
 
 
-## Representación gráfica
+## Estudio de simulación: Recuperación de parámetros
 
-- Superficio de respuesta al bloque
+### Diseño
 
-- Representación vectorial
+- Estimación sin bloques unidimensionales
+[@stark_irt_2005; @chernyshenko_normative_2009]
 
-- Polaridad
+- Estimación con/sin bloques heteropolares [@brown_item_2011]
 
-- Bloques unidimensionales:
-  - Equivalencia con el modelo 2PL
-  - Indeterminación del parámetro de escala
-  - Justificación para no usarlos
+- Comparación con estimación CFA
 
-
-## Relación con otros modelos de dominancia
-
-- TIRT
-
-- MCLM
-
-
-# Propuesta de estimación Bayesiana
-
-
-## Ventajas (e inconvenientes)
-
-
-## Descripción del algoritmo
-
-- Restricciones de identificación (distribuciones previas)
-  - Parámetros incidentales
-  - Parámetros estructurales
-    - Ítems
-    - Correlaciones latentes
-    
-- Inicialización
-
-- Iteración "M-H dentro de Gibbs":
-Permite reducir la dimensionalidad de cada iteración
-
-
-## Estudio 1
-
-
-## Estudio 2
-
-- Determinar las condiciones óptimas para diseñar FCQs resistentes a los sesgos
-
-- Comprobar y diagnosticar las propiedades del modelo ante dichas condiciones
-
-- Poner a prueba la estimación del modelo en condiciones críticas, dado el
-diseño óptimo
-
-
-## Estudio 3
-
-- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
-
-
-
-<h4>Árbol de desagregación</h4>
-<br>
-```{r ********************, dependson="********************", results='asis'}
+```{r simulation_recovery_result_matrix}
 ```
 
 
-## ******************** {data-transition="fade"}
+<div class="notes">
 
-<h4>********************</h4>
-<br>
+Interés en poner a prueba la estimación en condiciones supuestamente
+desfavorables.
+
+Por un lado, se argumenta la necesidad de utilizar bloques unidimensionales para
+identificar la métrica.
+Puesto que no vemos la necesidad de hacerlo, y su aplicación práctica es
+limitada, obviamos esta condición, en previsión de que serían innecesarios.
+
+Por otro, la necesidad de incluir bloques heteropolares.
+Ponemos a prueba diferentes condiciones para comprobar el efecto de incluir más
+o menos bloques heteropolares, junto con otras condiciones típicamente
+manipuladas: la correlación entre dimensiones del espacio latente, y la longitud
+del cuestionario.
+
+</div>
+
+
+## Estudio de simulación: Recuperación de parámetros
+
 <center>
-```{r ********************, dependson="********************"}
+Resultados: Parámetros de escala
+
+```{r simulation_recovery_results_scales, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+
+scale_corr_plot <- study_1_results %>% filter(Parametro == "Escalas") %>%
+  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
+  rename(`Correlación` = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
+  ggplot(
+    aes(
+      `Proporción de bloques heteropolares`, `Correlación`,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) +
+  geom_point() + geom_line() + ylim(0:1) +
+  ggtitle("Escala verdadera - estimación")
+
+scale_corr_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 ```
 </center>
 
 
-## ******************** {data-transition="fade-in slide-out"}
+## Estudio de simulación: Recuperación de parámetros
+
+<center>
+Resultados: Parámetros de correlación
+
+```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+
+corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
+  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
+  rename(RMSE = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
+  ggplot(
+    aes(
+      `Proporción de bloques heteropolares`, RMSE,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) +
+  geom_point() + geom_line() + ylim(c(0, .1)) +
+  ggtitle("Correlaciones entre dimensiones latentes")
+
+corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
 
 
+## Estudio de simulación: Recuperación de parámetros
 
-##
+<center>
+Resultados: Rasgo latente (precisión)
 
-<br>
-<br>
-<br>
-<h1>********************</h1>
+```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+
+lt_rel_plots <- study_1_results %>%
+  filter(Parametro == "Rasgo latente", Variable == "OPBP") %>%
+  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
+  rename(`Proporción de bloques heteropolares` = Nivel) %>%
+  ggplot(
+    aes(
+      `Proporción de bloques heteropolares`, Valor,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) + facet_grid(cols = vars(Estadistico), scales = "free", space = "free") +
+  geom_point(alpha = .5) + geom_line(alpha = .5) + ylab("") + ylim(0:1) +
+  ggtitle("Niveles de rasgo latente")
+
+lt_rel_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
 
 
-## ******************** {data-transition="slide-in fade-out"}
+## Estudio de simulación: Recuperación de parámetros
 
-### ********************
+<center>
+Resultados: Rasgo latente (incertidumbre)
 
-> - 
+```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
 
-> - 
+lt_CrI_plots <- study_1_results %>%
+  filter(Parametro == "Rasgo latente", Variable == "QL") %>%
+  mutate(Valor = Valor * 100) %>%
+  rename(`Longitud cuestionario (nº ítems)` = Nivel) %>%
+  ggplot(
+    aes(
+      `Longitud cuestionario (nº ítems)`, Valor,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) + geom_point(alpha = .5) + geom_line(alpha = .75) + ylim(c(90, 100)) +
+  ylab("% cobertura del parámetro verdadero") +
+  ggtitle("Intervalo de credibilidad del rasgo latente")
+  
+
+lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
 
 
-## ******************** {data-transition="slide-in none-out"}
+## Estudio empírico
+
+- Estimación de modelo "Big Five"
+
+- Algoritmo MCMC y CFA
+
+- Estimaciones menos extremas:
+    - En parámetros de escala de algunos ítems
+    
+    - En correlaciones del espacio latente
+    
+- Fiabilidades mayores
 
 
-## Gracias por su atención {data-background="www/********************.jpg" data-background-position='50% 70%' data-background-size='50% auto' data-background-transition='slide'}
+## Estudio 1: Conclusiones
 
-### Daniel Morillo (2018)
+- 
+
+
+## Referencias

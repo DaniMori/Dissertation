@@ -9,7 +9,7 @@ library(assertive)
 
 POLARITIES <- c("-", "+")
 
-init_ggplot <- function(theme = theme_bw()) {
+init_ggplot <- function(theme = theme_minimal()) {
 
   theme_set(theme)
 }
@@ -171,8 +171,8 @@ plot_MUPP_2PL_brf <- function(
     hoverinfo = "text"
   ) %>% layout(
     scene = list(
-      xaxis = list(title = HTML("\u03B8 1")),
-      yaxis = list(title = HTML("\u03B8 2")),
+      xaxis = list(title = HTML("\u03B81")),
+      yaxis = list(title = HTML("\u03B82")),
       zaxis = list(
         title = "" #TeX("\\textrm{P}_i(Y_{ij} = 1 | {\\bf\\unicode[Times]{x3B8}})")
       ),
@@ -276,7 +276,6 @@ plot_MUPP_2PL_vectors <- function(
       arrow = arrow(angle = 20, length = unit(0.20, "inches"), type = "closed"),
       size = 2
     ) +
-    theme_minimal(base_size = 16) +
     theme(plot.margin = unit(c(50, 20, 40, 20), "points")) +
     scale_color_discrete(guide = "none") +
     xlab(expression(italic(theta)[1])) + ylab(expression(italic(theta)[2]))
