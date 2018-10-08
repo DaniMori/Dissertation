@@ -1,0 +1,1573 @@
+---
+title: "Testing the invariance assumption in the MUPP-2PL"
+author: "Daniel Morillo"
+date: "12 de febrero de 2018"
+output:
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
+
+options(knitr.kable.NA = '')
+
+source("R/Rmarkdown_functions.R")
+
+```
+
+```{r data_load, include=FALSE}
+
+## Item and block properties: ------------------------------------------------------------------------------------------
+
+vars <- load.vars()
+items <- vars$items
+blocks <- vars$blocks
+
+
+## Log-likelihood ratio tests: -----------------------------------------------------------------------------------------
+
+LL.ratio.tests <- load.LL.ratio.tests(blocks)	%>% mutate(
+		Block_code = Block,
+		Block = n() %>% seq_len %>% as.character,
+		`Item 2 missing` = `Item 2` %>% (assertive::is_na) %>% if_else("X", "")
+	)
+
+
+## Wald tests and joint estimates: -------------------------------------------------------------------------------------
+
+Wald.tests.model <- readModels(target = "res/apra2_fcq_gsq_joint_es_op_ag_co_0_mlr_wald.out")
+
+
+## Independent estimation estimates: -----------------------------------------------------------------------------------
+
+block.item.params.independent <- load.independent.estimates(blocks)
+
+```
+
+```{r data_formatting, include = FALSE}
+
+## Wald test tibble: ---------------------------------------------------------------------------------------------------
+
+WT.params <- Wald.tests.model$parameters$unstandardized %>% filter(paramHeader == "New.Additional.Parameters") %>%
+	select(-paramHeader)
+
+WT.scales <- WT.params %>% mutate(item = param %>% str_extract("P[4-5]_[0-9]{1,3}")) %>% filter(item %>% is_not_na)
+
+WT.intercepts <- WT.params %>% mutate(
+	block = param %>% str_extract("P3_[0-9]{1,2}"),
+	threshold = param %>% str_extract("[1-4]$")
+) %>% filter(block %>% is_not_na)
+
+Wald.tests <- blocks %>% 
+	left_join(WT.scales %>% select(item, `Scale 1 WT` = est_se, `Scale 1 p-value` = pval), by = c("Item 1" = "item")) %>%
+	left_join(WT.scales %>% select(item, `Scale 2 WT` = est_se, `Scale 2 p-value` = pval), by = c("Item 2" = "item")) %>%
+	left_join(
+		WT.intercepts %>% filter(threshold == 1) %>% select(block, `Intercept 1 WT` = est_se, `Intercept 1 p-value` = pval),
+		by = c("Block" = "block")
+	) %>%
+	left_join(
+		WT.intercepts %>% filter(threshold == 2) %>% select(block, `Intercept 2 WT` = est_se, `Intercept 2 p-value` = pval),
+		by = c("Block" = "block")
+	) %>%
+	left_join(
+		WT.intercepts %>% filter(threshold == 3) %>% select(block, `Intercept 3 WT` = est_se, `Intercept 3 p-value` = pval),
+		by = c("Block" = "block")
+	) %>%
+	left_join(
+		WT.intercepts %>% filter(threshold == 4) %>% select(block, `Intercept 4 WT` = est_se, `Intercept 4 p-value` = pval),
+		by = c("Block" = "block")
+	)	%>% mutate(
+		Block_code = Block,
+		Block = n() %>% seq_len %>% as.character,
+		`Item 2 missing` = `Item 2` %>% (assertive::is_na) %>% if_else("X", "")
+	)
+
+
+## Joint estimation parameters tibble: ---------------------------------------------------------------------------------
+
+scale.params		 <- Wald.tests.model$parameters$unstandardized %>% filter(paramHeader %>% grepl(".BY", x = .))
+intercept.params <- Wald.tests.model$parameters$unstandardized %>% filter(paramHeader %>% grepl("Thresholds", x = .))
+
+scale.params %<>% mutate(paramHeader = paramHeader %>% magrittr::extract(TRAIT.NAMES, .) %>% factor)
+
+block.item.params.joint <- blocks %>%
+	left_join(
+		scale.params %>% filter(param %in% blocks$Block) %>%
+			select(Block = param, `Trait 1` = paramHeader, `Block scale 1` = est)
+	) %>%
+	left_join(
+		scale.params %>% filter(param %in% blocks$Block) %>%
+			transmute(Block = param, `Trait 2` = paramHeader, `Block scale 2` = -est)
+	) %>%
+	left_join(
+		scale.params %>% filter(param %in% blocks$`Item 1`) %>% select(`Item 1` = param, `Scale item 1` = est)
+	) %>% 
+	left_join(
+		scale.params %>% filter(param %in% blocks$`Item 2`) %>% select(`Item 2` = param, `Scale item 2` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P3_[0-9]{1,3}\\$1$", x = .)) %>%
+			transmute(`Block` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Intercept` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$1$", x = .)) %>%
+			transmute(`Item 1` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 1 Item 1` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$1$", x = .)) %>%
+			transmute(`Item 2` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 1 Item 2` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$2$", x = .)) %>%
+			transmute(`Item 1` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 2 Item 1` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$2$", x = .)) %>%
+			transmute(`Item 2` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 2 Item 2` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$3$", x = .)) %>%
+			transmute(`Item 1` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 3 Item 1` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$3$", x = .)) %>%
+			transmute(`Item 2` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 3 Item 2` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$4$", x = .)) %>%
+			transmute(`Item 1` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 4 Item 1` = est)
+	) %>% 
+	left_join(
+		intercept.params %>% filter(param %>% grepl("P[4-5]_[0-9]{1,3}\\$4$", x = .)) %>%
+			transmute(`Item 2` = param %>% str_split("\\$") %>% map_chr(magrittr::extract, 1), `Threshold 4 Item 2` = est)
+	) %>% mutate(
+		`Threshold 1 diff` = `Threshold 1 Item 1` - `Threshold 1 Item 2`,
+		`Threshold 2 diff` = `Threshold 2 Item 1` - `Threshold 2 Item 2`,
+		`Threshold 3 diff` = `Threshold 3 Item 1` - `Threshold 3 Item 2`,
+		`Threshold 4 diff` = `Threshold 4 Item 1` - `Threshold 4 Item 2`
+	) %>% filter(`Block scale 1` %>% is_not_na) %>% 
+	mutate(
+		`Trait 1` = `Trait 1` %>% factor(levels = TRAIT.NAMES[-2]),
+		`Trait 2` = `Trait 2` %>% factor(levels = TRAIT.NAMES[-2])
+	)
+
+scales.independent.collapsed <- block.item.params.independent %>% collapse.scale.params(
+	`Block scale 1 estimate`, `Block scale 2 estimate`, `Item 1 scale estimate`, `Item 2 scale estimate`
+)
+scales.joint.collapsed <- block.item.params.joint %>% 
+	collapse.scale.params(`Block scale 1`, `Block scale 2`, `Scale item 1`, `Scale item 2`)
+
+```
+
+# Description
+
+Two diferent estimations have been done:
+
+- *Independent estimation:* It consists of one unidimensional model per personality trait for the GS items,
+plus a model for the FC blocks.
+
+- *Joint estimation:* A single model with the GS items and the FC blocks.
+With this method however, the complete model did not converge, so one dimension (Extraversion) had to be dropped.
+
+In the following sections, the equivalence of the two estimations will be tested, in the first place.
+Then, the invariance assumption (i.e. that the block parameters can be predicted from the item parameters) will be
+tested for each estimation method.
+
+```{r block_properties}
+
+LL.ratio.tests %>%
+	filter(`Trait 1` != "Extraversion", `Trait 2` != "Extraversion") %>%
+  select(
+		Block, `Trait 1`, `Trait 2`, `Polarity 1`, `Polarity 2`, `Item 2 missing`
+	) %>% kable(align = "rllccc")
+
+```
+
+
+# Results
+
+## Comparison of the parameter estimates between the independent and joint estimation
+
+The equivalent parameter estimates were correlated across the two estimations:
+
+- The first block scales
+
+- The second block scales
+
+- All the block scales collapsed
+
+- The block intercepts
+
+- The item scales
+
+- The item thresholds
+
+```{r method_correlations, results='asis'}
+
+params.estimation.methods <- block.item.params.joint %>% full_join(block.item.params.independent)
+
+method.correlations <- params.estimation.methods %>% {
+	bind_cols(
+		correlate.params(., `Block scale 1`, `Block scale 1 estimate`),
+		correlate.params(., `Block scale 2`, `Block scale 2 estimate`),
+		bind_rows(
+			select(., `All block scales` = `Block scale 1`, Block.scales.ind = `Block scale 1 estimate`),
+			select(., `All block scales` = `Block scale 2`, Block.scales.ind = `Block scale 2 estimate`)
+		) %>% correlate.params(`All block scales`, Block.scales.ind),
+		correlate.params(., Intercept, `Intercept estimate`),
+		bind_rows(
+			select(., `Item scale` = `Scale item 1`, Scale.ind = `Item 1 scale estimate`),
+			select(., `Item scale` = `Scale item 2`, Scale.ind = `Item 2 scale estimate`)
+		) %>% correlate.params(`Item scale`, Scale.ind),
+		bind_rows(
+			select(., `Item threshold 1` = `Threshold 1 Item 1`, Threshold.ind = `Item 1 threshold 1 estimate`),
+			select(., `Item threshold 1` = `Threshold 1 Item 2`, Threshold.ind = `Item 2 threshold 1 estimate`)
+		) %>% correlate.params(`Item threshold 1`, Threshold.ind),
+		bind_rows(
+			select(., `Item threshold 2` = `Threshold 2 Item 1`, Threshold.ind = `Item 1 threshold 2 estimate`),
+			select(., `Item threshold 2` = `Threshold 2 Item 2`, Threshold.ind = `Item 2 threshold 2 estimate`)
+		) %>% correlate.params(`Item threshold 2`, Threshold.ind),
+		bind_rows(
+			select(., `Item threshold 3` = `Threshold 3 Item 1`, Threshold.ind = `Item 1 threshold 3 estimate`),
+			select(., `Item threshold 3` = `Threshold 3 Item 2`, Threshold.ind = `Item 2 threshold 3 estimate`)
+		) %>% correlate.params(`Item threshold 3`, Threshold.ind),
+		bind_rows(
+			select(., `Item threshold 4` = `Threshold 4 Item 1`, Threshold.ind = `Item 1 threshold 4 estimate`),
+			select(., `Item threshold 4` = `Threshold 4 Item 2`, Threshold.ind = `Item 2 threshold 4 estimate`)
+		) %>% correlate.params(`Item threshold 4`, Threshold.ind)
+	)
+}
+method.correlations %>% gather(key = "Parameters", value = "Correlation") %>%
+	kable(digits = c(0, 3), caption = "Correlations among block and item parameters across the two estimations")
+
+```
+
+The intercept estimates correlate very high, and the item thresholds almost perfectly,
+independently of the threshold level.
+Although the first block scale estimates have a low correlation, the correlation of the second block scale
+estimates are rather high.
+The correlation of the item scale estimates is also very high, close to 1.
+
+Therefore, the correlations seem to indicate that the two estimation methods yield similar results.
+
+
+## Comparison of the parameter estimates between items and blocks
+
+The table shows how the parameter estimates of the blocks correlate with their prediction made from the item
+parameter estimates.
+"All scales" is the correlation with all the scale parameters, regardless of their position in the block.
+
+```{r parameter_correlations, warning=FALSE, message=FALSE, results='asis'}
+
+## Correlations among the parameters by the two measurement methods, for each estimation: ------------------------------
+block.item.pars.table <- block.item.params.independent %>% invariance.correlations(
+	`Block scale 1 estimate`, `Block scale 2 estimate`, `Intercept estimate`,
+	`Item 1 scale estimate`, `Item 1 threshold 1 estimate`, `Item 1 threshold 2 estimate`, `Item 1 threshold 3 estimate`,
+	`Item 1 threshold 4 estimate`,
+	`Item 2 scale estimate`, `Item 2 threshold 1 estimate`, `Item 2 threshold 2 estimate`, `Item 2 threshold 3 estimate`,
+	`Item 2 threshold 4 estimate`
+) %>% select(Parameters, Independent = Value) %>%
+	left_join(
+		block.item.params.joint %>% invariance.correlations(
+			`Block scale 1`, `Block scale 2`, Intercept,
+			`Scale item 1`, `Threshold 1 Item 1`, `Threshold 2 Item 1`, `Threshold 3 Item 1`, `Threshold 4 Item 1`,
+			`Scale item 2`, `Threshold 1 Item 2`, `Threshold 2 Item 2`, `Threshold 3 Item 2`, `Threshold 4 Item 2`
+		)
+	) %>% select(Parameters, Independent, Joint = Value)
+
+block.item.pars.table[1:7, ] %>% kable(
+	digits = c(0, 3, 3), caption = "Correlations between block and item parameters"
+)
+
+```
+
+
+### Intercepts vs. difference of thresholds {.tabset .tabset-fade}
+
+#### Independent estimation {.tabset .tabset-fade}
+
+The block intercetps seem to be well approximated by the difference of the threshold estimates.
+The goodness of this approximation depends on which threshold is considered.
+The third one (between response categories 3 and 4) gives the highest correlation, of .900.
+
+Nevertheless, the values of the intercepts seem to be attenuated, with respect to the estimate from the difference
+of threshold estimates.
+
+##### Threshold 1
+
+```{r threshold_1_corr_independent}
+
+block.item.params.independent %>% intercept.threshold.scatter.plot(`Intercept estimate`, `Threshold 1 diff estimate`)
+
+```
+
+##### Threshold 2
+
+```{r threshold_2_corr_independent}
+
+block.item.params.independent %>% intercept.threshold.scatter.plot(`Intercept estimate`, `Threshold 2 diff estimate`)
+
+```
+
+##### Threshold 3
+
+```{r threshold_3_corr_independent}
+
+block.item.params.independent %>% intercept.threshold.scatter.plot(`Intercept estimate`, `Threshold 3 diff estimate`)
+
+```
+
+##### Threshold 4
+
+```{r threshold_4_corr_independent}
+
+block.item.params.independent %>% intercept.threshold.scatter.plot(`Intercept estimate`, `Threshold 4 diff estimate`)
+
+```
+
+
+#### Joint estimation {.tabset .tabset-fade}
+
+In this case, the correlations are higher than with the independent estimation.
+There is however some bias that is not found in the independent estimation.
+The third threshold (between response categories 3 and 4) gives the highest correlation again, being of .999.
+The bias is almost zero for the third threshold.
+
+The same attenuation found in the independent estimation can be seen in the estimates of the intercepts in the joint
+estimation.
+
+##### Threshold 1
+
+```{r threshold_1_corr_joint}
+
+block.item.params.joint %>%
+	rename(`Predicted intercept (Threshold 1)` =  `Threshold 1 diff`) %>%
+	intercept.threshold.scatter.plot(
+		Intercept, `Predicted intercept (Threshold 1)`,
+		filename = "intercepts_thr_1_compare_scatter_plot.png",
+		width = 3, height = 2.6, units = "in", dpi = "print"
+	)
+
+```
+
+##### Threshold 2
+
+```{r threshold_2_corr_joint}
+
+block.item.params.joint %>%
+	rename(`Predicted intercept (Threshold 2)` =  `Threshold 2 diff`) %>%
+	intercept.threshold.scatter.plot(
+		Intercept, `Predicted intercept (Threshold 2)`,
+		filename = "intercepts_thr_2_compare_scatter_plot.png",
+		width = 3, height = 2.6, units = "in", dpi = "print"
+	)
+
+```
+
+##### Threshold 3
+
+```{r threshold_3_corr_joint}
+
+block.item.params.joint %>%
+	rename(`Predicted intercept (Threshold 3)` =  `Threshold 3 diff`) %>%
+	intercept.threshold.scatter.plot(
+		Intercept, `Predicted intercept (Threshold 3)`,
+		filename = "intercepts_thr_3_compare_scatter_plot.png",
+		width = 3, height = 2.6, units = "in", dpi = "print"
+	)
+
+```
+
+##### Threshold 4
+
+```{r threshold_4_corr_joint}
+
+block.item.params.joint %>%
+	rename(`Predicted intercept (Threshold 4)` =  `Threshold 4 diff`) %>%
+	intercept.threshold.scatter.plot(
+		Intercept, `Predicted intercept (Threshold 4)`,
+		filename = "intercepts_thr_4_compare_scatter_plot.png",
+		width = 3, height = 2.6, units = "in", dpi = "print"
+	)
+
+```
+
+
+### Block scales vs. item scales {.tabset .tabset-fade}
+
+The correlations among the item and block scale estimates are high for both estimation methods in general.
+When considering the scale estimates of the items in the first position however, the correlation is much lower.
+This can be due to the fact that the items in the first position are all direct, while in the second position there are
+direct and inverse items.
+Consequently, the second scale parameters have both positive and negative values, while the first ones only have
+positive values, being their range more restricted.
+
+The highest correlations are obtained with the joint estimation method.
+Therefore, this method must give stronger evidence for the invariance assumption.
+
+
+#### Independent estimation
+
+```{r independent_scatter_plot_scales, warning=FALSE, message=FALSE, results='asis'}
+
+scales.independent.collapsed %>% scales.scatter.plot(Position)
+
+```
+
+#### Joint estimation
+
+```{r joint_scatter_plot_scales, warning=FALSE, message=FALSE, results='asis'}
+
+scales.joint.collapsed %>% scales.scatter.plot(Position)
+
+```
+
+
+### Effect of the item trait and polarity on the scale estimates {.tabset .tabset-fade}
+
+The following table shows the correlation of the item and block scale estimates, considering only the items with a
+certain polarity or the ones that measure a certain trait.
+
+"Polarity +" is the correlation of the *first and second block scale estimates, for which the first or second*
+*item, respectively, is direct*, with their corresponding item scale estimates.
+The same thing is true for "Polarity -", except that, in this case, all the inverse items are in the second position.
+Therefore, all the scale parameters in "Polarity -" correspond to second scale estimates in the blocks.
+The same applies to the next five rows (Trait ...).
+
+The properties of the item don't seem to affect much the invariance of the scale parameters
+(neither its polarity, nor its trait).
+The only exception seem to be the "Conscientiousness" items (for the independent estimation).
+The invariance of the direct items seems to be somehow lower as well, especially in the independent estimation,
+but this may be due to its restricted range of values.
+
+
+```{r parameter_correlations_per_item_properties, warning=FALSE, message=FALSE, results='asis'}
+
+block.item.pars.table[8:14, ] %>% kable(
+	digits = c(0, 3, 3), caption = "Correlations between block and item scale estimates for the properties of the item."
+)
+
+```
+
+#### Independent estimation {.tabset .tabset-fade}
+
+##### By polarity
+
+```{r independent_scatter_plot_scales_per_item_polarity, warning=FALSE, message=FALSE, results='asis'}
+
+scales.independent.collapsed %>% scales.scatter.plot(Polarity)
+
+```
+
+##### By trait
+
+```{r independent_scatter_plot_scales_per_item_trait, warning=FALSE, message=FALSE, results='asis'}
+
+scales.independent.collapsed %>% scales.scatter.plot(Trait)
+
+```
+
+#### Joint estimation {.tabset .tabset-fade}
+
+##### By polarity
+
+```{r joint_scatter_plot_scales_per_item_polarity, warning=FALSE, message=FALSE, results='asis'}
+
+scales.joint.collapsed %>% scales.scatter.plot(Polarity)
+
+```
+
+##### By trait
+
+```{r joint_scatter_plot_scales_per_item_trait, warning=FALSE, message=FALSE, results='asis'}
+
+scales.joint.collapsed %>% scales.scatter.plot(
+	Trait,
+	filename = "scales_compare_scatter_plot.png",
+	width = 6, height = 5.2, units = "in", dpi = "print"
+)
+
+```
+
+
+### Effect of the other item (context effect) on the scale estimates {.tabset .tabset-fade}
+
+The table below shows the correlations of the scale parameters, when *considering the properties of the other item with*
+*which a certain item is paired with*.
+"Polarity other +" is the correlation of the *first block scale estimates for which the second item in the block*
+*is direct, collapsed with the second block scale estimates for which the first item in the block is direct,* with
+their corresponding item scale estimates.
+The same applies to "Trait other ...", and "Polarity other -", except that, in this latter case, all the inverse items
+are in the second position, and thus all the scale estimates correspond to the items in the first position of the block.
+
+```{r parameter_correlations_per_other_item_properties, warning=FALSE, message=FALSE, results='asis'}
+
+block.item.pars.table[15:21, ] %>% kable(
+	digits = c(0, 3, 3),
+	caption = "Correlations between block and item scale estimates for the properties of the pairing item."
+)
+
+```
+
+
+The most salient values here are the ones corresponding to "Polarity other -".
+It appears as if *pairing an item with an inverse item may affect the invariance of its scale parameter*.
+This appears to happen in both estimation methods.
+When considering only the scale estimates of the items that are paired with direct items, the correlation grows to .958.
+This may be due to the wider range of the scale estimates of the items that are paired with direct items, as they can be
+both direct and inverse (while all the items paired with inverse items are direct in this design).
+
+
+#### Independent estimation {.tabset .tabset-fade}
+
+##### By polarity
+
+```{r independent_scatter_plot_scales_per_other_item_polarity, warning=FALSE, message=FALSE, results='asis'}
+
+scales.independent.collapsed %>% scales.scatter.plot(`Polarity other`)
+
+```
+
+##### By trait
+
+```{r independent_scatter_plot_scales_per_other_item_trait, warning=FALSE, message=FALSE, results='asis'}
+
+scales.independent.collapsed %>% scales.scatter.plot(`Trait other`)
+
+```
+
+#### Joint estimation {.tabset .tabset-fade}
+
+##### By polarity
+
+```{r joint_scatter_plot_scales_per_other_item_polarity, warning=FALSE, message=FALSE, results='asis'}
+
+scales.joint.collapsed %>% scales.scatter.plot(`Polarity other`)
+
+```
+
+##### By trait
+
+```{r joint_scatter_plot_scales_per_other_item_trait, warning=FALSE, message=FALSE, results='asis'}
+
+scales.joint.collapsed %>% scales.scatter.plot(`Trait other`)
+
+```
+
+
+## Invariance statistics
+
+The invarinace statistics are compared among three methods:
+
+* _Independent estimation_: Wald tests are computed from the item and block estimates and their standard errors.
+
+* _Joint estimation_: for each block parameter, the Wald test and the strictly-positive Satorra-Bentler
+log-likelihood (LL) ratio tests are computed.
+
+
+### Comparison of the independent and joint estimation
+
+In both estimations, Wald tests for the difference of the items and block parameters were computed.
+The test statistics are correlated for each parameter type, to see whether the two estimation methods
+converge.
+
+```{r compare_estimations}
+
+Wald.tests.total <- block.item.params.independent %>% select(Block, ends_with("WT")) %>%
+	full_join(
+		Wald.tests %>% mutate(`Scale 1 WT` = -`Scale 1 WT`, `Scale 2 WT` = -`Scale 2 WT`),
+		by = "Block", suffix = c("", " joint")
+	)
+
+WT.compare <- Wald.tests.total %>% correlate.params(`Scale 1 WT`, `Scale 1 WT joint`) %>% 
+	bind_cols(
+		Wald.tests.total %>% correlate.params(`Scale 2 WT`, `Scale 2 WT joint`),
+		Wald.tests.total %>% correlate.params(`Intercept - threshold 1 WT`, `Intercept 1 WT`),
+		Wald.tests.total %>% correlate.params(`Intercept - threshold 2 WT`, `Intercept 2 WT`),
+		Wald.tests.total %>% correlate.params(`Intercept - threshold 3 WT`, `Intercept 3 WT`),
+		Wald.tests.total %>% correlate.params(`Intercept - threshold 4 WT`, `Intercept 4 WT`)
+	) %>% gather
+
+WT.compare %>% kable(
+	digits = c(0, 3),
+	caption = "Correlation of the Wald test statistics for the two estimation methods."
+)
+
+```
+
+The correlations are moderate, which show that the two methods are not completely equivalent.
+The correlations are higher for the intercepts, with higher values for the values of 3 and 4 of the threshold.
+Also, the Wald tests of the second scale estimates correlate lower than the first scale estimates.
+
+
+### LLR statistics
+
+```{r LLR_results_table}
+
+n.contrasts <- LL.ratio.tests %>% summarise_at(vars(ends_with("p-value")), ~(is_not_na(.) %>% sum)) %>% gather %>%
+	summarize(n = value %>% sum) %>% extract2("n")
+
+sig <- .05
+alpha <- sig / n.contrasts
+
+print.LLR.tests <- LL.ratio.tests %>%
+	filter(`Trait 1` != "Extraversion", `Trait 2` != "Extraversion") %>%
+	select(-`Item 1`, -`Item 2`, -Block_code, -`Item 2 missing`) %>%
+	mutate_at(
+		vars(ends_with("p-value")),
+		~((. < alpha) %>% if_else(true = "\\*", false = "", missing = ""))
+	) %>%
+	mutate_at(
+		vars(starts_with("Polarity")),
+		~str_c("\\", .)
+	) %>% 
+	# rename_at(
+	# 	vars(starts_with("Intercept")),
+	# 	~str_replace(., "Intercept", "Int.  - thr.")
+	# ) %>%
+	rename_all(~str_remove(., " LR")) %>%
+	# rename_at(
+	# 	vars(starts_with("Polarity")), ~str_replace(., "Polarity", "Pol.")
+	# ) %>% 
+	mutate_at(
+		vars(starts_with("Trait")),
+		~(
+			.x %>% equals("Neuroticism") %>% if_else(
+				true = "Ne",
+				false = .x %>% equals("Agreeableness") %>% if_else(
+					true = "Ag",
+					false = .x %>% equals("Openness") %>% if_else(
+						true = "Op",
+						false = .x %>% equals("Conscientiousness") %>% if_else(
+							true = "Co",
+							false = ""
+						)
+					)
+				)
+			)
+		)
+	)
+
+print.LLR.tests %>%
+	kable(
+		align = "rccccrlrlrlrlrlrl",
+		digits = c(0 %>% rep(5), c(3, 0) %>% rep(6)),
+		col.names = "" %>% rep(17),
+		format = "html", escape = TRUE
+	) %>%
+	add_header_above(
+		c(1 %>% rep(5), 2 %>% rep(6)) %>% set_names(
+			print.LLR.tests %>% names %>% magrittr::extract(c(1:6, 8, 10, 12, 14, 16))
+		)
+	)
+
+```
+
+
+### Comparison of the invariance statistics for the joint estimation
+
+Using the joint estimation, the Wald tests and the LL ratio tests are compared.
+We correlate the *squared Wald tests* with the LL ratio tests (which are supposed to be asymptotically equivalent) and
+the p-values.
+
+```{r compare_methods}
+
+index <- vars(ends_with("WT"))
+Wald.tests.2 <- Wald.tests %>% mutate_at(index, .funs = "^", 2) %>% rename_at(index, .funs = str_c, "^2")
+
+WT.LL.corrs <- tibble(
+	Parameter = c(
+		"Scale 1", "Scale 2",
+		"Intercept - threshold 1", "Intercept - threshold 2", "Intercept - threshold 3", "Intercept - threshold 4"
+	),
+	Par = c("Scale 1", "Scale 2", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4")
+)
+
+corrs.result <- WT.LL.corrs %>% mutate(
+	LL = str_c(Par, " LR"),
+	WT = str_c(Par, " WT^2"),
+	`Statistic corrs.` = map2_dbl(LL, WT, cor.LL.Wald)
+) %>% select(-LL, -WT) %>%
+	mutate(pval = str_c(Par, " p-value"), `P-value corrs.` = map2_dbl(pval, pval, cor.LL.Wald)) %>%
+	select(-pval, -Par)
+
+corrs.result %>% kable(digits = c(0, 3, 3))
+
+```
+
+
+The test statistics and their p-values correlate highly between the two methods.
+
+
+### Proportion of non-invariant parameters {.tabset .tabset-fade}
+
+Using the LL ratio tests, the null hypothesis of invariance is tested on the block parameter estimates.
+The null hypotheses are rejected with a significance of `r sig`, applying a Bonferroni correction for multiple
+comparisons, which results in a value of $\alpha$ = `r sig` / `r n.contrasts` =
+`r alpha %>% format(scientific = TRUE, digits = 4)`.
+
+The number and percentage of invariant parameters is given for each parameter type.
+For the scales, these values are also computed for all of them, segmented by the properties of the item
+("Polarity" and "Trait"), and segmented by the properties of the item with which each item is paired with
+("Polarity other" and "Trait other").
+
+The p-values against the estimates predicted from the items are plotted below.
+
+
+```{r LR_tests}
+
+LL.sig <- LL.ratio.tests %>% mutate_at(vars(ends_with("p-value")), magrittr::is_less_than, alpha) %>% 
+	select(-`Polarity 1`, -ends_with("LR"))
+
+LL.scales.collapsed <- LL.ratio.tests %>% 
+	collapse.scale.params(`Scale 1 LR`, `Scale 2 LR`, `Scale 1 p-value`, `Scale 2 p-value`) %>%
+	rename(`LLR` = `Block scale`, `p-value` = `Item scale`) %>%
+	mutate(NI = `p-value` < alpha) %>% filter(NI %>% is_not_na) %>% 
+	mutate(
+		Trait = Trait %>% parse_factor(levels = TRAIT.NAMES[-2]),
+		`Trait other` = `Trait other` %>% parse_factor(levels = TRAIT.NAMES[-2])
+	)
+
+LL.summary <- LL.sig %>% {
+	bind_rows(
+		summarize_at(., vars(ends_with("p-value")), .funs = sum, na.rm = TRUE),
+		summarize_at(., vars(ends_with("p-value")), .funs = ~(mean(., na.rm = TRUE) * 100))
+	) %>% select(
+		`Scale 1` = `Scale 1 p-value`, `Scale 2` = `Scale 2 p-value`,
+		`Intercept - threshold 1` = `Intercept 1 p-value`, `Intercept - threshold 2` = `Intercept 2 p-value`,
+		`Intercept - threshold 3` = `Intercept 3 p-value`, `Intercept - threshold 4` = `Intercept 4 p-value`
+	)
+} %>% t %>% data.frame(stringsAsFactors = FALSE) %>% rownames_to_column(var = "Parameter") %>% 
+		rename(Count = X1, `%` = X2)
+
+LL.summary %>% kable(digits = c(0, 0, 2))
+
+```
+
+
+```{r LR_tests_factors}
+
+LL.summary.factors <- LL.summary %>%
+	bind_rows(
+		bind_cols(
+			Parameter = "Scales",
+			LL.scales.collapsed %>% summarize(
+				Count = NI %>% sum(na.rm = TRUE), `%` = NI %>% mean(., na.rm = TRUE) * 100
+			)	
+		),
+		LL.scales.collapsed %>% {
+			bind_rows(
+				group_by(., Polarity) %>% summarize(
+					Count = NI %>% sum(na.rm = TRUE), `%` = NI %>% mean(., na.rm = TRUE) * 100
+				) %>% mutate(Polarity = Polarity %>% str_c("Polarity ", .)) %>% rename(Parameter = Polarity),
+				group_by(., Trait) %>% summarize(
+					Count = NI %>% sum(na.rm = TRUE), `%` = NI %>% mean(., na.rm = TRUE) * 100
+				) %>% mutate(Trait = Trait %>% str_c("Trait ", .)) %>% rename(Parameter = Trait),
+				group_by(., `Polarity other`) %>% summarize(
+					Count = NI %>% sum(na.rm = TRUE), `%` = NI %>% mean(., na.rm = TRUE) * 100
+				) %>% mutate(`Polarity other` = `Polarity other` %>% str_c("Polarity other ", .)) %>%
+					rename(Parameter = `Polarity other`),
+				group_by(., `Trait other`) %>% summarize(
+					Count = NI %>% sum(na.rm = TRUE), `%` = NI %>% mean(., na.rm = TRUE) * 100
+				) %>% mutate(`Trait other` = `Trait other` %>% str_c("Trait other ", .)) %>% rename(Parameter = `Trait other`)
+			)
+		}
+	)
+
+LL.summary.factors %>% kable(digits = c(0, 0, 2))
+
+```
+
+
+```{r all_stats_table}
+
+# stats <- corrs.result %>% filter(Parameter %>% str_detect("Intercept"))
+
+# Wald.tests.2.collapsed <- Wald.tests.2 %>%
+# 	collapse.scale.params(`Scale 1 WT^2`, `Scale 2 WT^2`, `Scale 1 p-value`, `Scale 2 p-value`) %>%
+# 	rename(`WT^2` = `Block scale`, `WT p-value` = `Item scale`) %>%
+# 	mutate(`WT NI` = `WT p-value` < (alpha / 2) | `WT p-value` > (1 - alpha / 2)) %>%
+# 	filter(`WT NI` %>% is_not_na) %>% 
+# 	mutate(
+# 		Trait = Trait %>% parse_factor(levels = TRAIT.NAMES[-2]),
+# 		`Trait other` = `Trait other` %>% parse_factor(levels = TRAIT.NAMES[-2])
+# 	)
+
+# LL.scales.collapsed %>% full_join(Wald.tests.2.collapsed) %>%
+# 	summarize(
+# 		`Statistic corrs.` = cor(LLR, `WT^2`),
+# 		`P-value corrs.` = cor(`p-value`, `WT p-value`)
+# 	) %>% bind_cols(Parameter = "Scales", .) %>%
+# 	bind_rows(stats) %>%
+# 	left_join(LL.summary.factors) %>% rename(Parameters = Parameter) %>%
+# 	left_join(
+# 		block.item.pars.table %>%
+# 			select(Parameters, `Estimate corrs.` = Joint)
+# 	) %>%
+# 	select(
+# 		Parameters,
+# 		`Estimate correlations` = `Estimate corrs.`, `statistics` = `Statistic corrs.`,
+# 		`p-values` = `P-value corrs.`, Count, `%`
+# 	) %>% kable(digits = c(0, 3 %>% rep(3), 0, 2), format = "html") %>%
+# 	add_header_above(
+# 		c("", "", "LL - WT^2 correlations" = 2, "Non-invariant parameters" = 2)
+# 	)
+
+block.item.params.joint %<>% mutate(
+	`Scale 1 bias` = `Block scale 1` - `Scale item 1`,
+	`Scale 2 bias` = `Block scale 2` - `Scale item 2`,
+	`Intercept - thresh 1 bias` = Intercept - `Threshold 1 diff`,
+	`Intercept - thresh 2 bias` = Intercept - `Threshold 2 diff`,
+	`Intercept - thresh 3 bias` = Intercept - `Threshold 3 diff`,
+	`Intercept - thresh 4 bias` = Intercept - `Threshold 4 diff`,
+	`Scale 1 rel bias` = `Scale 1 bias` / `Scale item 1`,
+	`Scale 2 rel bias` = `Scale 2 bias` / `Scale item 2`,
+	`Intercept - thresh 1 rel bias` = `Intercept - thresh 1 bias` / `Threshold 1 diff`,
+	`Intercept - thresh 2 rel bias` = `Intercept - thresh 2 bias` / `Threshold 2 diff`,
+	`Intercept - thresh 3 rel bias` = `Intercept - thresh 3 bias` / `Threshold 3 diff`,
+	`Intercept - thresh 4 rel bias` = `Intercept - thresh 4 bias` / `Threshold 4 diff`,
+	`Scale 1 sq. err.` = `Scale 1 bias`^2,
+	`Scale 2 sq. err.` = `Scale 2 bias`^2,
+	`Intercept - threshold 1 sq. err.` = `Intercept - thresh 1 bias`^2,
+	`Intercept - threshold 2 sq. err.` = `Intercept - thresh 2 bias`^2,
+	`Intercept - threshold 3 sq. err.` = `Intercept - thresh 3 bias`^2,
+	`Intercept - threshold 4 sq. err.` = `Intercept - thresh 4 bias`^2
+)
+
+intercept.stats <- block.item.params.joint %>% summarize_at(
+	vars(ends_with("bias")),
+	mean, na.rm = TRUE
+) %>% gather(key = "Parameter", value = "Bias") %>%
+	mutate(
+		Rel = Parameter %>% str_detect("rel bias$") %>%
+			if_else("Mean rel. bias", "Mean bias")
+	) %>% select(-Parameter) %>%
+	bind_cols(
+		Parameter = c("Scale 1", "Scale 2", "Intercept - threshold" %>% paste(1:4)) %>%
+			rep(2)
+	) %>% spread(key = Rel, value = Bias) %>%
+	full_join(
+		block.item.params.joint %>% summarize_at(
+			vars(ends_with("sq. err.")), mean, na.rm = TRUE
+		) %>% gather(key = "Parameter", value = RMSE) %>%
+			mutate(Parameter = Parameter %>% str_remove(" sq. err."))
+	) %>% filter(Parameter %>% str_detect("Intercept")) %>%
+	full_join(
+		block.item.params.joint %>% summarize_at(
+			vars(ends_with("diff")),
+			~cor(., block.item.params.joint$Intercept, use = "pairwise")
+		) %>% gather(key = "Parameter", value = "Correlation") %>% 
+			mutate(Parameter = "Intercept - threshold" %>% paste(1:4)),
+		.
+	)
+
+
+
+scales.joint.collapsed %<>% mutate(
+	Bias = `Block scale` - `Item scale`,
+	`Relative bias` = Bias / `Item scale`,
+	`Square error` = Bias^2
+)
+
+scale.stats <- scales.joint.collapsed %>% summarize(
+	Parameter = "Scales",
+	`Correlation` = cor(`Block scale`, `Item scale`, use = "pairwise"),
+	`Mean bias` = Bias %>% mean(na.rm = TRUE),
+	`Mean rel. bias` = `Relative bias` %>% mean(na.rm = TRUE),
+	RMSE = `Square error` %>% mean(na.rm = TRUE) %>% sqrt
+)
+
+joint.estimation.stats <- scale.stats %>% bind_rows(intercept.stats)
+
+joint.estimation.stats %>% left_join(LL.summary.factors) %>%
+	kable(digits = c(0, 3 %>% rep(4), 0, 2), format = "html") %>%
+	add_header_above(
+		c("", "Estimate statitics" = 4, "Non-invariant parameters" = 2)
+	)
+
+```
+
+
+#### Intercept - threshold parameters {.tabset .tabset-fade}
+
+Many of the intercept estimates are significantly different from their predicted value.
+The fourth threshold gives the prediction with less invariant estimates, followed by the third one.
+The p-values are lower for the third and fourth thresholds.
+
+
+##### Threshold 1
+
+```{r LL_ratio_tests_threshold_1_plot}
+
+LLR.tests.params <- LL.ratio.tests %>% full_join(
+	block.item.params.joint %>% select(Block, Intercept, matches("Threshold [1-4] diff")) %>%
+		filter(`Threshold 1 diff` %>% is_not_na)
+)
+
+LLR.tests.params %>% ll.intercept.scatter.plot(
+	`Threshold 1 diff`, `Intercept 1 p-value`, Intercept, `Intercept 1 LR`, `Polarity 2`, alpha = alpha
+)
+
+```
+
+##### Threshold 2
+
+```{r LL_ratio_tests_threshold_2_plot}
+
+LLR.tests.params %>% ll.intercept.scatter.plot(
+	`Threshold 2 diff`, `Intercept 2 p-value`, Intercept, `Intercept 2 LR`, `Polarity 2`, alpha = alpha
+)
+
+```
+
+##### Threshold 3
+
+```{r LL_ratio_tests_threshold_3_plot}
+
+LLR.tests.params %>% ll.intercept.scatter.plot(
+	`Threshold 3 diff`, `Intercept 3 p-value`, Intercept, `Intercept 3 LR`, `Polarity 2`, alpha = alpha
+)
+
+```
+
+##### Threshold 4
+
+```{r LL_ratio_tests_threshold_4_plot}
+
+LLR.tests.params %>% ll.intercept.scatter.plot(
+	`Threshold 4 diff`, `Intercept 4 p-value`, Intercept, `Intercept 4 LR`, `Polarity 2`, alpha = alpha
+)
+
+```
+
+
+#### Scales {.tabset .tabset-fade}
+
+Regarding the scale estimates, there are quite a few differences.  The scale estimates of the direct items may be
+affected more stronger when they are paired with inverse items, as the polarity of the item they are paired with seems
+to have an effect on the significance of the LL ratio test.
+
+
+##### By polarity
+
+```{r LL_ratio_tests_plot_by_polarity}
+
+LL.scales.params <- LL.scales.collapsed %>%
+	full_join(scales.joint.collapsed %>% select(Item, `Block scale`, `Item scale`)) %>% filter(`Item scale` %>% is_not_na)
+
+LL.scales.params %>% ll.scale.scatter.plot(`Item scale`, `p-value`, Polarity, alpha)
+
+```
+
+
+##### By trait
+
+```{r LL_ratio_tests_plot_by_trait}
+
+LL.scales.params <- LL.scales.collapsed %>%
+	full_join(scales.joint.collapsed %>% select(Item, `Block scale`, `Item scale`)) %>% filter(`Item scale` %>% is_not_na)
+
+LL.scales.params %>% ll.scale.scatter.plot(`Item scale`, `p-value`, Trait, alpha)
+
+```
+
+
+##### By polarity (other)
+
+```{r LL_ratio_tests_plot_by_polarity_other}
+
+LL.scales.params <- LL.scales.collapsed %>%
+	full_join(scales.joint.collapsed %>% select(Item, `Block scale`, `Item scale`)) %>% filter(`Item scale` %>% is_not_na)
+
+LL.scales.params %>% ll.scale.scatter.plot(`Item scale`, `p-value`, `Polarity other`, alpha)
+
+```
+
+
+##### By trait (other)
+
+```{r LL_ratio_tests_plot_by_trait_other}
+
+# TODO: los parámetros de escala de los ítems deben estar mal
+
+LL.scales.params <- LL.scales.collapsed %>%
+	full_join(scales.joint.collapsed %>% select(Item, `Block scale`, `Item scale`)) %>% filter(`Item scale` %>% is_not_na)
+
+LL.scales.params %>% ll.scale.scatter.plot(`Item scale`, `p-value`, `Trait other`, alpha)
+
+```
+
+
+
+### Association of the invariance among the scale and intercept parameter estimates {.tabset .tabset-fade}
+
+We explore whether the invariance of the scale and intercept estimates for each block are associated among them.
+In order to that, we compute the correlation of the LL ratio test statistics of the three parameter types (two scales
+and the intercept), and the correlations of the p-values.
+
+A pattern of association is found neither among the test statistics of the estimates of the block parameter predictions
+not their p-values.
+
+```{r LL_ratio_tests_correlations}
+
+param.corrs <- tribble(
+	~`Parameter 1`,								~`Parameter 2`,
+		"Intercept - threshold 1",		"Scale 1",
+		"Intercept - threshold 1",		"Scale 2",
+		"Intercept - threshold 2",		"Scale 1",
+		"Intercept - threshold 2",		"Scale 2",
+		"Intercept - threshold 3",		"Scale 1",
+		"Intercept - threshold 3",		"Scale 2",
+		"Intercept - threshold 4",		"Scale 1",
+		"Intercept - threshold 4",		"Scale 2",
+		"Scale 1",										"Scale 2"
+)
+
+LL.stat.corrs <- LL.ratio.tests %>% {
+	bind_cols(
+		correlate.params(., `Intercept 1 LR`, `Scale 1 LR`),
+		correlate.params(., `Intercept 1 LR`, `Scale 2 LR`),
+		correlate.params(., `Intercept 2 LR`, `Scale 1 LR`),
+		correlate.params(., `Intercept 2 LR`, `Scale 2 LR`),
+		correlate.params(., `Intercept 3 LR`, `Scale 1 LR`),
+		correlate.params(., `Intercept 3 LR`, `Scale 2 LR`),
+		correlate.params(., `Intercept 4 LR`, `Scale 1 LR`),
+		correlate.params(., `Intercept 4 LR`, `Scale 2 LR`),
+		correlate.params(., `Scale 1 LR`, `Scale 2 LR`)
+	)
+} %>% gather(value = Statistic) %>% select(Statistic) %>% bind_cols(param.corrs, .)
+
+LL.pvalue.corrs <- LL.ratio.tests %>% {
+	bind_cols(
+		correlate.params(., `Intercept 1 p-value`, `Scale 1 p-value`),
+		correlate.params(., `Intercept 1 p-value`, `Scale 2 p-value`),
+		correlate.params(., `Intercept 2 p-value`, `Scale 1 p-value`),
+		correlate.params(., `Intercept 2 p-value`, `Scale 2 p-value`),
+		correlate.params(., `Intercept 3 p-value`, `Scale 1 p-value`),
+		correlate.params(., `Intercept 3 p-value`, `Scale 2 p-value`),
+		correlate.params(., `Intercept 4 p-value`, `Scale 1 p-value`),
+		correlate.params(., `Intercept 4 p-value`, `Scale 2 p-value`),
+		correlate.params(., `Scale 1 p-value`, `Scale 2 p-value`)
+	)
+} %>% gather(value = `p-value`) %>% select(`p-value`) %>% bind_cols(param.corrs, .)
+
+pred.errors <- block.item.params.joint %>% joint.estimation.block.item.params.diff
+
+diff.corrs <- pred.errors %>% {
+	bind_cols(
+		correlate.params(., `Intercept - threshold 1 diff`, `Scale 1 diff`),
+		correlate.params(., `Intercept - threshold 1 diff`, `Scale 2 diff`),
+		correlate.params(., `Intercept - threshold 2 diff`, `Scale 1 diff`),
+		correlate.params(., `Intercept - threshold 2 diff`, `Scale 2 diff`),
+		correlate.params(., `Intercept - threshold 3 diff`, `Scale 1 diff`),
+		correlate.params(., `Intercept - threshold 3 diff`, `Scale 2 diff`),
+		correlate.params(., `Intercept - threshold 4 diff`, `Scale 1 diff`),
+		correlate.params(., `Intercept - threshold 4 diff`, `Scale 2 diff`),
+		correlate.params(., `Scale 1 diff`, `Scale 2 diff`)
+	)
+} %>% gather(value = `Prediction error`) %>% select(`Prediction error`) %>% bind_cols(param.corrs, .)
+
+LL.stat.corrs %>% full_join(LL.pvalue.corrs) %>% full_join(diff.corrs) %>% kable(digits = c(0, 0, 3, 3, 3))
+
+```
+
+The LL ratio test statistics are plotted below on a paired basis, for each block.
+Only the prediction from the third threshold of the items is used here, as it has been shown to give better results.
+
+
+#### Intercept - scale 1
+
+This plot shows that, apparently, the prediction of the block intercept is better for the heteropolar blocks.
+
+
+```{r LL_ratio_tests_threshold_3_scale_1_plot}
+
+LL.ratio.tests %>% ll.params.scatter.plot(`Intercept 3 LR`, `Scale 1 LR`, `Polarity 2`, alpha)
+
+```
+
+
+#### Intercept - scale 2
+
+```{r LL_ratio_tests_threshold_3_scale_2_plot}
+
+LL.ratio.tests %>% ll.params.scatter.plot(`Intercept 3 LR`, `Scale 2 LR`, `Polarity 2`, alpha)
+
+```
+
+
+#### Scale 1 - scale 2
+
+```{r LL_ratio_tests_scale_1_scale_2_plot}
+
+LL.ratio.tests %>% ll.params.scatter.plot(`Scale 1 LR`, `Scale 2 LR`, `Polarity 2`, alpha)
+
+```
+
+
+## Effect of heteropolar item pairing
+
+```{r direct_items_corr, include=FALSE}
+
+position.1.scale.corrs <- scales.joint.collapsed %>% filter(Position == 1) %>% group_by(`Polarity other`) %>%
+	correlate.params(`Block scale`, `Item scale`)
+
+```
+
+There seems to be a context effect of polarity on the accuracy of the prediction of the block parameters;
+the items paired with an inverse item have a less consistent scale parameter.
+Indeed, when we only consider the items in the first position of the block, the scales of the ones paired with direct
+items have a correlation of `r position.1.scale.corrs[[1, "+"]] %>% sprintf("%.3f", .)`, while the ones paired with
+inverse items have a correlation of `r position.1.scale.corrs[[1, "-"]] %>% sprintf("%.3f", .)`.
+The intercepts of the heteropolar blocks, on the other hand, seem to be more accurately predicted than the intercepts of
+the homopolar blocks.
+
+A possible hypothesis for the prediction of these parameters is that **there is an effect of the difference of the**
+**perceived social desirability of the items in a pair on the predicted value of the block parameters**.
+This effect would undermine the prediction of the scale parameter of a direct item paired with an inverse one.
+Also, it would improve the prediction of the intercept parameter of a heteropolar block.
+Finally, if a SD effect could explain this effect, **the scale parameters of homopolar inverse blocks should be**
+**more invariant**, and **their intercept parameters should be less invariant**.
+
+This hypothesis is difficult to test with the current design.
+However, it is worth noting that **the poles of a scale are arbitrarily defined as positive or negative**.
+In this design, **the positive pole is identified with the socially desirable for all personality traits, with the**
+**exception of Neuroticism**.
+Taking this into account, **we could invert the Neuroticism dimension ---turning it into an "Emotional Stability"**
+**trait---**, thus **having both heteropolar blocks and inverse homopolar blocks**.
+
+According to the predictions of these hypotheses, if we revert the Neuroticism dimension:
+(1) the accuracy of the estimate predictions of the direct item scales in heteropolar blocks will decrease,
+(2) the accuracy of the estimate predictions of the inverse item scales in homopolar blocks will increase,
+(3) the accuracy of the estimate predictions of the homopolar block interceppts will decrease, and
+(4) the estimate predictions of the heteropolar block intercepts will increase.
+A decrease in the accuracy of the estimate predictions implies that correlations will be lower, and that more null
+hypotheses will be rejected in the LL ratio tests of the parameters.
+The opposite implies that correlations will be higher, and that less null hypotheses wil be rejected in the LL ratio
+tests.
+
+```{r inverted_Neuroticism_intercepts}
+
+params.joint.LL.reversed.Neuroticism <- LL.ratio.tests %>%
+	mutate(
+		`Scale 1 NI` = `Scale 1 p-value` < alpha,
+		`Scale 2 NI` = `Scale 2 p-value` < alpha,
+		`Intercept 1 NI` = `Intercept 1 p-value` < alpha,
+		`Intercept 2 NI` = `Intercept 2 p-value` < alpha,
+		`Intercept 3 NI` = `Intercept 3 p-value` < alpha,
+		`Intercept 4 NI` = `Intercept 4 p-value` < alpha
+	) %>% full_join(block.item.params.joint) %>% filter(`Scale 1 LR` %>% is_not_na) %>%
+	mutate(
+		`Polarity 1` = (`Trait 1` == "Neuroticism") %>%
+			if_else(
+				(`Polarity 1` == "+") %>% if_else("-", "+"), `Polarity 1` %>% as.character
+			) %>% parse_factor(levels = NULL),
+		`Polarity 2` = (`Trait 2` == "Neuroticism") %>%
+			if_else(
+				(`Polarity 2` == "+") %>% if_else("-", "+"), `Polarity 2` %>% as.character
+			) %>% parse_factor(levels = NULL),
+		`Block scale 1` = (`Trait 1` == "Neuroticism") %>% if_else(-`Block scale 1`, `Block scale 1`),
+		`Block scale 2` = (`Trait 2` == "Neuroticism") %>% if_else(-`Block scale 2`, `Block scale 2`),
+		`Scale item 1` = (`Trait 1` == "Neuroticism") %>% if_else(-`Scale item 1`, `Scale item 1`),
+		`Scale item 2` = (`Trait 2` == "Neuroticism") %>% if_else(-`Scale item 2`, `Scale item 2`),
+		`Trait 1` = (`Trait 1` == "Neuroticism") %>% if_else("Emotional stability", `Trait 1` %>% as.character) %>%
+			parse_factor(levels = NULL),
+		`Trait 2` = (`Trait 2` == "Neuroticism") %>% if_else("Emotional stability", `Trait 2` %>% as.character) %>%
+			parse_factor(levels = NULL),
+		`Block polarity` = (`Polarity 1` == `Polarity 2`) %>% if_else("Homopolar", "Heteropolar")
+	)
+
+LL.summary.reversed.Neuroticism <- params.joint.LL.reversed.Neuroticism %>% {
+	bind_rows(
+		bind_cols(
+			Parameter = "Intercept - threshold 2 (all)",
+			summarize(., Count = `Intercept 3 NI` %>% sum(na.rm = TRUE), `%` = Count / n() * 100)
+		),
+		group_by(., `Block polarity`) %>%
+			summarize(., Count = `Intercept 3 NI` %>% sum(na.rm = TRUE), `%` = Count / n() * 100) %>%
+			rename(Parameter = `Block polarity`)
+	)
+} %>% full_join(
+	bind_cols(
+		params.joint.LL.reversed.Neuroticism %>% correlate.params(`Threshold 3 diff`, Intercept) %>%
+			rename(`Intercept - threshold 2 (all)` = `Threshold 3 diff`),
+		params.joint.LL.reversed.Neuroticism %>% group_by(`Block polarity`) %>%
+			correlate.params(`Threshold 3 diff`, Intercept)
+	) %>% gather(value = "Correlation", key = "Parameter")
+) %>% select(Parameter, Correlation, Count, `%`)
+	
+LL.summary.reversed.Neuroticism %>% kable(
+		digits = c(0, 3, 0, 2),
+		caption =
+			"Invariance of intercept parameter estimates: correlations, number, and proportion of non-invariant parameters"
+	)
+
+```
+
+```{r inverted_Neuroticism_scales}
+
+scales.joint.collapsed.LL <- scales.joint.collapsed %>%
+	full_join(LL.scales.collapsed %>% select(Item, LLR, `p-value`, NI))
+
+scales.joint.collapsed.LL.reversed.Neuroticism <- scales.joint.collapsed.LL %>% mutate(
+	Polarity = (Trait == "Neuroticism") %>%
+		if_else((Polarity == "+") %>% if_else("-", "+"), Polarity %>% as_character) %>% parse_factor(levels = NULL),
+	`Block scale` = (Trait == "Neuroticism") %>% if_else(-`Block scale`, `Block scale`),
+	`Item scale` = (Trait == "Neuroticism") %>% if_else(-`Item scale`, `Item scale`),
+	Trait = (Trait == "Neuroticism") %>% if_else("Emotional stability", Trait %>% as.character) %>%
+		parse_factor(levels = NULL),
+	`Polarity other` = (`Trait other` == "Neuroticism") %>%
+		if_else((`Polarity other` == "+") %>% if_else("-", "+"), `Polarity other` %>% as.character) %>%
+		parse_factor(levels = NULL),
+	`Trait other` = (`Trait other` == "Neuroticism") %>%
+		if_else("Emotional stability", `Trait other` %>% as.character) %>% parse_factor(levels = NULL)
+) %>% mutate(
+	`Block polarity` = (Polarity == `Polarity other`) %>% if_else("Homopolar", "Heteropolar") %>%
+		parse_factor(levels = NULL)
+)
+
+bind_cols(
+	scales.joint.collapsed.LL.reversed.Neuroticism %>% correlate.params(`Block scale`, `Item scale`) %>%
+		rename(`All scales` = `Block scale`),
+	scales.joint.collapsed.LL.reversed.Neuroticism %>% group_by(`Block polarity`) %>%
+		correlate.params(`Block scale`, `Item scale`),
+	scales.joint.collapsed.LL.reversed.Neuroticism %>% group_by(`Polarity other`) %>%
+		correlate.params(`Block scale`, `Item scale`) %>% rename(`Polarity other +` = `+`, `Polarity other -` = `-`),
+	scales.joint.collapsed.LL.reversed.Neuroticism %>% filter(`Block polarity` == "Homopolar") %>%
+		group_by(`Polarity other`) %>% correlate.params(`Block scale`, `Item scale`) %>% 
+		rename(`Homopolar -` = `-`, `Homopolar +` = `+`),
+	scales.joint.collapsed.LL.reversed.Neuroticism %>% filter(`Block polarity` == "Heteropolar") %>%
+		group_by(`Polarity other`) %>% correlate.params(`Block scale`, `Item scale`) %>% 
+		rename(`Heteropolar with -` = `-`, `Heteropolar with +` = `+`)
+) %>% gather(key = "Parameter", value = "Correlation") %>%
+	bind_cols(
+		bind_rows(
+			scales.joint.collapsed.LL.reversed.Neuroticism %>%
+				summarize(Count = NI %>% sum(na.rm = TRUE), `%` = Count / n() * 100),
+			scales.joint.collapsed.LL.reversed.Neuroticism %>% group_by(`Block polarity`) %>%
+				summarize(Count = NI %>% sum(na.rm = TRUE), `%` = Count / n() * 100) %>% select(-`Block polarity`),
+			scales.joint.collapsed.LL.reversed.Neuroticism %>% group_by(`Polarity other`) %>%
+				summarize(Count = NI %>% sum(na.rm = TRUE), `%` = Count / n() * 100) %>% select(-`Polarity other`),
+			scales.joint.collapsed.LL.reversed.Neuroticism %>%
+				filter(`Block polarity` == "Homopolar") %>% group_by(`Polarity other`) %>%
+				summarize(Count = NI %>% sum(na.rm = TRUE), `%` = Count / n() * 100) %>% select(-`Polarity other`),
+			scales.joint.collapsed.LL.reversed.Neuroticism %>%
+				filter(`Block polarity` == "Heteropolar") %>% group_by(`Polarity other`) %>%
+				summarize(Count = NI %>% sum(na.rm = TRUE), `%` = Count / n() * 100) %>% select(-`Polarity other`)
+		)
+	) %>% 
+	kable(
+		digits = c(0, 3, 0, 2),
+		caption =
+			"Invariance of scale parameter estimates: correlations, number, and proportion of non-invariant parameters"
+	)
+
+```
+
+
+## Effect of item multidimensionality {.tabset .tabset-fade}
+
+Items are being considered unidimensional for fitting the FCQ model.
+However, we know they fit a bifactor model, thus being actually multidimensional.
+The proportion of variance explained by the main factor (I_ECV) is a measure of its unidimensionality.
+
+```{r multidimensionality_assessment, include=FALSE}
+
+unidimensionality.assessment <- assess.unidimensionality(
+	get.instrument.items(read.APRA2.new.items()$items, instrument = APRA2.INSTRUMENT, strings.as.factors = FALSE),
+	TRAIT.NAMES[-2]
+)
+unidimensionality.assessment$item.scales %<>%
+	mutate(Polarity = Polarity %>% parse_factor(levels = POLARITY))
+
+scales.joint.collapsed.LL %<>% left_join(
+	unidimensionality.assessment$item.scales %>%
+		select(Item, Unidim, Bifactor, I_ECV, Rel_bias)
+)
+
+```
+
+```{r multidimensionality_assessment_table, results='asis'}
+
+unidimensionality.assessment$fit %>%
+	rownames_to_column(var = "Dimension") %>% mutate(ECV = ECV * 100) %>%
+	select_at(1:9) %>%
+	kable(digits = c(0, 2, 3 %>% rep(4), 2, 3, 3))
+
+```
+
+```{r multidimensionality_assessment_bias, results='asis', message=FALSE}
+
+scatter.plot <- unidimensionality.assessment$item.scales %>%
+	ggplot(
+		mapping = aes(
+			Bifactor,
+			Unidim,
+			color = Trait
+		)
+	) +
+	theme_minimal(base_family = "serif") +
+	xlab("Scale estimate on bi-factor general factor") +
+	ylab("Unidimensional scale estimate")
+
+scatter.plot %>% scatter.plot.style(range.x = c(-3, 3), legend.title = "Trait",
+																		 output = "ggplot") %>%
+	ggsave("bifactor_unidim_scales.png", plot = ., path = OUTPUT.PATH,
+				 width = 6, height = 5.2, units = "in", dpi = "print")
+
+scatter.plot %>% scatter.plot.style(range.x = c(-3, 3), legend.title = "Trait")
+
+```
+
+```{r abs_rel_bias_histogram, results='asis', message=FALSE}
+
+unidimensionality.assessment$item.scales %<>%
+	mutate(`Relative bias absolute value (%)` = Rel_bias %>% abs)
+
+i_ecv.histogram <- unidimensionality.assessment$item.scales %>%
+	ggplot(mapping = aes(x = `Relative bias absolute value (%)`)) +
+	geom_histogram(bins = 30, fill = "#8DA0CB") +
+	theme_minimal(base_family = "serif") + ylab("Absolute frequency")
+
+ggsave("bifactor_unidim_bias_histogram.png", path = OUTPUT.PATH,
+			 width = 6, height = 5.2, units = "in", dpi = "print")
+
+i_ecv.histogram %>% ggplotly %>% 
+	layout(hoverlabel = list(bordercolor = "white")) %>%
+	config(displayModeBar = FALSE)
+
+```
+
+```{r rel_bias_unidimensionality, results='asis', message=FALSE}
+
+scatter.plot <- unidimensionality.assessment$item.scales %>%
+	ggplot(
+		mapping = aes(
+			I_ECV, Rel_bias,
+			color = Polarity
+		)
+	) + geom_smooth(color = "lightcoral", fill = "lightcoral") +
+		theme_minimal() + ylab("Relative bias (%)") + xlab("I-ECV")
+
+scatter.plot %>% scatter.plot.style(
+		range.x = 0:1,
+		range.y = scales.joint.collapsed.LL %>% pull(Rel_bias) %>% range,
+		legend.title = "Polarity",
+		output = "ggplot"
+	) %>%
+	ggsave("bifactor_rel_bias_unidimensionality.png",
+				 plot = ., path = OUTPUT.PATH,
+				 width = 6, height = 4.5, units = "in", dpi = "print")
+
+scatter.plot %>% scatter.plot.style(
+		range.x = 0:1,
+		range.y = scales.joint.collapsed.LL %>% pull(Rel_bias) %>% range,
+		legend.title = "Polarity"
+	)
+
+```
+
+
+The following plot represents the LLR statistic of the scales against the I_ECV.
+No association seems to occur between the two magnitudes.
+
+
+### By polarity
+
+```{r multidimensionality_effect_plot_polarity}
+
+scales.joint.collapsed.LL %>% ll.unidim.scatter.plot(I_ECV, LLR, Polarity, chisq.sig.line = alpha)
+
+```
+
+
+### By trait
+
+```{r multidimensionality_effect_plot_trait}
+
+scales.joint.collapsed.LL %>% ll.unidim.scatter.plot(I_ECV, LLR, Trait, chisq.sig.line = alpha)
+
+```
+
+
+### By polarity (other)
+
+```{r multidimensionality_effect_plot_polarity_other}
+
+scales.joint.collapsed.LL %>% ll.unidim.scatter.plot(I_ECV, LLR, `Polarity other`, chisq.sig.line = alpha)
+
+```
+
+
+### By trait (other)
+
+```{r multidimensionality_effect_plot_trait_other}
+
+scales.joint.collapsed.LL %>% ll.unidim.scatter.plot(I_ECV, LLR, `Trait other`, chisq.sig.line = alpha)
+
+```
+
+####
+
+The context effect of the item polarity seems to have an effect, though.
+Below, the effect of unidimensionality on the log-likelihood test statistic
+is plotted for items that are paired with inverse and direct items,
+respectively.
+
+```{r multidimensionality_effect_plot_by_polarity_other}
+
+scales.joint.collapsed.LL %>% ll.unidim.scatter.plot(I_ECV, LLR, facet = `Polarity other`, chisq.sig.line = alpha)
+
+```
+
+
+```{r multidimensionality_effect_plot_scales_Wald_test}
+
+# Wald.tests.collapsed <- Wald.tests %>%
+# 	collapse.scale.params(`Scale 1 WT`, `Scale 2 WT`, `Scale 1 p-value`, `Scale 2 p-value`) %>%
+# 	rename(`Wald test statistic` = `Block scale`, `WT p-value` = `Item scale`) %>%
+# 	mutate(`WT NI` = `WT p-value` < (alpha / 2) | `WT p-value` > (1 - alpha / 2)) %>%
+# 	filter(`WT NI` %>% is_not_na) %>% 
+# 	mutate(
+# 		Trait = Trait %>% parse_factor(levels = TRAIT.NAMES[-2]),
+# 		`Trait other` = `Trait other` %>% parse_factor(levels = TRAIT.NAMES[-2])
+# 	)
+# 
+# Wald.tests.collapsed %<>% left_join(
+# 	unidimensionality.assessment$item.scales %>%
+# 		select(Item, Unidim, Bifactor, I_ECV, Rel_bias)
+# )
+# 
+# scatter.plot <- Wald.tests.collapsed %>% ggplot(
+# 		aes(
+# 			I_ECV, `Wald test statistic`,
+# 			color = Polarity,
+# 			text = paste0(
+# 				"</br>Wald test: ", `Wald test statistic` %>% sprintf("%.3f", .),
+# 				"</br>Trait: ", Trait,
+# 				"</br>Trait other: ", `Trait other`,
+# 				"</br>Polarity: ", Polarity,
+# 				"</br>Polarity other: ", `Polarity other`
+# 			),
+# 			facet(Polarity)
+# 		)
+# 	) + theme_minimal(base_family = "serif") +
+# 	geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+# 	geom_smooth(
+# 		Wald.tests.collapsed %>% filter(Polarity == "+"),
+# 		mapping = aes(text = NULL), span = 2,
+# 		color = "lightcoral", alpha = .2, size = .75, fill = "lightcoral"
+# 	) +
+# 	geom_smooth(
+# 		Wald.tests.collapsed %>% filter(Polarity == "-"),
+# 		mapping = aes(text = NULL), span = 2,
+# 		color = "lightblue", alpha = .2, size = .75, fill = "lightblue"
+# 	) +
+# 	geom_point(alpha = .75) + scale_x_continuous() +
+# 	scale_y_continuous(limits = c(-5.5, 5.5)) +
+# 	scale_color_brewer(
+# 		palette = "Set2",
+# 		guide = guide_legend(title = "Polarity")
+# 	)
+# 
+# scatter.plot %>% ggplotly(tooltip = "text")
+# 
+# %>%
+# 	layout(
+# 		margin = list(l = 60, r = 150, b = 40, t = 50, pad = 0),
+# 		showlegend = TRUE,
+# 		hoverlabel = list(bordercolor = "white"),
+# 		xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
+# 		yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
+# 	) %>%
+# 	config(displayModeBar = FALSE)
+
+```
+
+
+```{r multidimensionality_effect_plot_intercepts_Wald_test}
+
+# Wald.tests %<>%
+# 	
+# unidim.by.block <- unidimensionality.assessment$item.scales %>%
+# 	spread(key = )
+# 
+# scatter.plot <- Wald.tests.collapsed %>% ggplot(
+# 		aes(
+# 			I_ECV, `Wald test statistic`,
+# 			color = Polarity,
+# 			text = paste0(
+# 				"</br>Wald test: ", `Wald test statistic` %>% sprintf("%.3f", .),
+# 				"</br>Trait: ", Trait,
+# 				"</br>Trait other: ", `Trait other`,
+# 				"</br>Polarity: ", Polarity,
+# 				"</br>Polarity other: ", `Polarity other`
+# 			),
+# 			facet(Polarity)
+# 		)
+# 	) + theme_minimal(base_family = "serif") +
+# 	geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+# 	geom_smooth(
+# 		Wald.tests.collapsed %>% filter(Polarity == "+"),
+# 		mapping = aes(text = NULL), span = 2,
+# 		color = "lightcoral", alpha = .2, size = .75, fill = "lightcoral"
+# 	) +
+# 	geom_smooth(
+# 		Wald.tests.collapsed %>% filter(Polarity == "-"),
+# 		mapping = aes(text = NULL), span = 2,
+# 		color = "lightblue", alpha = .2, size = .75, fill = "lightblue"
+# 	) +
+# 	geom_point(alpha = .75) + scale_x_continuous() +
+# 	scale_y_continuous(limits = c(-5.5, 5.5)) +
+# 	scale_color_brewer(
+# 		palette = "Set2",
+# 		guide = guide_legend(title = "Polarity")
+# 	)
+# 
+# scatter.plot %>% ggplotly(tooltip = "text") %>%
+# 	layout(
+# 		margin = list(l = 60, r = 150, b = 40, t = 50, pad = 0),
+# 		showlegend = TRUE,
+# 		hoverlabel = list(bordercolor = "white"),
+# 		xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
+# 		yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
+# 	) %>%
+# 	config(displayModeBar = FALSE)
+
+```
+
+
+## Latent trait estimates with the predicted and estimated FC block parameters (Part pending)
+
+In order to test whether the block parameter estimates predicted from the
+graded scale item parameters can be used as a proxy for the block parameters,
+we compute the correlation of the latent trait estimates using the
+block parameter estimates, on one side, and the predictors on the other.
+
+```{r theta_estimates_correlations}
+
+starting.values.file <- readLines("res/apra2_fcq_gsq_joint_es_op_ag_co_0_mlr_starting_values.out")
+
+starting.values.range <- starting.values.file %>% {
+	c(
+		grep(pattern = "MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES", x = .) + 1,
+		grep(pattern = "DIAGRAM INFORMATION", x = .) - 1
+	)
+}
+
+starting.values.model <- starting.values.file[ starting.values.range %>% { seq(.[1], .[2]) } ]
+starting.values.model %<>% str_replace_all("\\*", "@")
+
+item.loadings <- starting.values.model %>% str_subset("\\h+(es|op|ag|co) BY p[4-5]_*")
+latent.corrs <- starting.values.model %>% str_subset("\\h+(es|op|ag|co) WITH (es|op|ag|co)@*")
+item.threshold <- starting.values.model %>% str_subset("\\h+\\[ p[4-5]_[0-9]{1,3}\\$[1-4]@*")
+
+# model10 <- estimate.Mplus.model(model.file.name)
+
+
+```
