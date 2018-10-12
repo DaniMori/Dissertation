@@ -27,7 +27,11 @@ editor_options:
 library(tidyverse)
 library(magrittr)
 library(knitr)
+<<<<<<< HEAD
 # library(shiny)
+=======
+library(shiny)
+>>>>>>> 8b9a8caaff3df98bc42fcdfcd7de1e706ab74254
 
 "R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
@@ -179,11 +183,14 @@ Modelo más parsimonioso, y más sencillo de abordar teóricamente
 
 - Estudio 2: Estudio y evaluación de la sensibilidad dimensional
 
+<<<<<<< HEAD
 - Estudio 3: Comprobación del supuesto de invarianza
 
 - Conclusions (in English)
 
 
+=======
+>>>>>>> 8b9a8caaff3df98bc42fcdfcd7de1e706ab74254
 # Estudio 1:<br>Variante de dominancia dentro del marco MUPP: formulación y estimación Markov Chain-Monte Carlo
 
 
@@ -199,6 +206,17 @@ Modelo más parsimonioso, y más sencillo de abordar teóricamente
 
 
 <aside class="notes">
+
+El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
+la estimación del mismo mediante el método Bayesiano propuesto.
+Se han utilizado para ello diferentes condiciones consideradas más, o menos favorables,
+en función de las propiedades teóricas del modelo y de consideraciones aportadas por la
+literatura previa.
+
+Asimismo, como existe una equivalencia práctica entre el modelo MUPP-2PL
+y el modelo TIRT, esto nos permite comparar los dos métodos de estimación, el
+Bayesiano, basado en información completa, y el método frecuentista, basado en
+Análisis Factorial Confirmatorio de la información bivariada.
 
 El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
 la estimación del mismo mediante el método Bayesiano propuesto.
@@ -1496,7 +1514,804 @@ Aside from Ph.D. project:
 
 - Seven communications in national and international conferences (one as speaker)
 
+<<<<<<< HEAD
 - Several posters in national and international conferences
 
 
 # Bibliografía seleccionada {.small}
+=======
+Modelo MUPP-2PL:
+
+- Equivalencia con TIRT
+
+- Indeterminación de parámetros de posición
+
+- Estimable sin bloques unidimensionales
+
+- Estimable sin bloques heteropolares
+
+
+## Estudio 1: Conclusiones
+
+Estimación Bayesiana:
+
+- Permite estimación conjunta
+
+- Buena recuperación con nº bajo de dimensiones
+
+- Generalización al modelo MUPP
+
+
+## Estudio 1: Conclusiones
+
+Comparación con CFA:
+
+- Fiabilidades mayores
+
+- Mejor estimación de incertidumbre en parámetros de rasgo latente
+
+- Mayor precisión en correlaciones del espacio latente
+
+- Estimaciones más razonables con escasez de información
+
+
+## Estudio 1: Limitaciones
+
+- Modelo MUPP-2PL:
+
+    - Sólo 2 ítems
+
+
+- Estimación Bayesiana:
+
+    - Estadísticos de ajuste
+
+    - Intensidad computacional
+
+    - Menor facilidad de uso
+
+
+# Estudio 2:<br>Evaluación y mitigación de problemas pscométricos en el diseño de cuestionarios de elección forzosa multidimensionales para selección de personal
+
+
+## Objetivos
+
+- Estudiar las propiedades teóricas de QEFs robustos a los sesgos de respuesta
+
+- Estudiar la estimación del modelo MUPP-2PL en condiciones de restricción
+dimensional
+
+- Proponer y evaluar indicadores de calidad para evaluar la calidad en
+condiciones de restricción dimensional
+
+
+## QEF para selección de personal
+
+- Sensibilidad a sesgos de respuesta:
+
+    - Ítems inversos
+    
+    - Bloques unidimensionales
+
+- Diseño de "pares bidimensionales directos" (DBP)
+
+
+## Indeterminación empírica del diseño DBP
+
+- Parámetros de escala
+
+[Imagen bloques con diferente correlación (figura 3.2)]
+
+
+## Indeterminación empírica del diseño DBP
+
+- Matriz de información
+
+[Imagen scatter plot rasgos simulados y estimados]
+
+
+## Restricción dimensional del diseño DBP
+
+- Reducción de fiabilidad
+    
+- Distorsión de correlaciones
+    
+- Ipsatividad
+
+
+## Evaluación de la sensibilidad dimensional
+
+```{r load_LEV_LSV_sims}
+```
+
+- Menor valor singular (*LSV*)
+
+```{r plot_LSV_sims, dependson="load_LEV_LSV_sims"}
+
+plot_LSV <- results %>%
+  ggplot(
+    aes(
+      `Correlación entre escalas`, LSV,
+      group = `Nº dimensiones`, color = `Nº dimensiones`,
+      text = HTML("<i>LSV</i>:") %>% paste(LSV %>% round(3))
+    )
+  ) +
+  facet_grid(cols = vars(items.dim)) + geom_point() + geom_line() +
+  scale_color_manual(values = PALETTE.COLORS %>% unname) +
+  ylab(HTML("<i>LSV</i>"))
+
+plot_LSV %>% ggplotly(tooltip = "text") %>% config(displayModeBar = FALSE)
+
+```
+
+
+## Evaluación de la sensibilidad dimensional
+
+- Menor autovalor (*LEV*)
+
+[Imagen diferente correlación entre dimensiones (figura 3.2)]
+
+
+## Evaluación de la sensibilidad dimensional
+
+- Menor autovalor (*LEV*)
+
+```{r plot_LEV_corr_0.0_sims, dependson="load_LEV_LSV_sims"}
+
+results %>% plot_LEV(
+  LEV_corr_0,
+  LEV_max,
+  "Suma de correlaciones = 0.0"
+)
+  
+```
+
+
+## Evaluación de la sensibilidad dimensional
+
+- Menor autovalor (*LEV*)
+
+```{r plot_LEV_corr_0.3_sims, dependson="load_LEV_LSV_sims"}
+
+results %>% plot_LEV(
+  LEV_corr_0.3,
+  LEV_max,
+  "Suma de correlaciones = 0.3"
+)
+  
+```
+
+
+## Evaluación de la sensibilidad dimensional
+
+- Menor autovalor (*LEV*)
+
+```{r plot_LEV_corr_0.6_sims, dependson="load_LEV_LSV_sims"}
+
+results %>% plot_LEV(
+  LEV_corr_0.6,
+  LEV_max,
+  "Suma de correlaciones = 0.6"
+)
+  
+```
+
+
+## Evaluación de la sensibilidad dimensional
+
+- Menor autovalor (*LEV*)
+
+```{r plot_LEV_corr_0.9_sims, dependson="load_LEV_LSV_sims"}
+
+results %>% plot_LEV(
+  LEV_corr_0.9,
+  LEV_max,
+  "Suma de correlaciones = 0.9"
+)
+  
+```
+
+
+## Estudio de simulación
+
+- Evaluar la estimación de rasgos latentes en condiciones de restricción
+dimensional
+
+- Comprobar la capacidad predictiva de los indicadores de sensiblidad
+dimensional
+
+
+## Estudio de simulación
+
+Diseño:
+
+- Correlación entre parámetros de escala del bloque
+
+- Longitud del cuestionario
+
+- Correlación entre dimensiones del espacio latente
+
+- Fiabilidad y distorsión de correlaciones entre rasgos
+
+- *LSV* y *LEV*
+
+
+## Estudio de simulación
+
+Resultados: Fiabilidad empírica
+
+[Gráfico de interacción BSC x LTC (figura 3.5)]
+
+
+## Estudio de simulación
+
+Resultados: Distorsión de correlaciones
+
+[Gráficos NB, BSC, LTC]
+
+
+## Estudio de simulación
+
+Resultados: *LSV* y *LEV*
+
+[Figuras 3.6 y 3.7]
+
+
+## Estudio 2: Conclusiones
+
+- Diseño DBP
+
+- Indeterminación empírica del modelo MUPP-2PL
+
+- Índices de sensibilidad dimensional
+
+- Generalizabilidad de resultados
+
+
+## Estudio 2: Limitaciones
+
+- Validez externa
+
+- Uso de los índices de sensibilidad dimensional
+
+- Sensibilidad dimensional local
+
+
+# Estudio 3:<br>Comprobación del supuesto de invarianza del modelo MUPP-2PL
+
+```{r data_load, include=FALSE}
+```
+
+```{r data_formatting, include=FALSE, dependson="data_load"}
+```
+
+```{r unidimensionality_assessment, include=FALSE, dependson="data_formatting"}
+```
+
+```{r LR_tests, include=FALSE, dependson="unidimensionality_assessment"}
+```
+
+```{r all_stats_table, include=FALSE, dependson="LR_tests"}
+```
+
+
+## Objetivos
+
+- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
+
+- Explorar los factores que potencialmente influyen en la violación del supuesto
+
+
+## Supuesto de invarianza
+
+MUPP-2PL:
+
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+
+Ítem 1:
+
+$$
+\textrm{P}_{i_1}\left(X_{i_1j} = 1 | \theta_\tilde{i_1}\right) = \Phi_L\left(a_{i_1}^*\left(\theta_{\tilde{i_1}j} - b_{i_1}\right)\right)
+$$
+
+Ítem 2:
+
+$$
+\textrm{P}_{i_2}\left(X_{i_2j} = 1 | \theta_\tilde{i_2}\right) = \Phi_L\left(a_{i_2}^*\left(\theta_{\tilde{i_2}j} - b_{i_2}\right)\right)
+$$
+
+
+## Supuesto de invarianza
+
+<br>
+
+<center>
+
+- $a_{i_1}^*\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_1}$
+
+<br>
+
+- $a_{i_2}^2\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_2}$
+
+<br>
+
+- $a_{i_2}^*b_{i_2}-a_{i_1}^*b_{i_1}\longrightarrow l_i$
+
+</center>
+
+
+## Supuesto de invarianza
+
+### Con ítems de escala graduada (i.e. Likert):
+
+[imagen umbrales Likert]
+
+$$a_{i_2}^*b_{i_2k'}-a_{i_1}^*b_{i_1k'}\longrightarrow l_i$$
+
+
+## Prueba de invarianza
+
+- Test razón de verosimilitud de modelos anidados (por parámetro)
+
+[Imagen de modelos CFA con parámetros libres / restringidos]
+
+
+- Estadístico: $SB-\chi^2$ robusto estrictamente positivo [@satorra_ensuring_2010]
+
+
+<div class="notes">
+
+Para calcular este estadístico y realizar el test de razón de verosimilitudes
+es necesario estimación CFA (Mplus; no algoritmo MCMC)
+
+</div>
+
+
+## Prueba de invarianza
+
+### Conjunto de datos:
+
+- Test de personalidad "Big Five"
+
+- Respuestas de 695 - 396 estudiantes
+
+- Ítems Likert y bloques EF
+
+- Emparejamiento de rasgos balanceado
+
+- Bloques homopolares y heteropolares
+
+
+## Resultados
+
+### Parámetros de escala
+
+```{r joint_scatter_plot_scales_per_item_trait, dependson="all_stats_table"}
+
+scales.joint.collapsed %>% rename(`Block_code` = Block) %>%
+  left_join(
+    block.item.params.joint %>% select(`Block_code` = Block, Bloque)
+  ) %>%
+  mutate(Label = NI %>% if_else(Bloque, NA_character_)) %>%
+  scales.scatter.plot(
+    Trait, labels = Label,
+    width = 6, height = 5.2, units = "in", dpi = "print"
+  )
+
+```
+
+
+<div class="notes">
+
+Se cumple el supuesto de invarianza en casi todos los casos, menos en dos
+parámetros.
+
+Esto imposibilita el estudio de la invarianza a nivel de ítems y bloques
+
+A nivel de cuestionario:
+
+- "Compresión" del rango
+- Desplazamiento del origen
+
+</div>
+
+
+## Resultados
+
+### Parámetros de posición
+
+```{r joint_threshold_plot_per_block, dependson="all_stats_table"}
+
+threshold_1 <- block.item.params.joint %>% plot_joint_threshold_per_block(
+  `Intersección`, `Predicción umbral 1`
+)
+threshold_2 <- block.item.params.joint %>% plot_joint_threshold_per_block(
+  `Intersección`, `Predicción umbral 1`
+)
+threshold_3 <- block.item.params.joint %>% plot_joint_threshold_per_block(
+  `Intersección`, `Predicción umbral 1`
+)
+threshold_4 <- block.item.params.joint %>% plot_joint_threshold_per_block(
+  `Intersección`, `Predicción umbral 1`
+)
+
+subplot(
+  threshold_1, threshold_2, threshold_3, threshold_4,
+  nrows = 2, shareX = TRUE, shareY = TRUE
+)
+
+```
+
+
+- "Compresión" del rango
+
+- "Desplazamiento" del origen
+
+
+<div class="notes">
+
+Más violaciones de invarianza con la segunda categoría.
+
+Cuarta categoría la que menos.
+Posible "desplazamiento" del origen: sesgo negativo en bloques, o posible
+sesgo positivo (aquiescencia) en ítems, controlado por bloques
+
+</div>
+
+
+## Resultados
+
+```{r intercepts_preprocessing, include=FALSE, dependson="all_stats_table"}
+```
+
+
+### Exploración de violación del supuesto (posición)
+
+
+```{r non_invariant_intercepts_plot, dependson="intercepts_preprocessing"}
+
+intercept.invariance.plot <- non.invariant.intercepts %>%
+  ggplot(
+    aes(Bloque, `Desviación intersección`, shape = `Rasgo 1`, color = `Rasgo 2`)
+  ) +
+  geom_point(size = 2.5) + scale_shape_manual(values = c(16, 17, 15, 18)) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname) +
+  geom_hline(yintercept = 0) +
+  facet_grid(
+    `Threshold category` ~ `Polarity 2`,
+    as.table = FALSE, scales = "free_x"
+  ) +
+  theme_minimal(base_family = "serif", base_size = 12) +
+  ggtitle("Polaridad del bloque") +
+  theme(plot.title = element_text(hjust = .5, size = 12))
+
+# intercept.invariance.plot %>% ggsave(
+#   filename = "non_invariant_intercepts_plot.png", plot = .,
+#   width = 6.5, height = 8, units = "in", dpi = "print"
+# )
+
+intercept.invariance.plot %>% ggplotly %>% config(displayModeBar = FALSE)
+
+```
+
+
+<div class="notes">
+
+- Los rasgos medidos por cada ítem pueden jugar un papel en la violación
+de la invarianza: más violaciones en Neuroticismo (en segunda posición) y
+Apertura (primera pos)
+
+- Polaridades no parecen afectar (pero su efecto no puede separarse entre
+polaridad del ítem, y bloque, debido al diseño de bloques heteropolares)
+
+Patrón consistente para diferentes polaridades de ítems y rasgos
+
+</div>
+
+
+## Resultados
+
+### Exploración de violación del supuesto (posición)
+
+
+```{r non_invariant_intercepts_plot_4th_threshold, dependson="intercepts_preprocessing"}
+
+intercept.invariance.plot.threshold.4 <- non.invariant.intercepts %>%
+  filter(`Threshold category` == "Umbral 4") %>%
+  ggplot(
+    aes(Bloque, `Desviación intersección`, shape = `Rasgo 1`, color = `Rasgo 2`)
+  ) +
+  geom_point(size = 2.5) + scale_shape_manual(values = c(16, 17, 15, 18)) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname) +
+  geom_hline(yintercept = 0) +
+  facet_grid(. ~ `Polarity 2`, as.table = FALSE, scales = "free_x"
+  ) +
+  theme_minimal(base_family = "serif", base_size = 12) +
+  ggtitle("Polaridad del bloque") +
+  theme(plot.title = element_text(hjust = .5, size = 12))
+
+intercept.invariance.plot.threshold.4 %>% ggplotly %>%
+  config(displayModeBar = FALSE)
+
+```
+
+
+<div class="notes">
+
+Asumiendo que se da el efecto de escalamiento y desplazamiento del origen,
+podemos centrarnos en la categoría 4, asumiendo que sus predicciones son más
+precisas: por un lado, tenemos el menor número de violaciones de la invarianza,
+y por otro, los errores de predicción positivos y negativos están igualmente
+distribuidos, al contrario que en otras categorías.
+
+En estas condiciones, podemos interpretar las violaciones de la
+invarianza como violacions del supuesto de independencia a su vez, posiblemente
+debido a una interacción de efectos entre rasgo y polaridad.
+(Es decir, combinar determinados ítems con rasgos y polaridades específicas
+podría afectar a la invarianza)
+
+El signo del error de predicción está asociado con la polaridad y el rasgo
+medido.
+
+</div>
+
+
+## Conclusiones
+
+- Metodología para poner a prueba el supuesto del modelo MUPP-2PL
+
+- Cumplimiento general del supuesto de invarianza
+
+- Consideraciones sobre las violaciones de la invarianza
+
+    - Efecto de escalamiento
+    
+    - Efecto de desplazamiento de la posición
+    
+    - Violaciones de invarianza a nivel de bloque
+
+
+<div class="notes">
+
+El cumplimiento del supuesto de invarianza permite contruir QEFs basándose
+en las propiedades de ítems Likert precalibrados
+(Reducción de costes, optimización de criterios)
+
+Violaciones de invarianza pueden afectar a la información:
+
+- Efecto de escalamiento reduciría la información del QEF (pero predecible)
+
+- Umbral usado para la estimación; por otro lado, modelos que puedan dar cuenta
+de este efecto (e.g. sesgo de aquiescencia en los ítems)
+
+- Hipótesis a comprobar sobre los bloques, mediante ítems/bloques experimentales
+diseñados para inducir o mitigar las violaciones de invarianza
+
+</div>
+
+
+## Limitaciones
+
+- Manipulación experimental de fuentes de violación de la invarianza
+
+- Estimación con bloques con *Extraversión*
+
+
+# General conclusions
+
+
+<div class="notes">
+
+We have discussed the three studies separately. Now we will discuss some
+conclusions fro the results of the three studies and the relationships among
+them.
+
+</div>
+
+
+---
+
+1. A variant of the MUPP model [@stark_irt_2005] under a dominance
+measurement assumption can be formulated and identified; it has been called the
+MUPP-2PL model.
+
+2. When data represents responses to a multidimensional pairwise FC
+questionnaire, both the MUPP-2PL and the TIRT model [@brown_item_2011] can be
+applied. Under these conditions, the two models are quasi-equivalent.
+
+3. A Bayesian procedure for estimating structural and incidental parameters
+jointly is feasible. The method is based on Markov-Chain Monte Carlo simulation,
+and an implementation in R [@r_core_team_r:_2017] has been developed.
+Despite its high computational intensiveness, it gives highly accurate results.
+These results are satisfactory even under two allegedly unfavorable conditions:
+without unidimensional blocks, and without blocks with different polarity
+combinations (i.e., heteropolar blocks)
+
+
+<div class="notes">
+
+1. This model is more parsimonious than the original MUPP model.
+In addition, it may be more appropriate than the original when the latent
+agreement to the items in a block is a monotonical function of the trait level.
+
+2. Scaling factor aside, their parameters and estimation methods are
+interchangeable with negligible consequences.
+
+</div>
+
+
+---
+
+4. The new Bayesian estimation procedure outperforms the estimation method
+proposed for the TIRT model, based on analysis of bivariate information through
+confirmatory factor analysis [@brown_fitting_2012].
+Particularly, it yields more accurate estimation errors for the incidental
+parameters, a better estimation of the latent space correlational structure,
+and more reasonable estimates when empirical information is scant.
+
+5. The direct bidimensional pairs (DBP) design for FC questionnaires,
+intended to control for bias associated with response styles,
+may suffer from an empirical underidentification we may call
+*dimensional restriction*.
+This condition necessarily leads to (a) a notable reduction of the reliability,
+and (b) distortion of the correlations among the latent trait estimates,
+in the form of negative bias.
+
+
+<div class="notes">
+
+4. Arguably,
+the first result is due to the joint estimation of structural and incidental
+parameters, the second to the use of full information, and the third to the
+Bayesian features of the algorithm.
+
+5. These properties are the same attributed to ipsative scores. Similar to them,
+the distortion of the latent trait estimates will be worse the more positive the
+actual latent dimension correlations are.
+
+</div>
+
+
+---
+
+6. A FC instrument designed under the DBP principle, although not fulfilling
+the conditions for the empirical underidentification, may be close enough to it
+to have identification issues. We may refer to the distance of the instrument
+information matrix to the empirical underidentification as its dimensional
+sensitivity.
+
+7. We have proposed cutoff criteria for the *LSV* and *LEV*, useful to assess
+the property of dimensional sensitivity of an instrument.
+However, neither of these indices capture all the relevant phenomena related to
+the dimensional restriction of a DBP FC instrument.
+
+<div class="notes">
+
+6. This property can be quantified, and its magnitude estimated using two
+proposed indices:
+the least singular value (LSV), and the least eigenvalue (LEV).
+
+7. Therefore, these indices should not be used for attempting to maximize the
+dimensional sensitivity.
+
+</div>
+
+
+---
+
+8. The invariance assumption of the MUPP-2PL model can be tested using a nested
+model comparison method.
+
+9. This method has provided evidence in favor of the invariance assumption of
+the MUPP-2PL model parameters.
+
+10. The item scale estimates especially fulfill the invariance assumption.
+Therefore, their predictions can be used to estimate the dimensional sensitivity
+of a pairwise multidimensional FC instrument using the *LSV* and *LEV*,
+attending to its item pairings.
+
+11. The violations of the invariance assumption seem to follow at least
+partially predictable patterns.
+
+
+<div class="notes">
+
+8. We have showcased the Likelihood Ratio test applied to
+the dataset of empirical responses to a FC questionnaire measuring
+the Big-Five personality model.
+
+9. Therefore, estimates from the graded responSe model, applied to a
+graded-scale instrument made up by the individual items of the FCQ, may yield
+accurate predictions of the MUPP-2PL model parameters.
+
+11. Global translation and/or scaling transformations may affect the whole FC
+format, while individual block parameters may deviate from their predictions due
+to factors such as item dimensions or polarities.
+
+</div>
+
+
+## Limitations
+
+Regarding the model and its applications:
+
+- Theoretical develovments only applicable to *pairwise* responses
+
+- Pending issues regarding robustness against *motivated distortion*
+
+- Underidentification of the item location parameters
+
+- Invariance assumption with DBP design
+
+
+<div class="notes">
+
+Relevant because:
+1. This format is widely popular and is used in many instruments
+2. Lay the foundations for future theoretical developments on other formats with
+more than two items
+Consider generatlizations due to connections to the TIRT and MUPP models.
+
+DBP design not sufficient condition:
+- Pairing the items according to their *preference indices*
+- Impact of the pairing strategies on model properties
+- Invariance under different conditions (test only with straight-take conditions)
+
+Major restraint for deisgn mulditidemsnional FC CATs.
+Fulfilment of the invariance assumption is a necessary condition for using
+pre-calibrated items.  Need to know pairing conditions to avoid.
+
+Dimensional restriction of an instrument does not imply a distortion in the
+structural parameter estimates.
+If the underidentification is local to incidental parameters,
+it may be possible that block parameters can be still accurately recovered.
+
+</div>
+
+
+## Limitations
+
+Regarding the Bayesian estimation procedure:
+
+- No model fit indices introduced
+
+- Intensive consumption of computational resources
+
+- Other optimization strategies
+
+- More general modeling framework (e.g. allowing restrictions and model nesting)
+
+
+## Contributions
+
+Related to the Ph.D. project:
+
+- Three co-authored papers (one as leading)
+
+- Two working papers in preparation (one as leading)
+
+- Six communications in international conferences (two as speaker)
+
+- Five communications in national conferences and seminars (four as speaker)
+
+- Code for simulations and MCMC estimator (more than 7,600 lines of code)
+
+- Several posters in national and international conferences
+
+
+## Contributions
+
+Aside from Ph.D. project:
+
+- Five co-authored papers as collaborations (one as senior)
+
+- Seven communications in national and international conferences (one as speaker)
+
+- Several posters in national and international conferences
+
+
+## Referencias
+
+>>>>>>> 8b9a8caaff3df98bc42fcdfcd7de1e706ab74254
