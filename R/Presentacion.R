@@ -102,16 +102,16 @@ study_2_results <- tribble(
       "Corr. escalas",        ".7", "Dif. correlaciones", -0.319,
   "Corr. dimensiones",       ".00", "Dif. correlaciones", -0.216,
   "Corr. dimensiones",       ".25", "Dif. correlaciones", -0.193,
-  "Corr. dimensiones",       ".50", "Dif. correlaciones", -0.120
-          # "BSC x LTC", "-.7 x .00",         "Fiabilidad", -,
-          # "BSC x LTC", "-.7 x .25",         "Fiabilidad", -,
-          # "BSC x LTC", "-.7 x .50",         "Fiabilidad", -,
-          # "BSC x LTC", "  0 x .00",         "Fiabilidad", -,
-          # "BSC x LTC", "  0 x .25",         "Fiabilidad", -,
-          # "BSC x LTC", "  0 x .50",         "Fiabilidad", -,
-          # "BSC x LTC", " .7 x .00",         "Fiabilidad", -,
-          # "BSC x LTC", " .7 x .25",         "Fiabilidad", -,
-          # "BSC x LTC", " .7 x .50",         "Fiabilidad", -
+  "Corr. dimensiones",       ".50", "Dif. correlaciones", -0.120,
+  "BSC x LTC", "-.7 x .00",         "Fiabilidad",           .755,
+  "BSC x LTC", "-.7 x .25",         "Fiabilidad",           .751,
+  "BSC x LTC", "-.7 x .50",         "Fiabilidad",           .757,
+  "BSC x LTC", "  0 x .00",         "Fiabilidad",           .719,
+  "BSC x LTC", "  0 x .25",         "Fiabilidad",           .699,
+  "BSC x LTC", "  0 x .50",         "Fiabilidad",           .696,
+  "BSC x LTC", " .7 x .00",         "Fiabilidad",           .637,
+  "BSC x LTC", " .7 x .25",         "Fiabilidad",           .570,
+  "BSC x LTC", " .7 x .50",         "Fiabilidad",           .530
 )
 
 

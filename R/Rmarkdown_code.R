@@ -104,20 +104,19 @@ plotly_conf <- function(plotly_obj, zoom = FALSE) {
 #   
 #   c(option_1, option_2) %>% t %>% kable(col.names = 1:2, align = 'c')
 # }
-# 
-# main_layout <- function(title, subtitle = NULL) {
-#   
-#   tagList(
-#     br(),
-#     br(),
-#     br(),
-#     br(),
-#     h1(title),
-#     br(),
-#     h2(subtitle)
-#   )
-# }
-# ----
+
+main_layout <- function(title, subtitle = NULL) {
+
+  tagList(
+    br(),
+    br(),
+    br(),
+    br(),
+    h1(title),
+    br(),
+    h2(subtitle)
+  )
+}
 
 
 ### Estudio 1: -----------------------------------------------------------------

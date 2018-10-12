@@ -3,16 +3,18 @@ title: "Modelos de TRI para<br>cuestionarios de elección forzosa"
 author: "Daniel Morillo"
 date: "`r format(lubridate::today(), '%d de %B de %Y')`"
 output:
-  ioslides_presentation:
-    css: res/styles.css
-    fig_width: 5
-    fig_height: 4.5
+  revealjs::revealjs_presentation:
+    transition: slide
+    transitionSpeed: slow
+    theme: white
     incremental: true
-    logo: res/LOGO_UAM_NEGRO_VARIANTE.JPG
-    theme: simplex
-    transition: slower
-    widescreen: true
-runtime: shiny
+    center: false
+    slide_level: 1
+    fig_width: 7
+    fig_height: 4.5
+    fig_caption: false
+    self_contained: false
+    reveal_plugins: ["notes"]
 bibliography: "res/dissertation_bibliography.bib"
 csl: "res/apa-old-doi-prefix.csl"
 editor_options:
@@ -20,17 +22,17 @@ editor_options:
 ---
 
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
 
 library(tidyverse)
 library(magrittr)
 library(knitr)
-library(shiny)
+# library(shiny)
 
 "R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
 opts_chunk$set(
-  cache = TRUE, results = 'asis',
+  cache = FALSE, results = 'asis',
   message = FALSE, warning = FALSE, echo = FALSE
 )
 
@@ -41,31 +43,51 @@ init_ggplot()
 ```
 
 
----
+# {data-background-image="res/LOGO_UAM_NEGRO_VARIANTE.jpg" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
 
-<center>
-<br>
+```{css styles}
 
-### <b>
+reveal p {
+  text-align: left;
+}
 
-### Modelos de TRI para cuestionarios de elección forzosa
+.reveal ul {
+  display: block;
+}
 
-### </b>
+.container{
+    display: flex;
+}
 
-<br>
+.col{
+    flex: 1;
+}
 
-#### Tesis doctoral enviada para la obtención del título de<br>Doctor en Psicología Clínica y de la Salud
+```
 
-<br>
 
-##### Por: Daniel Morillo
+```{r title}
 
-###### Supervisores: Francisco José Abad, Iwin Leenen
-###### Tutor: Vicente Ponsoda
+h1("Modelos de TRI para cuestionarios de elección forzosa")
+br()
 
-</center>
+```
 
-<div class="notes">
+### Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud
+
+#### Por: Daniel Morillo
+#### Supervisores: Francisco José Abad, Iwin Leenen
+#### Tutor: Vicente Ponsoda
+
+```{r date}
+
+br()
+lubridate::today() %>% format('%d de %B de %Y') %>% h5
+
+```
+
+
+<aside class="notes">
 
 Buenos días.
 Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado
@@ -74,89 +96,98 @@ experto sobre ella, y a todas las personas presentes por estar aquí y darme la
 oportunidad de exponer públicamente los resultados de mi investigación
 predoctoral.
 
-</div>
-
-# Introducción:<br>El formato de elección Forzosa y los modelos de TRI
+</aside>
 
 
-## El formato de Elección Forzosa
+# Introducción: Marco teórico
 
-- Formato de respuesta para cuestionarios
+
+# El formato de Elección Forzosa
+
+- Formato de respuesta
 
 - Evaluación no cognitiva
 
-- Control de los sesgos de respuesta
+- Objetivo:
 
-- Aumento de validez
+    - Controlar sesgos de respuesta
+
+    - Aumento de validez
 
 
-## El formato de Elección Forzosa multidimensional
+# El formato de Elección Forzosa multidimensional
 
-- Agrupamiento de indicadores de distintas dimensiones
+- Bloques de ítems de distintas dimensiones
 
-- Medición simultánea de varios constructos
+- Medición de varios rasgos simultáneamente
 
 - Puntuaciones ipsativas
 
 
-## Ipsatividad
+# Ipsatividad
 
 <!-- TODO: Referencias -->
 
 - Puntuaciones intra-persona
 
-- Estructura factorial distorsionada
+- Estructura del espacio latente distorsionada [@clemans_analytical_1966]:
+
+<div class="fragment">
+$$
+\overline{r} = -\frac{1}{D-1}
+$$
+</div>
 
 - Fiabilidad reducida
 
-- Validez predictiva reducida
+- Validez predictiva distorsionada
 
 - No comparables entre personas
 
 
-## Aplicación de la Teoría de Respuesta al Ítem
+# Aplicación de la Teoría de Respuesta al Ítem
 
 - Modelo "Multi-Unidimensional Pairwise Preference" [@stark_irt_2005]
 
-- Modelo "TRI Thurstoniana" [@brown_item_2011]
+- Modelo "Thurstonian IRT" [@brown_item_2011]
 
 
-## Justificación: Propuesta del modelo MUPP-2PL
+# Justificación
 
-- Simplificación del modelo MUPP
+- Desarrollo y aplicación del modelo MUPP-2PL
+
+    - Propuesta de método de estimación
+
+    - Aplicación a bloques EF binarios
+    
+    - Abordaje teórico de sus propiedades
 
 - Variante tipo _dominancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
 
-- Abordaje teórico
 
-- Propuesta de método de estimación
-
-
-<div class="notes">
+<aside class="notes">
 
 Modelos de dominancia se consideran más apropiados para ítems de personalidad (en general)
-
 Modelo más parsimonioso, y más sencillo de abordar teóricamente
 
-</div>
+</aside>
 
 
-## Estructura
+# Estructura
 
-- Estudio 1: Variante de dominancia dentro del marco MUPP: formulación y estimación mediante Markov Chain-Monte Carlo
+- Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
 
-- Estudio 2: Evaluación y mitigación de problemas pscométricos en el diseño de
-cuestionarios de elección forzosa multidimensionales para selección de personal
+- Estudio 2: Estudio y evaluación de la sensibilidad dimensional
 
-- Estudio 3: Comprobación del supuesto de invarianza del modelo MUPP-2PL
+- Estudio 3: Comprobación del supuesto de invarianza
 
-- Conclusiones
+- Conclusions (in English)
 
 
 # Estudio 1:<br>Variante de dominancia dentro del marco MUPP: formulación y estimación Markov Chain-Monte Carlo
 
 
-## Objetivos
+# Objetivos
 
 - Propuesta teórica del modelo
 
@@ -167,7 +198,7 @@ cuestionarios de elección forzosa multidimensionales para selección de persona
 - Poner a prueba estimación con datos empíricos
 
 
-<div class="notes">
+<aside class="notes">
 
 El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
 la estimación del mismo mediante el método Bayesiano propuesto.
@@ -183,10 +214,10 @@ Análisis Factorial Confirmatorio de la información bivariada.
 Estudio de simulación para comprobar las condiciones (sobre todo las
 supuestamente desfavorables)
 
-</div>
+</aside>
 
 
-## Modelo MUPP-2PL
+# Modelo MUPP-2PL
 
 Supuesto de independencia MUPP [@stark_irt_2005]:
 
@@ -199,29 +230,25 @@ $$
 </center>
 
 
-## Modelo MUPP-2PL
+# Modelo MUPP-2PL
 
 Supuesto de medida: 2PL [@birnbaum_latent_1968]
 
-<div class="columns-2">
+<div class="container">
+
+<div class="col">
 
 <br>
 
 $$
 \textrm{P}_i \left(X_{ij} = 1 | \theta_j \right) = \Phi_L \left(a_i\theta_j + b_i \right)
 $$
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
-```{r 2PL, fig.width=5, fig.height=4.5}
+</div>
+
+<div class="col">
+
+```{r 2PL, fig.width=5, fig.height=4.5, cache=FALSE}
 
 theta_vector <- seq(-3, 3, 0.1)
 
@@ -243,7 +270,7 @@ irf_plot <- irf %>% ggplot(
   scale_y_continuous(expand = expand_scale(.01))
 
 irf_plot %>% ggplotly(tooltip = "text") %>%
-  layout(
+  plotly::layout(
     xaxis = list(title = TeX("\\textrm{P}_i \\left(X_{ij} = 1 | \\theta_j \\right)")),
     yaxis = list(title = TeX("\\theta_j"))
   ) %>% plotly_conf
@@ -252,8 +279,10 @@ irf_plot %>% ggplotly(tooltip = "text") %>%
 
 </div>
 
+</div>
 
-## Modelo MUPP-2PL
+
+# Modelo MUPP-2PL
 
 $$
 \textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
@@ -266,100 +295,93 @@ INIT_BLOCK <- tibble(
 )
 DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
 
-block <- reactive(
-  {
-    tibble(
-      a1 = input$a1_adjust, a2 = input$a2_adjust, l = input$l_adjust,
-      pol1 = input$item_1_polarity, pol2 = input$item_2_polarity,
-      dim1 = input$item_1_dim, dim2 = input$item_2_dim
-    )
-  }
-)
-
-pov <- reactive(
-  {
-    DEFAULT_POV
-  }
-)
+# block <- reactive(
+#   {
+#     tibble(
+#       a1 = input$a1_adjust, a2 = input$a2_adjust, l = input$l_adjust,
+#       pol1 = input$item_1_polarity, pol2 = input$item_2_polarity,
+#       dim1 = input$item_1_dim, dim2 = input$item_2_dim
+#     )
+#   }
+# )
+# 
+# pov <- reactive(
+#   {
+#     DEFAULT_POV
+#   }
+# )
 # block %>% plot_MUPP_2PL_brf
 # block %>% plot_MUPP_2PL_vectors(cor = 0)
 
-fluidRow(
-  column(4, plotlyOutput(outputId = "MUPP_2PL_brf_view")),
-  column(4, plotOutput(outputId = "MUPP_2PL_vector_view")),
-  column(
-    4,
-    br(),
-    br(),
-    fluidRow(
-      column(
-        6, align = "center",
-        sliderInput(
-          "a1_adjust", label = HTML("<em>a<sub>i</sub></em><sub>1</sub>"), 0, 2,
-          value = INIT_BLOCK$a2, step = 0.1
-        )
-      ),
-      column(
-        3,
-        radioButtons(
-          "item_1_polarity", label = "Polaridad:", selected = INIT_BLOCK$pol1,
-          choiceNames = c("+", "-"), choiceValues = c("+", "-")
-        )
-      ),
-      column(
-        3,
-        radioButtons(
-          "item_1_dim", label = "Dimensión:", selected = INIT_BLOCK$dim1,
-          choiceNames = c("1", "2"),
-          choiceValues = c("theta_1", "theta_2")
-        )
-      )
-    ),
-    fluidRow(
-      column(
-        6, align = "center",
-        sliderInput(
-          "a2_adjust", label = HTML("<em>a<sub>i</sub></em><sub>2</sub>"), 0, 2,
-          value = INIT_BLOCK$a2, step = 0.1
-        )
-      ),
-      column(
-        3,
-        radioButtons(
-          "item_2_polarity", label = HTML("&nbsp;"), selected = INIT_BLOCK$pol2,
-          choiceNames = c("+", "-"), choiceValues = c("+", "-")
-        )
-      ),
-      column(
-        3,
-        radioButtons(
-          "item_2_dim", label = HTML("&nbsp;"), selected = INIT_BLOCK$dim2,
-          choiceNames = c("1", "2"),
-          choiceValues = c("theta_1", "theta_2")
-        )
-      )
-    ),
-    fluidRow(
-      align = "center",
-      sliderInput(
-        "l_adjust", label = HTML("<em>l<sub>i</sub></em>"), -2, 2,
-        value = INIT_BLOCK$l, step = 0.1, width = "90%"
-      )
-    )
-  )
-)
-
-output$MUPP_2PL_brf_view <- renderPlotly(
-  block() %>% plot_MUPP_2PL_brf(pov = pov())
-)
-output$MUPP_2PL_vector_view <- renderPlot(
-  block() %>% plot_MUPP_2PL_vectors(cor = 0)
-)
+# fluidRow(
+#   column(4, plotlyOutput(outputId = "MUPP_2PL_brf_view")),
+#   column(4, plotOutput(outputId = "MUPP_2PL_vector_view")),
+#   column(
+#     4,
+#     br(),
+#     br(),
+#     fluidRow(
+#       column(
+#         6, align = "center",
+#         sliderInput(
+#           "a1_adjust", label = HTML("<em>a<sub>i</sub></em><sub>1</sub>"), 0, 2,
+#           value = INIT_BLOCK$a2, step = 0.1
+#         )
+#       ),
+#       column(
+#         3,
+#         radioButtons(
+#           "item_1_polarity", label = "Polaridad:", selected = INIT_BLOCK$pol1,
+#           choiceNames = c("+", "-"), choiceValues = c("+", "-")
+#         )
+#       ),
+#       column(
+#         3,
+#         radioButtons(
+#           "item_1_dim", label = "Dimensión:", selected = INIT_BLOCK$dim1,
+#           choiceNames = c("1", "2"),
+#           choiceValues = c("theta_1", "theta_2")
+#         )
+#       )
+#     ),
+#     fluidRow(
+#       column(
+#         6, align = "center",
+#         sliderInput(
+#           "a2_adjust", label = HTML("<em>a<sub>i</sub></em><sub>2</sub>"), 0, 2,
+#           value = INIT_BLOCK$a2, step = 0.1
+#         )
+#       ),
+#       column(
+#         3,
+#         radioButtons(
+#           "item_2_polarity", label = HTML("&nbsp;"), selected = INIT_BLOCK$pol2,
+#           choiceNames = c("+", "-"), choiceValues = c("+", "-")
+#         )
+#       ),
+#       column(
+#         3,
+#         radioButtons(
+#           "item_2_dim", label = HTML("&nbsp;"), selected = INIT_BLOCK$dim2,
+#           choiceNames = c("1", "2"),
+#           choiceValues = c("theta_1", "theta_2")
+#         )
+#       )
+#     ),
+#     fluidRow(
+#       align = "center",
+#       sliderInput(
+#         "l_adjust", label = HTML("<em>l<sub>i</sub></em>"), -2, 2,
+#         value = INIT_BLOCK$l, step = 0.1, width = "90%"
+#       )
+#     )
+#   )
+# )
 
 ```
 
 
-<div class = "notes">
+<aside class = "notes">
 
 Algebraicamente equivalence a un modelo logístico multidimensional compensatorio
 
@@ -371,10 +393,10 @@ Si los dos ítems del bloque miden el mismo rasgo latente, se reduce nuevamente
 a un modelo logístico de 2 parámetros, con una indeterminación adicional que
 afecta a los parámetros de escala.
 
-</div>
+</aside>
 
 
-## Estimación Bayesiana
+# Estimación Bayesiana
 
 - Algoritmo Markov Chain-Monte Carlo: muestreo Metropolis-within-Gibbs
 
@@ -385,19 +407,19 @@ afecta a los parámetros de escala.
 - Estadísticos "Expected a Posteriori"
 
 
-<div class="notes">
+<aside class="notes">
 
 Previsiblemente, información completa mejor recuperación del espacio latente.
 
 Estimación conjunta, mayor precisión en la estimación de la incertidumbre de los
 parámetros incidentales.
 
-</div>
+</aside>
 
 
-## Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación: Recuperación de parámetros
 
-### Diseño
+## Diseño
 
 - Estimación sin bloques unidimensionales
 [@stark_irt_2005; @chernyshenko_normative_2009]
@@ -410,7 +432,7 @@ parámetros incidentales.
 ```
 
 
-<div class="notes">
+<aside class="notes">
 
 Interés en poner a prueba la estimación en condiciones supuestamente
 desfavorables.
@@ -426,15 +448,15 @@ o menos bloques heteropolares, junto con otras condiciones típicamente
 manipuladas: la correlación entre dimensiones del espacio latente, y la longitud
 del cuestionario.
 
-</div>
+</aside>
 
 
-## Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación: Recuperación de parámetros
 
 <center>
 Resultados: Parámetros de escala
 
-```{r simulation_recovery_results_scales, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+```{r simulation_recovery_results_scales, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 scale_corr_plot <- study_1_results %>% filter(Parametro == "Escalas") %>%
   mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
@@ -454,12 +476,12 @@ scale_corr_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 </center>
 
 
-## Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación: Recuperación de parámetros
 
 <center>
 Resultados: Parámetros de correlación
 
-```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
   mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
@@ -479,15 +501,18 @@ corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 </center>
 
 
-## Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación: Recuperación de parámetros
 
 <center>
 Resultados: Rasgo latente (precisión)
 
-```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 lt_rel_plots <- study_1_results %>%
-  filter(Parametro == "Rasgo latente", Variable == "OPBP") %>%
+  filter(
+    Parametro == "Rasgo latente", Variable == "OPBP",
+    Estadistico == "Fiabilidad"
+  ) %>%
   mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
   rename(`Proporción de bloques heteropolares` = Nivel) %>%
   ggplot(
@@ -495,7 +520,7 @@ lt_rel_plots <- study_1_results %>%
       `Proporción de bloques heteropolares`, Valor,
       group = Algoritmo, color = Algoritmo
     )
-  ) + facet_grid(cols = vars(Estadistico), scales = "free", space = "free") +
+  ) +
   geom_point(alpha = .5) + geom_line(alpha = .5) + ylab("") + ylim(0:1) +
   ggtitle("Niveles de rasgo latente")
 
@@ -505,12 +530,12 @@ lt_rel_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 </center>
 
 
-## Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación: Recuperación de parámetros
 
 <center>
 Resultados: Rasgo latente (incertidumbre)
 
-```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix"}
+```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 lt_CrI_plots <- study_1_results %>%
   filter(Parametro == "Rasgo latente", Variable == "QL") %>%
@@ -532,7 +557,7 @@ lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 </center>
 
 
-## Estudio empírico
+# Estudio empírico
 
 - Estimación de modelo "Big Five"
 
@@ -546,7 +571,7 @@ lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 - Fiabilidades mayores
 
 
-## Estudio 1: Conclusiones
+# Estudio 1: Discusión
 
 Modelo MUPP-2PL:
 
@@ -559,7 +584,7 @@ Modelo MUPP-2PL:
 - Estimable sin bloques heteropolares
 
 
-## Estudio 1: Conclusiones
+# Estudio 1: Discusión
 
 Estimación Bayesiana:
 
@@ -570,9 +595,7 @@ Estimación Bayesiana:
 - Generalización al modelo MUPP
 
 
-## Estudio 1: Conclusiones
-
-Comparación con CFA:
+En comparación con CFA:
 
 - Fiabilidades mayores
 
@@ -583,28 +606,10 @@ Comparación con CFA:
 - Estimaciones más razonables con escasez de información
 
 
-## Estudio 1: Limitaciones
-
-- Modelo MUPP-2PL:
-
-    - Sólo 2 ítems
-
-
-- Estimación Bayesiana:
-
-    - Estadísticos de ajuste
-
-    - Intensidad computacional
-
-    - Menor facilidad de uso
-
-
 # Estudio 2:<br>Evaluación y mitigación de problemas pscométricos en el diseño de cuestionarios de elección forzosa multidimensionales para selección de personal
 
 
-## Objetivos
-
-- Estudiar las propiedades teóricas de QEFs robustos a los sesgos de respuesta
+# Objetivos
 
 - Estudiar la estimación del modelo MUPP-2PL en condiciones de restricción
 dimensional
@@ -613,7 +618,7 @@ dimensional
 condiciones de restricción dimensional
 
 
-## QEF para selección de personal
+# QEF para selección de personal
 
 - Sensibilidad a sesgos de respuesta:
 
@@ -624,7 +629,7 @@ condiciones de restricción dimensional
 - Diseño de "pares bidimensionales directos" (DBP)
 
 
-## Indeterminación empírica del diseño DBP
+# Indeterminación empírica del diseño DBP
 
 <center>
 ```{r MUPP_2PL_empirical_underdetermination, cache=FALSE}
@@ -633,54 +638,54 @@ N_BLOCKS <- 18
 CORR_INIT <- 0
 LOCATION_PARAMS <- rnorm(N_BLOCKS, 0, .5)
 
-fluidRow(
-  column(
-    6,
-    plotOutput(
-      outputId = "MUPP_2PL_vectors_underidentification", height = "500px"
-    )
-  ),
-  column(
-    6, align = "center", br(), br(), br(), br(),
-    sliderInput(
-      "corr_adjust", label = HTML("Correlación entre escalas:"), -.75, .95,
-      value = CORR_INIT, step = 0.05
-    )
-  )
-)
+# fluidRow(
+#   column(
+#     6,
+#     plotOutput(
+#       outputId = "MUPP_2PL_vectors_underidentification", height = "500px"
+#     )
+#   ),
+#   column(
+#     6, align = "center", br(), br(), br(), br(),
+#     sliderInput(
+#       "corr_adjust", label = HTML("Correlación entre escalas:"), -.75, .95,
+#       value = CORR_INIT, step = 0.05
+#     )
+#   )
+# )
 
 
-eui_blocks <- reactive(
-  {
-    scales <- rbvlnorm(
-      N_BLOCKS, location = c(.25, .25),
-      bvlnorm.scale(c(.25, .25), input$corr_adjust)
-    )
-    
-    tibble(
-      a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
-      pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
-    )
-  }
-)
+# eui_blocks <- reactive(
+#   {
+#     scales <- rbvlnorm(
+#       N_BLOCKS, location = c(.25, .25),
+#       bvlnorm.scale(c(.25, .25), input$corr_adjust)
+#     )
+#     
+#     tibble(
+#       a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+#       pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
+#     )
+#   }
+# )
 
-output$MUPP_2PL_vectors_underidentification <- renderPlot(
-  eui_blocks() %>% plot_MUPP_2PL_vectors(cor = 0, alpha = .75, thickness = 1)
-  # res = 300
-)
+# output$MUPP_2PL_vectors_underidentification <- renderPlot(
+#   eui_blocks() %>% plot_MUPP_2PL_vectors(cor = 0, alpha = .75, thickness = 1)
+#   # res = 300
+# )
 
 ```
 </center>
 
 
-<!-- ## Indeterminación empírica del diseño DBP -->
+<!-- # Indeterminación empírica del diseño DBP -->
 
 <!-- - Matriz de información -->
 
 <!-- [Imagen scatter plot rasgos simulados y estimados] -->
 
 
-## Restricción dimensional del diseño DBP
+# Restricción dimensional del diseño DBP
 
 - Reducción de fiabilidad
     
@@ -689,7 +694,7 @@ output$MUPP_2PL_vectors_underidentification <- renderPlot(
 - Ipsatividad
 
 
-## Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional
 
 ```{r load_LEV_LSV_sims}
 ```
@@ -697,7 +702,7 @@ output$MUPP_2PL_vectors_underidentification <- renderPlot(
 ### Menor valor singular (*LSV*)
 
 <center>
-```{r plot_LSV_sims, dependson="load_LEV_LSV_sims", fig.width=9}
+```{r plot_LSV_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
 
 plot_LSV <- results %>%
   ggplot(
@@ -719,19 +724,19 @@ plot_LSV %>% ggplotly(tooltip = "text") %>%
 </center>
 
 
-<!-- ## Evaluación de la sensibilidad dimensional -->
+<!-- # Evaluación de la sensibilidad dimensional -->
 
 <!-- - Menor autovalor (*LEV*) -->
 
 <!-- [Imagen diferente correlación entre dimensiones (figura 3.2)] -->
 
 
-## Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional
 
 ### Menor autovalor (*LEV*)
 
 <center>
-```{r plot_LEV_corr_0.0_sims, dependson="load_LEV_LSV_sims", fig.width=9}
+```{r plot_LEV_corr_0.0_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
 
 results %>% plot_LEV(
   LEV_corr_0,
@@ -743,29 +748,29 @@ results %>% plot_LEV(
 </center>
 
 
-## Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional
 
 ### Menor autovalor (*LEV*)
 
 <center>
-```{r plot_LEV_corr_0.3_sims, dependson="load_LEV_LSV_sims", fig.width=9}
+```{r plot_LEV_corr_0.3_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
 
 results %>% plot_LEV(
   LEV_corr_0.3,
   LEV_max,
   "Suma de correlaciones = 0.3"
 )
-  
+
 ```
 </center>
 
 
-## Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional
 
 ### Menor autovalor (*LEV*)
 
 <center>
-```{r plot_LEV_corr_0.6_sims, dependson="load_LEV_LSV_sims", fig.width=9}
+```{r plot_LEV_corr_0.6_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
 
 results %>% plot_LEV(
   LEV_corr_0.6,
@@ -777,12 +782,12 @@ results %>% plot_LEV(
 </center>
 
 
-## Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional
 
 ### Menor autovalor (*LEV*)
 
 <center>
-```{r plot_LEV_corr_0.9_sims, dependson="load_LEV_LSV_sims", fig.width=9}
+```{r plot_LEV_corr_0.9_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
 
 results %>% plot_LEV(
   LEV_corr_0.9,
@@ -794,7 +799,7 @@ results %>% plot_LEV(
 </center>
 
 
-## Estudio de simulación
+# Estudio de simulación
 
 - Evaluar la estimación de rasgos latentes en condiciones de restricción
 dimensional
@@ -803,7 +808,7 @@ dimensional
 dimensional
 
 
-## Estudio de simulación
+# Estudio de simulación
 
 - Diseño:
 
@@ -820,29 +825,116 @@ dimensional
 
     - *LSV* y *LEV*
 
+```{r study_2_simulation_results}
+```
 
-## Estudio de simulación
+# Estudio de simulación
 
+<center>
 Resultados: Fiabilidad empírica
 
-[Gráfico de interacción BSC x LTC (figura 3.5)]
+```{r simulation_reliability, fig.height=4, fig.width=9, dependson="study_2_simulation_results", cache=FALSE}
+
+rel_results <- study_2_results %>%
+  filter(Variable == "BSC x LTC") %>% 
+  rename(`Fiabilidad media` = Valor) %>%
+  mutate(
+    `Correlación entre escalas` = c("-.7" %>% rep(3), "0" %>% rep(3), ".7" %>%
+                                      rep(3)) %>% factor(levels = unique(.)),
+    `Correlación entre dimensiones` = c(".00", ".25", ".50") %>% rep(3) %>%
+      factor(levels = unique(.))
+  )
+
+rel_plot <- rel_results %>%
+  ggplot(
+    aes(
+      `Correlación entre escalas`, `Fiabilidad media`,
+      group = `Correlación entre dimensiones`, color = `Correlación entre dimensiones`
+    )
+  ) +
+  geom_point() + geom_line()
+
+rel_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
 
 
-## Estudio de simulación
+# Estudio de simulación
 
+<center>
 Resultados: Distorsión de correlaciones
 
-[Gráficos NB, BSC, LTC]
+```{r simulation_corr_distortion, fig.height=4, fig.width=9, dependson="study_2_simulation_results", cache=FALSE}
+
+diff_corr_results <- study_2_results %>%
+  filter(Estadistico == "Dif. correlaciones") %>% 
+  rename(`Distorión correlaciones` = Valor)
+
+blocks_plot <- diff_corr_results %>% filter(Variable %in% "Nº bloques") %>%
+  mutate(Nivel = Nivel %>% factor) %>%
+  rename(`Nº bloques / dimensión` = Nivel) %>%
+  ggplot(
+    aes(
+      `Nº bloques / dimensión`, `Distorión correlaciones`,
+      group = Variable
+    )
+  ) +
+  geom_point() + geom_line()
+
+blocks_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+scales_plot <- diff_corr_results %>% filter(Variable %in% "Corr. escalas") %>%
+  mutate(Nivel = Nivel %>% factor(levels = unique(.))) %>%
+  rename(`Correlación entre escalas` = Nivel) %>%
+  ggplot(
+    aes(
+      `Correlación entre escalas`, `Distorión correlaciones`,
+      group = Variable
+    )
+  ) +
+  geom_point() + geom_line()
+
+scales_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+corrs_plot <- diff_corr_results %>% filter(Variable %in% "Corr. dimensiones") %>%
+  mutate(Nivel = Nivel %>% factor(levels = unique(.))) %>%
+  rename(`Correlaciones entre dimensiones` = Nivel) %>%
+  ggplot(
+    aes(
+      `Correlaciones entre dimensiones`, `Distorión correlaciones`,
+      group = Variable
+    )
+  ) +
+  geom_point() + geom_line()
+
+corrs_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+## TODO: etiquetar y fijar eje
+subplot(nrows = 1, blocks_plot, scales_plot, corrs_plot) %>%
+  config(displayModeBar = FALSE)
+
+```
+</center>
 
 
-## Estudio de simulación
+# Estudio de simulación
 
-Resultados: *LSV* y *LEV*
+Resultados: *LSV*
 
-[Figuras 3.6 y 3.7]
+![](res/LSV_reliability.png)
+![](res/LSV_correlation.png)
 
 
-## Estudio 2: Conclusiones
+# Estudio de simulación
+
+Resultados: *LEV*
+
+![](res/LEV_reliability.png)
+![](res/LEV_correlation.png)
+
+
+# Estudio 2: Conclusiones
 
 - Diseño DBP
 
@@ -851,15 +943,6 @@ Resultados: *LSV* y *LEV*
 - Índices de sensibilidad dimensional
 
 - Generalizabilidad de resultados
-
-
-## Estudio 2: Limitaciones
-
-- Validez externa
-
-- Uso de los índices de sensibilidad dimensional
-
-- Sensibilidad dimensional local
 
 
 # Estudio 3:<br>Comprobación del supuesto de invarianza del modelo MUPP-2PL
@@ -880,14 +963,14 @@ Resultados: *LSV* y *LEV*
 ```
 
 
-## Objetivos
+# Objetivos
 
 - Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
 
 - Explorar los factores que potencialmente influyen en la violación del supuesto
 
 
-## Supuesto de invarianza
+# Supuesto de invarianza
 
 MUPP-2PL:
 
@@ -908,7 +991,7 @@ $$
 $$
 
 
-## Supuesto de invarianza
+# Supuesto de invarianza
 
 <br>
 
@@ -927,7 +1010,7 @@ $$
 </center>
 
 
-## Supuesto de invarianza
+# Supuesto de invarianza
 
 ### Con ítems de escala graduada (i.e. Likert):
 
@@ -936,7 +1019,7 @@ $$
 $$a_{i_2}^*b_{i_2k'}-a_{i_1}^*b_{i_1k'}\longrightarrow l_i$$
 
 
-## Prueba de invarianza
+# Prueba de invarianza
 
 - Test razón de verosimilitud de modelos anidados (por parámetro)
 
@@ -946,15 +1029,15 @@ $$a_{i_2}^*b_{i_2k'}-a_{i_1}^*b_{i_1k'}\longrightarrow l_i$$
 - Estadístico: $SB-\chi^2$ robusto estrictamente positivo [@satorra_ensuring_2010]
 
 
-<div class="notes">
+<aside class="notes">
 
 Para calcular este estadístico y realizar el test de razón de verosimilitudes
 es necesario estimación CFA (Mplus; no algoritmo MCMC)
 
-</div>
+</aside>
 
 
-## Prueba de invarianza
+# Prueba de invarianza
 
 ### Conjunto de datos:
 
@@ -969,12 +1052,12 @@ es necesario estimación CFA (Mplus; no algoritmo MCMC)
 - Bloques homopolares y heteropolares
 
 
-## Resultados
+# Resultados
 
 <center>
 ### Parámetros de escala
 
-```{r joint_scatter_plot_scales_per_item_trait, dependson="all_stats_table"}
+```{r joint_scatter_plot_scales_per_item_trait, dependson="all_stats_table", cache=FALSE}
 
 scales.joint.collapsed %>% rename(`Block_code` = Block) %>%
   left_join(
@@ -990,7 +1073,7 @@ scales.joint.collapsed %>% rename(`Block_code` = Block) %>%
 </center>
 
 
-<div class="notes">
+<aside class="notes">
 
 Se cumple el supuesto de invarianza en casi todos los casos, menos en dos
 parámetros.
@@ -1002,15 +1085,15 @@ A nivel de cuestionario:
 "Compresión" del rango
 Desplazamiento del origen
 
-</div>
+</aside>
 
 
-## Resultados
+# Resultados
 
 <center>
 ### Parámetros de posición
 
-```{r joint_threshold_plot_per_block, dependson="all_stats_table", fig.width=9}
+```{r joint_threshold_plot_per_block, dependson="all_stats_table", fig.width=9, cache=FALSE}
 
 threshold_1 <- block.item.params.joint %>% plot_joint_threshold_per_block(
   `Intersección`, `Predicción umbral 1`
@@ -1039,7 +1122,7 @@ subplot(
 - "Desplazamiento" del origen
 
 
-<div class="notes">
+<aside class="notes">
 
 Más violaciones de invarianza con la segunda categoría.
 
@@ -1047,12 +1130,12 @@ Cuarta categoría la que menos.
 Posible "desplazamiento" del origen: sesgo negativo en bloques, o posible
 sesgo positivo (aquiescencia) en ítems, controlado por bloques
 
-</div>
+</aside>
 
 
-## Resultados
+# Resultados
 
-```{r intercepts_preprocessing, include=FALSE, dependson="all_stats_table", fig.width=9}
+```{r intercepts_preprocessing, include=FALSE, dependson="all_stats_table"}
 ```
 
 
@@ -1060,7 +1143,7 @@ sesgo positivo (aquiescencia) en ítems, controlado por bloques
 ### Exploración de violación del supuesto (posición)
 
 
-```{r non_invariant_intercepts_plot, dependson="intercepts_preprocessing", fig.width=9}
+```{r non_invariant_intercepts_plot, dependson="intercepts_preprocessing", fig.width=9, cache=FALSE}
 
 intercept.invariance.plot <- non.invariant.intercepts %>%
   ggplot(
@@ -1088,7 +1171,7 @@ intercept.invariance.plot %>% ggplotly %>% config(displayModeBar = FALSE)
 </center>
 
 
-<div class="notes">
+<aside class="notes">
 
 Los rasgos medidos por cada ítem pueden jugar un papel en la violación
 de la invarianza: más violaciones en Neuroticismo (en segunda posición) y
@@ -1099,16 +1182,16 @@ polaridad del ítem, y bloque, debido al diseño de bloques heteropolares)
 
 Patrón consistente para diferentes polaridades de ítems y rasgos
 
-</div>
+</aside>
 
 
-## Resultados
+# Resultados
 
 <center>
 ### Exploración de violación del supuesto (posición)
 
 
-```{r non_invariant_intercepts_plot_4th_threshold, dependson="intercepts_preprocessing", fig.width=9}
+```{r non_invariant_intercepts_plot_4th_threshold, dependson="intercepts_preprocessing", fig.width=9, cache=FALSE}
 
 intercept.invariance.plot.threshold.4 <- non.invariant.intercepts %>%
   filter(`Threshold category` == "Umbral 4") %>%
@@ -1131,7 +1214,7 @@ intercept.invariance.plot.threshold.4 %>% ggplotly %>%
 </center>
 
 
-<div class="notes">
+<aside class="notes">
 
 Asumiendo que se da el efecto de escalamiento y desplazamiento del origen,
 podemos centrarnos en la categoría 4, asumiendo que sus predicciones son más
@@ -1148,10 +1231,10 @@ podría afectar a la invarianza)
 El signo del error de predicción está asociado con la polaridad y el rasgo
 medido.
 
-</div>
+</aside>
 
 
-## Conclusiones
+# Conclusiones
 
 - Metodología para poner a prueba el supuesto del modelo MUPP-2PL
 
@@ -1166,7 +1249,7 @@ medido.
     - Violaciones de invarianza a nivel de bloque
 
 
-<div class="notes">
+<aside class="notes">
 
 El cumplimiento del supuesto de invarianza permite contruir QEFs basándose
 en las propiedades de ítems Likert precalibrados
@@ -1182,26 +1265,19 @@ de este efecto (e.g. sesgo de aquiescencia en los ítems)
 Hipótesis a comprobar sobre los bloques, mediante ítems/bloques experimentales
 diseñados para inducir o mitigar las violaciones de invarianza
 
-</div>
+</aside>
 
 
-## Limitaciones
-
-- Manipulación experimental de fuentes de violación de la invarianza
-
-- Estimación con bloques con *Extraversión*
+# Conclusions
 
 
-# General conclusions
-
-
-<div class="notes">
+<aside class="notes">
 
 We have discussed the three studies separately. Now we will discuss some
 conclusions fro the results of the three studies and the relationships among
 them.
 
-</div>
+</aside>
 
 
 ---
@@ -1227,7 +1303,7 @@ without unidimensional blocks, and without blocks with different polarity
 combinations (i.e., heteropolar blocks)
 
 
-<div class="notes">
+<aside class="notes">
 
 This model is more parsimonious than the original MUPP model.
 In addition, it may be more appropriate than the original when the latent
@@ -1236,7 +1312,7 @@ agreement to the items in a block is a monotonical function of the trait level.
 Scaling factor aside, their parameters and estimation methods are
 interchangeable with negligible consequences.
 
-</div>
+</aside>
 
 
 ---
@@ -1259,7 +1335,7 @@ and (b) distortion of the correlations among the latent trait estimates,
 in the form of negative bias.
 
 
-<div class="notes">
+<aside class="notes">
 
 Arguably,
 the first result is due to the joint estimation of structural and incidental
@@ -1270,7 +1346,7 @@ These properties are the same attributed to ipsative scores. Similar to them,
 the distortion of the latent trait estimates will be worse the more positive the
 actual latent dimension correlations are.
 
-</div>
+</aside>
 
 
 ---
@@ -1288,7 +1364,7 @@ the property of dimensional sensitivity of an instrument.
 However, neither of these indices capture all the relevant phenomena related to
 the dimensional restriction of a DBP FC instrument.
 
-<div class="notes">
+<aside class="notes">
 
 This property can be quantified, and its magnitude estimated using two
 proposed indices:
@@ -1297,7 +1373,7 @@ the least singular value (LSV), and the least eigenvalue (LEV).
 Therefore, these indices should not be used for attempting to maximize the
 dimensional sensitivity.
 
-</div>
+</aside>
 
 
 ---
@@ -1323,7 +1399,7 @@ attending to its item pairings.
 partially predictable patterns.
 
 
-<div class="notes">
+<aside class="notes">
 
 We have showcased the Likelihood Ratio test applied to
 the dataset of empirical responses to a FC questionnaire measuring
@@ -1339,7 +1415,7 @@ Global translation and/or scaling transformations may affect the whole FC
 format, while individual block parameters may deviate from their predictions due
 to factors such as item dimensions or polarities.
 
-</div>
+</aside>
 
 
 ## Limitations
@@ -1355,7 +1431,7 @@ Regarding the model and its applications:
 - Invariance assumption with DBP design
 
 
-<div class="notes">
+<aside class="notes">
 
 Relevant because:
 This format is widely popular and is used in many instruments
@@ -1377,7 +1453,7 @@ structural parameter estimates.
 If the underidentification is local to incidental parameters,
 it may be possible that block parameters can be still accurately recovered.
 
-</div>
+</aside>
 
 
 ## Limitations
@@ -1386,9 +1462,11 @@ Regarding the Bayesian estimation procedure:
 
 - No model fit indices introduced
 
+- High technical skill required
+
 - Intensive consumption of computational resources
 
-- Other optimization strategies
+    - Optimization strategies
 
 - More general modeling framework (e.g. allowing restrictions and model nesting)
 
@@ -1421,5 +1499,4 @@ Aside from Ph.D. project:
 - Several posters in national and international conferences
 
 
-## Referencias {.smaller}
-
+# Bibliografía seleccionada {.small}
