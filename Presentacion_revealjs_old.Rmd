@@ -36,15 +36,6 @@ knitr::read_chunk(lines = readLines("R/Presentacion.R", encoding = 'UTF-8'))
 
 ```
 
-https://github.com/rstudio/crosstalk
-
-http://rstudio.github.io/crosstalk/using.html
-
-https://plotly-book.cpsievert.me/
-
-http://rstudio.github.io/crosstalk/authoring.html
-
-
 
 ## {data-background="www/********************.jpg" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
 

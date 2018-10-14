@@ -10,6 +10,7 @@ output:
     incremental: true
     center: false
     slide_level: 1
+    maxScale: 0.6
     fig_width: 7
     fig_height: 4.5
     fig_caption: false
@@ -43,7 +44,7 @@ init_ggplot()
 ```
 
 
-# {data-background-image="res/LOGO_UAM_NEGRO_VARIANTE.jpg" data-background-position='50% 80%' data-background-size='50% auto' data-background-transition='slide'}
+# {data-background-image="res/LOGO_UAM_NEGRO_VARIANTE.jpg" data-background-position='5% 4%' data-background-size='10% auto' data-background-transition='slide'}
 
 ```{css styles}
 
@@ -68,21 +69,16 @@ reveal p {
 
 ```{r title}
 
-h1("Modelos de TRI para cuestionarios de elección forzosa")
-br()
-
-```
-
-### Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud
-
-#### Por: Daniel Morillo
-#### Supervisores: Francisco José Abad, Iwin Leenen
-#### Tutor: Vicente Ponsoda
-
-```{r date}
+h2("Modelos de Teoría de Respuesta al Ítem para cuestionarios de elección forzosa")
+h4("Tesis doctoral enviada para la obtención del título de Doctor en Psicología Clínica y de la Salud")
 
 br()
-lubridate::today() %>% format('%d de %B de %Y') %>% h5
+
+p("Por: Daniel Morillo")
+p("Supervisores: Francisco José Abad, Iwin Leenen")
+p("Tutor: Vicente Ponsoda")
+
+lubridate::today() %>% format('%d de %B de %Y') %>% p
 
 ```
 
@@ -90,11 +86,14 @@ lubridate::today() %>% format('%d de %B de %Y') %>% h5
 <aside class="notes">
 
 Buenos días.
-Ante todo quisiera a gradecer a los miembros del tribunal que hayan aceptado
-evaluar el trabajo de mi tesis y estar hoy presentes para emitir su juicio
-experto sobre ella, y a todas las personas presentes por estar aquí y darme la
+Ante todo muchas gracias a los miembros del tribunal por acceder a evaluar el
+trabajo de mi tesis doctoral, así como al público por estar aquí y darme la
 oportunidad de exponer públicamente los resultados de mi investigación
 predoctoral.
+
+Mi nombre es Daniel Morillo, y el título de mi proyecto de tesis es
+Vamos a comenzar haciendo una breve introducción para establecer el contexto
+teórico.
 
 </aside>
 
@@ -102,122 +101,82 @@ predoctoral.
 # Introducción: Marco teórico
 
 
-# El formato de Elección Forzosa
+# El formato de Elección Forzosa multidimensional
 
 - Formato de respuesta
 
 - Evaluación no cognitiva
 
-- Objetivo:
+- Control de sesgos de respuesta
 
-    - Controlar sesgos de respuesta
-
-    - Aumento de validez
+- Puntuaciones ipsativas [@cattell_psychological_1944]
 
 
-# El formato de Elección Forzosa multidimensional
+<aside class="notes">
 
-- Bloques de ítems de distintas dimensiones
+El formato EF multidimensional se utiliza cada vez más, la industria demanda
+aplicaciones del mismo, principalmente con el objetivo de controlar los sesgos
+de respuesta en cuestionarios para la medición de rasgos no cognitivos, con el
+objeto de controlar los sesgos de respuseta, y por tanto aumentar su validez.
 
-- Medición de varios rasgos simultáneamente
-
-- Puntuaciones ipsativas
+</aside>
 
 
 # Ipsatividad
 
-<!-- TODO: Referencias -->
-
-- Puntuaciones intra-persona
-
 - Estructura del espacio latente distorsionada [@clemans_analytical_1966]:
 
-<div class="fragment">
-$$
-\overline{r} = -\frac{1}{D-1}
-$$
-</div>
-
-- Fiabilidad reducida
+- Fiabilidad reducida [@hicks_properties_1970]
 
 - Validez predictiva distorsionada
 
-- No comparables entre personas
+- Puntuaciones intra-persona
 
 
-# Aplicación de la Teoría de Respuesta al Ítem
+<aside class="notes">
 
-- Modelo "Multi-Unidimensional Pairwise Preference" [@stark_irt_2005]
+Las puntuaciones de estos instrumentos serían intra-persona, es decir,
+permitirían comparar diferentes niveles en diferentes rasgos para una misma
+persona, pero no permitirían comparar el mismo rasgo entre diferentes personas
 
-- Modelo "Thurstonian IRT" [@brown_item_2011]
+</aside>
 
 
 # Justificación
+
+## Aplicación de la Teoría de Respuesta al Ítem
 
 - Desarrollo y aplicación del modelo MUPP-2PL
 
     - Propuesta de método de estimación
 
-    - Aplicación a bloques EF binarios
+    - Aplicación a bloques EF de ítems emparejados
     
     - Abordaje teórico de sus propiedades
 
-- Variante tipo _dominancia_: logístico de 2 parámetros [@birnbaum_latent_1968]
+- Basado en el modelo MUPP [@stark_irt_2005]
 
 
 <aside class="notes">
 
-Modelos de dominancia se consideran más apropiados para ítems de personalidad (en general)
-Modelo más parsimonioso, y más sencillo de abordar teóricamente
+El objetivo de esta tesis es proponer y estudiar las propiedades de un modelo
+de teoría de respuesta al ítem, con el objeto de solucionar los problemas de
+derivados de la ipsatividad de las puntuaciones en cuestionarios de EF
+multidimensionales.
+
+Está basado en el modelo MUPP, propuesto originalmente por Stark, Chernyshenko y
+Drasgow. Este modelo ya ha sido planteado anteriormente para solucionar los
+problemas de ipsatividad de este tipo de instrumentos.
+
+Sin embargo, el modelo MUPP original está basado en un modelo de medida de punto
+ideal, con una formulación compleja y gran número de parámetros.
 
 </aside>
 
 
-# Estructura
+# Justificación
 
-- Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
-
-- Estudio 2: Estudio y evaluación de la sensibilidad dimensional
-
-- Estudio 3: Comprobación del supuesto de invarianza
-
-- Conclusions (in English)
-
-
-# Estudio 1:<br>Variante de dominancia dentro del marco MUPP: formulación y estimación Markov Chain-Monte Carlo
-
-
-# Objetivos
-
-- Propuesta teórica del modelo
-
-- Propuesta de algoritmo Markov Chain-Monte Carlo (estimación Bayesiana conjunta)
-
-- Comparar con estimación factorial
-
-- Poner a prueba estimación con datos empíricos
-
-
-<aside class="notes">
-
-El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así como
-la estimación del mismo mediante el método Bayesiano propuesto.
-Se han utilizado para ello diferentes condiciones consideradas más, o menos favorables,
-en función de las propiedades teóricas del modelo y de consideraciones aportadas por la
-literatura previa.
-
-Asimismo, como existe una equivalencia práctica entre el modelo MUPP-2PL
-y el modelo TIRT, esto nos permite comparar los dos métodos de estimación, el
-Bayesiano, basado en información completa, y el método frecuentista, basado en
-Análisis Factorial Confirmatorio de la información bivariada.
-
-Estudio de simulación para comprobar las condiciones (sobre todo las
-supuestamente desfavorables)
-
-</aside>
-
-
-# Modelo MUPP-2PL
+## Aplicación de la Teoría de Respuesta al Ítem
 
 Supuesto de independencia MUPP [@stark_irt_2005]:
 
@@ -228,6 +187,9 @@ $$
 \textrm{P}_i \left(Y_{ij} = 1 \right) = \frac{\textrm{P}_i \left(X_{i_1j} = 1 \right) \textrm{P}_i \left(X_{i_2j} = 0 \right)}{\textrm{P}_i \left(X_{i_1j} = 1 \right) \textrm{P}_i \left(X_{i_2j} = 0 \right) + \textrm{P}_i \left(X_{i_1j} = 0 \right) \textrm{P}_i \left(X_{i_2j} = 1 \right)}
 $$
 </center>
+
+- Supuesto de _dominancia_: modelo logístico de 2 parámetros
+[@birnbaum_latent_1968]
 
 
 # Modelo MUPP-2PL
@@ -282,116 +244,82 @@ irf_plot %>% ggplotly(tooltip = "text") %>%
 </div>
 
 
-# Modelo MUPP-2PL
+<aside class="notes">
 
+Esta propuesta, sin embargo, está basada en un modelo de medida más simple y con
+más desarrollos teóricos previos. Esto nos permite formular un modelo más
+parsimonioso, más sencillo de abordar teóricamente, y con un mayor soporte
+teórico en lo que a la medición de rasgos de personalidad se refiere.
+
+</aside>
+
+
+# Estructura
+
+- Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
+
+- Estudio 2: Estudio y evaluación de la sensibilidad dimensional
+
+- Estudio 3: Comprobación del supuesto de invarianza
+
+- Conclusions
+
+
+<aside class="notes">
+
+Conclusiones en inglés
+
+</aside>
+
+
+# Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
+
+
+# Objetivos
+
+- Propuesta teórica del modelo
+
+- Desarrollo de algoritmo de estimación Bayesiana conjunta
+(Markov Chain-Monte Carlo)
+
+- Comparación con estimación factorial
+
+
+<aside class="notes">
+
+El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así
+como la estimación del mismo mediante el método Bayesiano propuesto.
+
+Asimismo, como existe una equivalencia práctica entre el modelo MUPP-2PL
+y el modelo TIRT como veremos, esto nos permite comparar los dos métodos de
+estimación, el Bayesiano planteado en este capítulo, basado en información
+completa, y el método frecuentista, basado en Análisis Factorial Confirmatorio
+de la información bivariada.
+
+Por lo tant, se han puesto a prueba ambos métodos de estimación en un estudio de
+simulación y en datos empíricos para comprobar cómo afectan las condiciones
+(sobre todo las supuestamente desfavorables según la literatura previa)
+
+</aside>
+
+
+# Equivalencia entre modelos
+
+- Modelo Logístico Multidimensional Compensatorio
+
+<div class="fragment">
 $$
 \textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
 $$
-
-```{r MUPP_2PL_BRF_vector_applet, cache=FALSE}
-
-INIT_BLOCK <- tibble(
-  a1 = 1, a2 = 1, l = 0, pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
-)
-DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
-
-# block <- reactive(
-#   {
-#     tibble(
-#       a1 = input$a1_adjust, a2 = input$a2_adjust, l = input$l_adjust,
-#       pol1 = input$item_1_polarity, pol2 = input$item_2_polarity,
-#       dim1 = input$item_1_dim, dim2 = input$item_2_dim
-#     )
-#   }
-# )
-# 
-# pov <- reactive(
-#   {
-#     DEFAULT_POV
-#   }
-# )
-# block %>% plot_MUPP_2PL_brf
-# block %>% plot_MUPP_2PL_vectors(cor = 0)
-
-# fluidRow(
-#   column(4, plotlyOutput(outputId = "MUPP_2PL_brf_view")),
-#   column(4, plotOutput(outputId = "MUPP_2PL_vector_view")),
-#   column(
-#     4,
-#     br(),
-#     br(),
-#     fluidRow(
-#       column(
-#         6, align = "center",
-#         sliderInput(
-#           "a1_adjust", label = HTML("<em>a<sub>i</sub></em><sub>1</sub>"), 0, 2,
-#           value = INIT_BLOCK$a2, step = 0.1
-#         )
-#       ),
-#       column(
-#         3,
-#         radioButtons(
-#           "item_1_polarity", label = "Polaridad:", selected = INIT_BLOCK$pol1,
-#           choiceNames = c("+", "-"), choiceValues = c("+", "-")
-#         )
-#       ),
-#       column(
-#         3,
-#         radioButtons(
-#           "item_1_dim", label = "Dimensión:", selected = INIT_BLOCK$dim1,
-#           choiceNames = c("1", "2"),
-#           choiceValues = c("theta_1", "theta_2")
-#         )
-#       )
-#     ),
-#     fluidRow(
-#       column(
-#         6, align = "center",
-#         sliderInput(
-#           "a2_adjust", label = HTML("<em>a<sub>i</sub></em><sub>2</sub>"), 0, 2,
-#           value = INIT_BLOCK$a2, step = 0.1
-#         )
-#       ),
-#       column(
-#         3,
-#         radioButtons(
-#           "item_2_polarity", label = HTML("&nbsp;"), selected = INIT_BLOCK$pol2,
-#           choiceNames = c("+", "-"), choiceValues = c("+", "-")
-#         )
-#       ),
-#       column(
-#         3,
-#         radioButtons(
-#           "item_2_dim", label = HTML("&nbsp;"), selected = INIT_BLOCK$dim2,
-#           choiceNames = c("1", "2"),
-#           choiceValues = c("theta_1", "theta_2")
-#         )
-#       )
-#     ),
-#     fluidRow(
-#       align = "center",
-#       sliderInput(
-#         "l_adjust", label = HTML("<em>l<sub>i</sub></em>"), -2, 2,
-#         value = INIT_BLOCK$l, step = 0.1, width = "90%"
-#       )
-#     )
-#   )
-# )
-
-```
-
+</div>
 
 <aside class = "notes">
 
-Algebraicamente equivalence a un modelo logístico multidimensional compensatorio
+El modelo propuesto es algebraicamente equivalente a un modelo logístico
+multidimensional compensatorio, una propiedad muy útil para estudiar
+posteriormente algunas de sus propiedades desde un punto de vista teórico
 
-Bloques heteropolares / homopolares
-
-Bloques unidimensionales
-
-Si los dos ítems del bloque miden el mismo rasgo latente, se reduce nuevamente
-a un modelo logístico de 2 parámetros, con una indeterminación adicional que
-afecta a los parámetros de escala.
+Asimismo, hay una cuasi-equivalencia con el modelo TIRT
 
 </aside>
 
@@ -417,16 +345,17 @@ parámetros incidentales.
 </aside>
 
 
-# Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación
 
-## Diseño
+<center>Diseño</center>
 
-- Estimación sin bloques unidimensionales
-[@stark_irt_2005; @chernyshenko_normative_2009]
+- Estimación sin bloques unidimensionales:
+
+    It is currently believed that unidimensional pairings are needed to identify
+    the metric so that scores on different dimensions can be estimated and
+    compared in a meaningful way [@chernyshenko_normative_2009]
 
 - Estimación con/sin bloques heteropolares [@brown_item_2011]
-
-- Comparación con estimación CFA
 
 ```{r simulation_recovery_result_matrix}
 ```
@@ -451,62 +380,11 @@ del cuestionario.
 </aside>
 
 
-# Estudio de simulación: Recuperación de parámetros
+# Estudio de simulación
 
-<center>
-Resultados: Parámetros de escala
-
-```{r simulation_recovery_results_scales, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
-
-scale_corr_plot <- study_1_results %>% filter(Parametro == "Escalas") %>%
-  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
-  rename(`Correlación` = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
-  ggplot(
-    aes(
-      `Proporción de bloques heteropolares`, `Correlación`,
-      group = Algoritmo, color = Algoritmo
-    )
-  ) +
-  geom_point() + geom_line() + ylim(0:1) +
-  ggtitle("Escala verdadera - estimación")
-
-scale_corr_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
-```
-</center>
-
-
-# Estudio de simulación: Recuperación de parámetros
-
-<center>
-Resultados: Parámetros de correlación
-
-```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
-
-corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
-  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
-  rename(RMSE = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
-  ggplot(
-    aes(
-      `Proporción de bloques heteropolares`, RMSE,
-      group = Algoritmo, color = Algoritmo
-    )
-  ) +
-  geom_point() + geom_line() + ylim(c(0, .1)) +
-  ggtitle("Correlaciones entre dimensiones latentes")
-
-corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
-```
-</center>
-
-
-# Estudio de simulación: Recuperación de parámetros
-
-<center>
 Resultados: Rasgo latente (precisión)
 
-```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
+```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 lt_rel_plots <- study_1_results %>%
   filter(
@@ -527,15 +405,54 @@ lt_rel_plots <- study_1_results %>%
 lt_rel_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 ```
-</center>
 
 
-# Estudio de simulación: Recuperación de parámetros
+<aside class="notes">
 
-<center>
-Resultados: Rasgo latente (incertidumbre)
+Fiabilidad decrece cuando sólo hay bloques homopolares
 
-```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, dependson="simulation_recovery_result_matrix", cache=FALSE}
+</aside>
+
+
+# Estudio de simulación
+
+<center>Resultados: Parámetros de correlación</center>
+
+```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
+
+corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
+  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
+  rename(RMSE = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
+  ggplot(
+    aes(
+      `Proporción de bloques heteropolares`, RMSE,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) +
+  geom_point() + geom_line() + ylim(c(0, .1)) +
+  ggtitle("Correlaciones entre dimensiones latentes")
+
+corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+
+
+<aside class="notes">
+
+Estructura del espacio latente se estima con mayor error cuando sólo hay bloques
+homopolare, pero el algoritmo MCMC pierde menos precisión.
+Presumiblemente, esto sería debido a la estimación conjunta de parámetros
+estructurales e incidentales, a las propiedades de la estimación Bayesiana, o a
+ambas.
+
+</aside>
+
+
+# Estudio de simulación
+
+<center>Resultados: Rasgo latente (incertidumbre)</center>
+
+```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 lt_CrI_plots <- study_1_results %>%
   filter(Parametro == "Rasgo latente", Variable == "QL") %>%
@@ -554,16 +471,26 @@ lt_CrI_plots <- study_1_results %>%
 lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 ```
-</center>
+
+
+<aside class="notes">
+
+También, debido a la estimación conjnta, la incertidumbre en la estimación de
+los parámetros de las personas, cuantificada según la cobertura de los
+intervalos de credibilidad, es más precisa con el algoritmo MCMC.
+Mientras que el análisis factorial confirmatorio infraestima la incertidumbre de
+los parámetros, y además se ve afectado por algunas condiciones de estimación
+como el número de bloques.
+
+</aside>
 
 
 # Estudio empírico
 
 - Estimación de modelo "Big Five"
 
-- Algoritmo MCMC y CFA
-
 - Estimaciones menos extremas:
+
     - En parámetros de escala de algunos ítems
     
     - En correlaciones del espacio latente
@@ -571,39 +498,28 @@ lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 - Fiabilidades mayores
 
 
-# Estudio 1: Discusión
+<aside class="notes">
+
+En un estudio empírico con el modelo Big Five, encontramos:
+
+Mayores fiabilidades con el algoritmo MCMC
+
+Aparentemente mejor convergencia:
+En parámetros de escala cuando la información empírica es escasa
+En los parámetros de correlación del espacio latente
+
+</aside>
+
+
+# Discusión
 
 Modelo MUPP-2PL:
-
-- Equivalencia con TIRT
-
-- Indeterminación de parámetros de posición
 
 - Estimable sin bloques unidimensionales
 
 - Estimable sin bloques heteropolares
 
-
-# Estudio 1: Discusión
-
-Estimación Bayesiana:
-
-- Permite estimación conjunta
-
-- Buena recuperación con nº bajo de dimensiones
-
-- Generalización al modelo MUPP
-
-
-En comparación con CFA:
-
-- Fiabilidades mayores
-
-- Mejor estimación de incertidumbre en parámetros de rasgo latente
-
-- Mayor precisión en correlaciones del espacio latente
-
-- Estimaciones más razonables con escasez de información
+- Mejores resultados del algoritmo MCMC en algunos parámetros
 
 
 # Estudio 2:<br>Evaluación y mitigación de problemas pscométricos en el diseño de cuestionarios de elección forzosa multidimensionales para selección de personal

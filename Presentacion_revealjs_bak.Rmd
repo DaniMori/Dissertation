@@ -107,7 +107,6 @@ main_layout(
 - Aumento de validez
 
 
-
 ## El formato de Elección Forzosa multidimensional
 
 - Agrupamiento de indicadores de distintas dimensiones
