@@ -11,8 +11,8 @@ output:
     center: false
     slide_level: 1
     maxScale: 0.6
-    fig_width: 7
-    fig_height: 4.5
+    fig_width: 6
+    fig_height: 4
     fig_caption: false
     self_contained: false
     reveal_plugins: ["notes"]
@@ -28,7 +28,7 @@ editor_options:
 library(tidyverse)
 library(magrittr)
 library(knitr)
-# library(shiny)
+library(gridExtra)
 
 "R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
@@ -98,7 +98,13 @@ teórico.
 </aside>
 
 
-# Introducción: Marco teórico
+---
+
+```{r intro_title_slide}
+
+main_layout("Introducción:", "Marco teórico")
+
+```
 
 
 # El formato de Elección Forzosa multidimensional
@@ -124,6 +130,8 @@ objeto de controlar los sesgos de respuseta, y por tanto aumentar su validez.
 
 # Ipsatividad
 
+<br>
+
 - Estructura del espacio latente distorsionada [@clemans_analytical_1966]:
 
 - Fiabilidad reducida [@hicks_properties_1970]
@@ -142,9 +150,12 @@ persona, pero no permitirían comparar el mismo rasgo entre diferentes personas
 </aside>
 
 
-# Justificación
+# Justificación {data-transition="slide-in fade-out"}
 
-## Aplicación de la Teoría de Respuesta al Ítem
+</br>
+<center>Aplicación de la Teoría de Respuesta al Ítem</center>
+
+</br>
 
 - Desarrollo y aplicación del modelo MUPP-2PL
 
@@ -168,49 +179,68 @@ Está basado en el modelo MUPP, propuesto originalmente por Stark, Chernyshenko 
 Drasgow. Este modelo ya ha sido planteado anteriormente para solucionar los
 problemas de ipsatividad de este tipo de instrumentos.
 
-Sin embargo, el modelo MUPP original está basado en un modelo de medida de punto
-ideal, con una formulación compleja y gran número de parámetros.
-
 </aside>
 
 
-# Justificación
+# Justificación {data-transition="fade-in slide-out"}
 
-## Aplicación de la Teoría de Respuesta al Ítem
+</br>
+<center>Aplicación de la Teoría de Respuesta al Ítem</center>
 
-Supuesto de independencia MUPP [@stark_irt_2005]:
+</br>
 
-<br>
+- Supuesto de independencia MUPP [@stark_irt_2005]:
 
-<center>
+</br>
+
+<div class="fragment" style="align:center">
+<small>
 $$
 \textrm{P}_i \left(Y_{ij} = 1 \right) = \frac{\textrm{P}_i \left(X_{i_1j} = 1 \right) \textrm{P}_i \left(X_{i_2j} = 0 \right)}{\textrm{P}_i \left(X_{i_1j} = 1 \right) \textrm{P}_i \left(X_{i_2j} = 0 \right) + \textrm{P}_i \left(X_{i_1j} = 0 \right) \textrm{P}_i \left(X_{i_2j} = 1 \right)}
 $$
-</center>
+</small>
+</div>
+
+</br>
 
 - Supuesto de _dominancia_: modelo logístico de 2 parámetros
 [@birnbaum_latent_1968]
 
+<aside class="notes">
+
+El modelo se basa en el supuesto de que la persona evaluada toma
+la decisión de acuerdo o desacuerdo con cada una de las dos opciones de
+respuesta de manera independiente.
+
+Sin embargo, el modelo MUPP original está basado en un modelo de medida de punto
+ideal, con una formulación compleja y gran número de parámetros, mientras que
+nuestra propuesta asume un modelo de medida de dominancia, que supone que la
+probabilidad de acuerdo con cada una de las dos opciones sigue un modelo
+logístico de dos parámetros.
+
+</aside>
+
 
 # Modelo MUPP-2PL
 
-Supuesto de medida: 2PL [@birnbaum_latent_1968]
+<center>Supuesto de medida: 2PL [@birnbaum_latent_1968]</center>
+
+</br>
 
 <div class="container">
-
-<div class="col">
-
-<br>
-
+  <div class="col">
+  
+  <small>
+    
 $$
 \textrm{P}_i \left(X_{ij} = 1 | \theta_j \right) = \Phi_L \left(a_i\theta_j + b_i \right)
 $$
-
-</div>
-
-<div class="col">
-
-```{r 2PL, fig.width=5, fig.height=4.5, cache=FALSE}
+  </small>
+  </div>
+  
+  <div class="col">
+  
+```{r 2PL, fig.width=4, fig.height=3.5, cache=FALSE}
 
 theta_vector <- seq(-3, 3, 0.1)
 
@@ -238,23 +268,23 @@ irf_plot %>% ggplotly(tooltip = "text") %>%
   ) %>% plotly_conf
 
 ```
-
-</div>
-
+  </div>
 </div>
 
 
 <aside class="notes">
 
-Esta propuesta, sin embargo, está basada en un modelo de medida más simple y con
-más desarrollos teóricos previos. Esto nos permite formular un modelo más
-parsimonioso, más sencillo de abordar teóricamente, y con un mayor soporte
-teórico en lo que a la medición de rasgos de personalidad se refiere.
+Este modelo es más simple y con más desarrollos teóricos previos que el modelo
+de medida de punto ideal, lo que permite formular un modelo más parsimonioso,
+más sencillo de abordar teóricamente, y con un mayor soporte teórico en el
+ámbito de la medición de rasgos de personalidad.
 
 </aside>
 
 
 # Estructura
+
+<br>
 
 - Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
 
@@ -272,10 +302,21 @@ Conclusiones en inglés
 </aside>
 
 
-# Estudio 1: Propuesta del modelo MUPP-2PL y algoritmo de estimación
+---
+
+```{r study_1_title_slide}
+
+main_layout(
+  "Estudio 1:",
+  "Propuesta del modelo MUPP-2PL y algoritmo de estimación"
+)
+
+```
 
 
 # Objetivos
+
+</br>
 
 - Propuesta teórica del modelo
 
@@ -305,13 +346,23 @@ simulación y en datos empíricos para comprobar cómo afectan las condiciones
 
 # Equivalencia entre modelos
 
-- Modelo Logístico Multidimensional Compensatorio
-
+</br>
 <div class="fragment">
 $$
 \textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
 $$
 </div>
+
+- Modelo Logístico Multidimensional Compensatorio
+
+- Thurstonian IRT model:
+
+<div class="fragment">
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_N\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+</div>
+
 
 <aside class = "notes">
 
@@ -319,46 +370,71 @@ El modelo propuesto es algebraicamente equivalente a un modelo logístico
 multidimensional compensatorio, una propiedad muy útil para estudiar
 posteriormente algunas de sus propiedades desde un punto de vista teórico
 
-Asimismo, hay una cuasi-equivalencia con el modelo TIRT
+Asimismo, hay una cuasi-equivalencia con el modelo TIRT, que se diferencia
+únciamente por la función de enlace, que es la función de probabilidad acumulada
+en lugar de la función logística.
 
 </aside>
 
 
 # Estimación Bayesiana
 
-- Algoritmo Markov Chain-Monte Carlo: muestreo Metropolis-within-Gibbs
+</br>
+
+- Algoritmo Markov Chain-Monte Carlo
 
 - Información completa (vs. bivariada)
 
 - Estimación conjunta
+
+- Muestreo Metropolis-within-Gibbs adaptativo
 
 - Estadísticos "Expected a Posteriori"
 
 
 <aside class="notes">
 
-Previsiblemente, información completa mejor recuperación del espacio latente.
+La estimación Bayesiana ha sido implementada en un algoritmo Markov-Chain
+Monte Carlo para muestrear la distribución posterior.
+Este algoritmo utiliza la información completa de los vectores de respuesta,
+lo que previsiblemente dará lugar a una mejor recuperación del espacio latente.
 
-Estimación conjunta, mayor precisión en la estimación de la incertidumbre de los
-parámetros incidentales.
+Además, gracias a que se estima la distribución conjunta de los parámetros
+estructurales e incidentales, esperamos una mayor precisión en la estimación de
+la incertidumbre de los parámetros incidentales respecto a los procedimientos
+que estiman los parámetros estructurales y después dan sus valores como
+conocidos, utilizando los estimadores puntuales, para estimar los parámetros
+incidentales.
+
+Sin profundizar en los detalles técnicos, hemos aplicado un muestreados de Gibbs
+con un paso Metropolis por cada tipo de parámetro.  Esto permite reducir la
+dimensionalidad de cada paso mejorando la convergencia.
+También para mejorar la convergencia el muestreo se ha implementado mediante un
+algoritmo de adaptativo de la tasa de aceptación.
+
+Para obtener los estimadores puntuales hemos utilizado el estadístico EAP de la
+distribución posterior, que se puede calcular de manera muy sencilla una vez
+se han generado las muestras y comprobado los criterios de calidad.
 
 </aside>
 
+```{r simulation_recovery_result_matrix}
+```
 
 # Estudio de simulación
 
-<center>Diseño</center>
+</br>
 
 - Estimación sin bloques unidimensionales:
 
-    It is currently believed that unidimensional pairings are needed to identify
-    the metric so that scores on different dimensions can be estimated and
-    compared in a meaningful way [@chernyshenko_normative_2009]
+<div class="fragment">
+> It is currently believed that unidimensional pairings are needed to identify
+> the metric so that scores on different dimensions can be estimated and
+> compared in a meaningful way [@chernyshenko_normative_2009].
 
-- Estimación con/sin bloques heteropolares [@brown_item_2011]
+</div>
 
-```{r simulation_recovery_result_matrix}
-```
+- Comparación con estimación basada en CFA
 
 
 <aside class="notes">
@@ -367,15 +443,122 @@ Interés en poner a prueba la estimación en condiciones supuestamente
 desfavorables.
 
 Por un lado, se argumenta la necesidad de utilizar bloques unidimensionales para
-identificar la métrica.
-Puesto que no vemos la necesidad de hacerlo, y su aplicación práctica es
-limitada, obviamos esta condición, en previsión de que serían innecesarios.
+identificar la métrica, pero esta afirmación no está teóricamente justificada.
+Puesto que el MUPP-2PL no parece plantear problemas de identificación, su
+aplicación práctica es limitada, e implica complicaciones adicionales, obviamos
+la inclusión de bloques unidimensionales, en previsión de que serían
+innecesarios.
 
-Por otro, la necesidad de incluir bloques heteropolares.
-Ponemos a prueba diferentes condiciones para comprobar el efecto de incluir más
-o menos bloques heteropolares, junto con otras condiciones típicamente
-manipuladas: la correlación entre dimensiones del espacio latente, y la longitud
-del cuestionario.
+Los resultados de las simulaciones así lo demuestran, permitiendo estimar los
+parámetros del modelo de forma precisa, tanto con el algoritmo MCMC como con
+análisis factorial confirmatorio.
+
+</aside>
+
+
+# Estudio de simulación
+
+<center>Resultados: Rasgo latente (incertidumbre)</center>
+
+</br>
+
+<center>
+```{r simulation_recovery_results_lt_CrI, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
+
+lt_CrI_plots <- study_1_results %>%
+  filter(Parametro == "Rasgo latente", Variable == "QL") %>%
+  mutate(Valor = Valor * 100) %>%
+  rename(`Longitud cuestionario (nº ítems)` = Nivel) %>%
+  ggplot(
+    aes(
+      `Longitud cuestionario (nº ítems)`, Valor,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) + geom_point(alpha = .5) + geom_line(alpha = .75) + ylim(c(90, 100)) +
+  ylab("% cobertura del parámetro verdadero") +
+  ggtitle("Intervalo de credibilidad del rasgo latente")
+  
+
+lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
+
+<aside class="notes">
+
+Por otro lado, debido a la estimación conjunta, la incertidumbre en la
+estimación de los parámetros incidentales, operativizada como el porcentaje de
+cobertura de los intervalos de credibilidad, es más precisa con el algoritmo
+MCMC.
+
+El análisis factorial confirmatorio sin embargo infraestima la incertidumbre de
+los parámetros incidentales, y además se ve afectado por algunas condiciones de
+estimación, como el número de bloques.
+
+</aside>
+
+
+# Estudio de simulación
+
+</br>
+
+- Estimación sólo con bloques homopolares
+
+<div class="fragment" style="align:left">
+> [...] in a forced-choice application with five traits, the design with 30
+> positively keyed item pairs would fall slightly short of the measurement
+> precision that is typically required. However, the questionnaire can be
+> sufficiently precise when both positive and negative items are combined in
+> blocks [@brown_item_2011].
+
+</div>
+
+<aside class="notes">
+
+Por otro, nos interesa evaluar la necesidad de incluir bloques heteropolares,
+dados los problemas metodológicos que conllevaría ese diseño en la medida en
+contextos de altas consecuencias, donde es necesario controlar los sesgos, ya
+que en la literatura se ha argumentado que es necesario incluirlos siempre para
+evitar problemas de convergencia en la estimación.
+
+</aside>
+
+
+# Estudio de simulación
+
+<center>Resultados: Parámetros de correlación</center>
+
+</br>
+
+<center>
+```{r simulation_recovery_results_correlations, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
+
+corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
+  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
+  rename(RMSE = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
+  ggplot(
+    aes(
+      `Proporción de bloques heteropolares`, RMSE,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) +
+  geom_point() + geom_line() + ylim(c(0, .1)) +
+  ggtitle("Correlaciones entre dimensiones latentes")
+
+corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
+
+
+<aside class="notes">
+
+Los resultados muestran que la estructura del espacio latente se estima con
+mayor error cuando sólo hay bloques homopolares, pero el algoritmo MCMC pierde
+menos precisión.
+Presumiblemente, esto sería debido a la estimación conjunta de parámetros
+estructurales e incidentales, a las propiedades de la estimación Bayesiana, o a
+ambas.
 
 </aside>
 
@@ -384,7 +567,10 @@ del cuestionario.
 
 Resultados: Rasgo latente (precisión)
 
-```{r simulation_recovery_results_lt_prec, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
+</br>
+
+<center>
+```{r simulation_recovery_results_lt_prec, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
 
 lt_rel_plots <- study_1_results %>%
   filter(
@@ -405,124 +591,294 @@ lt_rel_plots <- study_1_results %>%
 lt_rel_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 ```
+</center>
 
 
 <aside class="notes">
 
-Fiabilidad decrece cuando sólo hay bloques homopolares
-
-</aside>
-
-
-# Estudio de simulación
-
-<center>Resultados: Parámetros de correlación</center>
-
-```{r simulation_recovery_results_correlations, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
-
-corrs_RMSE_plot <- study_1_results %>% filter(Parametro == "Correlaciones") %>%
-  mutate(Nivel = Nivel %>% factor(levels = levels(.) %>% rev)) %>%
-  rename(RMSE = Valor, `Proporción de bloques heteropolares` = Nivel) %>%
-  ggplot(
-    aes(
-      `Proporción de bloques heteropolares`, RMSE,
-      group = Algoritmo, color = Algoritmo
-    )
-  ) +
-  geom_point() + geom_line() + ylim(c(0, .1)) +
-  ggtitle("Correlaciones entre dimensiones latentes")
-
-corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
-```
-
-
-<aside class="notes">
-
-Estructura del espacio latente se estima con mayor error cuando sólo hay bloques
-homopolare, pero el algoritmo MCMC pierde menos precisión.
-Presumiblemente, esto sería debido a la estimación conjunta de parámetros
-estructurales e incidentales, a las propiedades de la estimación Bayesiana, o a
-ambas.
-
-</aside>
-
-
-# Estudio de simulación
-
-<center>Resultados: Rasgo latente (incertidumbre)</center>
-
-```{r simulation_recovery_results_lt_CrI, fig.height=4, fig.width=8, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
-
-lt_CrI_plots <- study_1_results %>%
-  filter(Parametro == "Rasgo latente", Variable == "QL") %>%
-  mutate(Valor = Valor * 100) %>%
-  rename(`Longitud cuestionario (nº ítems)` = Nivel) %>%
-  ggplot(
-    aes(
-      `Longitud cuestionario (nº ítems)`, Valor,
-      group = Algoritmo, color = Algoritmo
-    )
-  ) + geom_point(alpha = .5) + geom_line(alpha = .75) + ylim(c(90, 100)) +
-  ylab("% cobertura del parámetro verdadero") +
-  ggtitle("Intervalo de credibilidad del rasgo latente")
-  
-
-lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
-```
-
-
-<aside class="notes">
-
-También, debido a la estimación conjnta, la incertidumbre en la estimación de
-los parámetros de las personas, cuantificada según la cobertura de los
-intervalos de credibilidad, es más precisa con el algoritmo MCMC.
-Mientras que el análisis factorial confirmatorio infraestima la incertidumbre de
-los parámetros, y además se ve afectado por algunas condiciones de estimación
-como el número de bloques.
+Además vemos que la fiabilidad decrece cuando sólo hay bloques homopolares.
+Sin embargo, el algoritmo MCMC arroja fiabilidades ligeramente superiores, que
+estarían dentro de los márgenes aceptables.
 
 </aside>
 
 
 # Estudio empírico
 
-- Estimación de modelo "Big Five"
+```{r empirical_reliabilities}
+```
 
-- Estimaciones menos extremas:
+</br>
 
-    - En parámetros de escala de algunos ítems
-    
-    - En correlaciones del espacio latente
-    
+- Mejor convergencia de estimaciones
+
 - Fiabilidades mayores
+
+<div class="fragment">
+<center>
+```{r empirical_reliabilities_plot, dependson="empirical_reliabilities", fig.height=3.5}
+
+emp_rels %>% plot_ly(
+  r = ~Fiabilidad, split = ~`Método`, theta = ~Rasgo,
+  type = "scatterpolar",
+  mode = "markers",
+  fill = 'toself',
+  hovertext = ~Fiabilidad,
+  hoverinfo = "text"
+) %>% plotly_conf() %>% layout(
+  polar = list(radialaxis = list(visible = TRUE, range = 0:1)),
+  magin = list(t = 40)
+)
+
+```
+</center>
+</div>
 
 
 <aside class="notes">
 
-En un estudio empírico con el modelo Big Five, encontramos:
+Esto también queda ilustrado en la aplicación a datos empíricos en un
+cuestionario de Elección Forzosa de personalidad para el Modelo Big Five,
+donde encontramos mayores fiabilidades con el algoritmo MCMC.
 
-Mayores fiabilidades con el algoritmo MCMC
-
-Aparentemente mejor convergencia:
-En parámetros de escala cuando la información empírica es escasa
-En los parámetros de correlación del espacio latente
+Aparte de una mejor convergencia de los parámetros estructurales cuando la
+información empírica es escasa.
 
 </aside>
 
 
 # Discusión
 
-Modelo MUPP-2PL:
+</br>
+
+- Equivalencia modelo MUPP-2PL y otros modelos
+
+- Mejores resultados del algoritmo MCMC en algunos parámetros
 
 - Estimable sin bloques unidimensionales
 
 - Estimable sin bloques heteropolares
 
-- Mejores resultados del algoritmo MCMC en algunos parámetros
+
+<aside class="notes">
+
+El modelo MUPP-2PL es algebraicamente equivalente al modelo Multidimensional
+Logístico Compensatorio, lo que permite establecer analogías y generalizar
+resultados, y al modelo TIRT aplicado a pares, permitiendo comparar métodos de
+estimación y hacer generalizaciones.
+
+En cuanto a la estimación, vemos que el algoritmo MCMC da mejores resultados en
+algunos indicadores de recuperación de parámetros. También, que es posible
+estimar el modelo MUPP-2PL sin bloques unidimensionales y sin bloques
+heteropolares.
+
+</aside>
 
 
-# Estudio 2:<br>Evaluación y mitigación de problemas pscométricos en el diseño de cuestionarios de elección forzosa multidimensionales para selección de personal
+---
+
+```{r study_2_title_slide}
+
+main_layout(
+  "Estudio 2:",
+  "Estudio y evaluación de la sensibilidad dimensional"
+)
+
+```
+
+
+<aside class="notes">
+
+En lo que a los bloques heteropolares se refiere, encontramos por lo tanto una
+discrepancia entre nuestros resultados y los encontrados por Brown y
+Maydeu-Olivares en su artículo de 2011.
+
+</aside>
+
+
+# Introducción
+
+</br>
+
+<div class="container">
+  
+  <div class="col fragment">
+```{r MUPP_2PL_sparse_directions, cache=FALSE, fig.width=3, fig.height=3.2, fig.align='center'}
+
+set.seed(345654)
+
+N_BLOCKS <- 18
+SCALE_CORR_1 <- -.6
+SCALE_CORR_2 <- .85
+LOCATION_PARAMS <- rnorm(N_BLOCKS, 0, .5)
+
+scales <- rbvlnorm(
+  N_BLOCKS, location = c(.25, .25),
+  bvlnorm.scale(c(.25, .25), SCALE_CORR_1)
+)
+tibble(
+  a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+  pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
+) %>% plot_MUPP_2PL_vectors(cor = 0, alpha = .75, thickness = 1)
+
+```
+  </div>
+
+  <div class="col fragment">
+```{r MUPP_2PL_empirical_underidentification, cache=FALSE, fig.width=3, fig.height=3.2, fig.align='center', dependson="MUPP_2PL_sparse_directions"}
+
+scales <- rbvlnorm(
+  N_BLOCKS, location = c(.25, .25),
+  bvlnorm.scale(c(.25, .25), SCALE_CORR_2)
+)
+tibble(
+  a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+  pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
+) %>% plot_MUPP_2PL_vectors(cor = 0, alpha = .75, thickness = 1)
+
+```
+  </div>
+
+  <div class="col fragment">
+```{r MUPP_2PL_heteropolar_blocks, cache=FALSE, fig.width=3, fig.height=3.2, fig.align='center', dependson="MUPP_2PL_empirical_underidentification"}
+
+tibble(
+  a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+  pol1 = c("+" %>% rep(N_BLOCKS / 3), "-" %>% rep(N_BLOCKS / 3), "+" %>% rep(N_BLOCKS / 3)),
+  pol2 = c("+" %>% rep(N_BLOCKS * 2 / 3), "-" %>% rep(N_BLOCKS / 3)),
+  dim1 = "theta_1", dim2 = "theta_2"
+) %>% plot_MUPP_2PL_vectors(
+    cor = 0, alpha = .75, thickness = 1, colors = .$pol1 != .$pol2
+  )
+
+```
+  </div>
+  
+</div>
+
+
+<aside class="notes">
+
+Los desarrollos teóricos del Capítulo 3, plasmados en los dos teoremas, dan a
+entender que esto se debe al problema que denominamos restricción dimensional,
+que ocurre cuando sólo tenemos bloques homopolares.
+
+En estos casos, corremos el riesgo de que la dirección de medida sea muy similar
+en todos los bloques, siendo el cuestionario prácticamente unidimensional, cosa
+que no puede ocurrir en presencia de bloques heteropolares.
+
+</aside>
+
+
+# Introducción
+
+</br>
+
+<center>
+```{r MUPP-2PL_underidentification_3D, cache=FALSE, fig.align='center', dependson="MUPP_2PL_heteropolar_blocks", fig.width=8, fig.height=6}
+
+SCALE_CORR_3 <- .95
+
+scales <- rbvlnorm(
+  N_BLOCKS, location = c(.25, .25),
+  bvlnorm.scale(c(.25, .25), SCALE_CORR_3)
+)
+
+underidentified_scales_3D <- tibble(
+  a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+  pol1 = "+", pol2 = "+",
+  dim1 = c("theta_1" %>% rep(N_BLOCKS * 2 / 3), "theta_2" %>% rep(N_BLOCKS / 3)),
+  dim2 = c("theta_2" %>% rep(N_BLOCKS / 3), "theta_3" %>% rep(N_BLOCKS * 2 / 3))
+)
+
+MCLM_blocks <- underidentified_scales_3D %>% MUPP2PL_to_MCLM
+multidim_blocks <- underidentified_scales_3D %>%
+  multidim_params_MUPP_2PL(diag(3))
+
+origin_coords <- multidim_blocks %>%
+  transmute_at(vars(starts_with("theta")), "*", .$MBL) %>%
+  rename_all(str_replace, pattern = "theta", replacement = "coord") %>%
+  rowid_to_column(var = "Item") %>% mutate(Point = "origin")
+
+end_coords <- multidim_blocks %>%
+  transmute_at(vars(starts_with("theta")), "*", (.$MBL + .$MBS)) %>%
+  rename_all(str_replace, pattern = "theta", replacement = "coord") %>%
+  rowid_to_column(var = "Item") %>% mutate(Point = "end")
+
+segment_coords <- bind_rows(origin_coords, end_coords)
+
+tip_coords <- bind_cols(
+  end_coords,
+  multidim_blocks %>% select(starts_with("theta"))
+)
+
+segment_coords %>% plot_ly(
+  type= "scatter3d", mode = "lines",
+  x = ~coord_1, y = ~coord_2, z = ~coord_3,
+  split = ~Item, hoverinfo = "none", color = I(PALETTE.COLORS[4])
+) %>%
+  add_trace(
+    type = "cone", data = tip_coords,
+    x = ~coord_1, y = ~coord_2, z = ~coord_3,
+    u = ~theta_1, v = ~theta_2, w = ~theta_3,
+    hoverinfo = "none", color = I(PALETTE.COLORS[2]),
+    showscale = FALSE
+  ) %>%
+  layout(
+    scene = list(
+      aspectmode = "cube",
+      xaxis = list(title = HTML("\u03B81")),
+      yaxis = list(title = HTML("\u03B82")),
+      zaxis = list(title = HTML("\u03B83"))
+    ),
+    showlegend = FALSE
+  )
+      
+```
+</center>
+
+
+<aside class="notes">
+
+Cuando el cuestionario de elección forzosa mide tres dimensiones latentes,
+es más difícil visualizar el problema, pero podemos ver que los bloques tienden
+a concentrarse en un único plano.
+
+Y con más de tres dimensiones es imposible representarlo, pero básicamente si el
+cuestionario está diseñado para medir D dimensiones, en condiciones de
+restricción dimensional solamente puede obtener D-1 parámetros de rasgo latente
+independientes para cada persona.
+
+</aside>
+
+
+# Introducción
+
+</br>
+
+- Restricción dimensional
+
+- Reducción de la sensibilidad dimensional del instrumento
+
+- Indeterminación empírica
+
+- "Ipdatividad" en puntuaciones de rasgo latente
+
+
+<aside class="notes">
+
+Esta condición constituye una indeterminación empírica que hemos denominado
+"restricción dimensional", y consiste en una reducción de la
+"sensibilidad dimensional" del instrumento, que en el caso
+límite viene dada por la condición expresada en los
+teoremas 1 y 2 del capítulo tercero.
+
+En estas condiciones, lo que se observa es que las puntuaciones de rasgo latente
+obtenidas mediante TRI tienen las mismas propiedades que las puntuaciones
+ipsativas, y por lo tanto conviene evitar esta indeterminación ya que no
+estaríamos solucionando los problemas de la ipsatividad.
+
+</aside>
 
 
 # Objetivos
@@ -530,221 +886,14 @@ Modelo MUPP-2PL:
 - Estudiar la estimación del modelo MUPP-2PL en condiciones de restricción
 dimensional
 
-- Proponer y evaluar indicadores de calidad para evaluar la calidad en
+- Proponer y probar indicadores para evaluar la calidad del instrumento en
 condiciones de restricción dimensional
 
 
-# QEF para selección de personal
-
-- Sensibilidad a sesgos de respuesta:
-
-    - Ítems inversos
-    
-    - Bloques unidimensionales
-
-- Diseño de "pares bidimensionales directos" (DBP)
-
-
-# Indeterminación empírica del diseño DBP
-
-<center>
-```{r MUPP_2PL_empirical_underdetermination, cache=FALSE}
-
-N_BLOCKS <- 18
-CORR_INIT <- 0
-LOCATION_PARAMS <- rnorm(N_BLOCKS, 0, .5)
-
-# fluidRow(
-#   column(
-#     6,
-#     plotOutput(
-#       outputId = "MUPP_2PL_vectors_underidentification", height = "500px"
-#     )
-#   ),
-#   column(
-#     6, align = "center", br(), br(), br(), br(),
-#     sliderInput(
-#       "corr_adjust", label = HTML("Correlación entre escalas:"), -.75, .95,
-#       value = CORR_INIT, step = 0.05
-#     )
-#   )
-# )
-
-
-# eui_blocks <- reactive(
-#   {
-#     scales <- rbvlnorm(
-#       N_BLOCKS, location = c(.25, .25),
-#       bvlnorm.scale(c(.25, .25), input$corr_adjust)
-#     )
-#     
-#     tibble(
-#       a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
-#       pol1 = "+", pol2 = "+", dim1 = "theta_1", dim2 = "theta_2"
-#     )
-#   }
-# )
-
-# output$MUPP_2PL_vectors_underidentification <- renderPlot(
-#   eui_blocks() %>% plot_MUPP_2PL_vectors(cor = 0, alpha = .75, thickness = 1)
-#   # res = 300
-# )
-
-```
-</center>
-
-
-<!-- # Indeterminación empírica del diseño DBP -->
-
-<!-- - Matriz de información -->
-
-<!-- [Imagen scatter plot rasgos simulados y estimados] -->
-
-
-# Restricción dimensional del diseño DBP
-
-- Reducción de fiabilidad
-    
-- Distorsión de correlaciones
-    
-- Ipsatividad
-
-
-# Evaluación de la sensibilidad dimensional
-
-```{r load_LEV_LSV_sims}
-```
-
-### Menor valor singular (*LSV*)
-
-<center>
-```{r plot_LSV_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
-
-plot_LSV <- results %>%
-  ggplot(
-    aes(
-      `Correlación entre escalas`, LSV,
-      group = `Nº dimensiones`, color = `Nº dimensiones`,
-      text = HTML("<i>LSV</i>:") %>% paste(LSV %>% round(3))
-    )
-  ) +
-  facet_grid(cols = vars(items.dim)) + geom_point() + geom_line() +
-  scale_color_manual(values = PALETTE.COLORS %>% unname) +
-  ylab(HTML("<i>LSV</i>"))
-
-plot_LSV %>% ggplotly(tooltip = "text") %>%
-  layout(margin = list(r = 140)) %>%
-  config(displayModeBar = FALSE)
-
-```
-</center>
-
-
-<!-- # Evaluación de la sensibilidad dimensional -->
-
-<!-- - Menor autovalor (*LEV*) -->
-
-<!-- [Imagen diferente correlación entre dimensiones (figura 3.2)] -->
-
-
-# Evaluación de la sensibilidad dimensional
-
-### Menor autovalor (*LEV*)
-
-<center>
-```{r plot_LEV_corr_0.0_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
-
-results %>% plot_LEV(
-  LEV_corr_0,
-  LEV_max,
-  "Suma de correlaciones = 0.0"
-)
-  
-```
-</center>
-
-
-# Evaluación de la sensibilidad dimensional
-
-### Menor autovalor (*LEV*)
-
-<center>
-```{r plot_LEV_corr_0.3_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
-
-results %>% plot_LEV(
-  LEV_corr_0.3,
-  LEV_max,
-  "Suma de correlaciones = 0.3"
-)
-
-```
-</center>
-
-
-# Evaluación de la sensibilidad dimensional
-
-### Menor autovalor (*LEV*)
-
-<center>
-```{r plot_LEV_corr_0.6_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
-
-results %>% plot_LEV(
-  LEV_corr_0.6,
-  LEV_max,
-  "Suma de correlaciones = 0.6"
-)
-  
-```
-</center>
-
-
-# Evaluación de la sensibilidad dimensional
-
-### Menor autovalor (*LEV*)
-
-<center>
-```{r plot_LEV_corr_0.9_sims, dependson="load_LEV_LSV_sims", fig.width=9, cache=FALSE}
-
-results %>% plot_LEV(
-  LEV_corr_0.9,
-  LEV_max,
-  "Suma de correlaciones = 0.9"
-)
-  
-```
-</center>
-
-
 # Estudio de simulación
 
-- Evaluar la estimación de rasgos latentes en condiciones de restricción
-dimensional
-
-- Comprobar la capacidad predictiva de los indicadores de sensiblidad
-dimensional
-
-
-# Estudio de simulación
-
-- Diseño:
-
-    - Correlación entre parámetros de escala del bloque
-
-    - Longitud del cuestionario
-
-    - Correlación entre dimensiones del espacio latente
-
-
-- Indicadores:
-
-    - Fiabilidad y distorsión de correlaciones entre rasgos
-
-    - *LSV* y *LEV*
-
-```{r study_2_simulation_results}
+```{r study_2_simulation_results, include=FALSE}
 ```
-
-# Estudio de simulación
 
 <center>
 Resultados: Fiabilidad empírica
@@ -776,6 +925,18 @@ rel_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 </center>
 
 
+<aside class="notes">
+
+Al poner a prueba cómo afecta la indeterminación empírica a la fiabilidad
+mediante un estudio de simulación, vemos que ésta decrece considerablemente
+cuanto más nos aproximamos a la indeterminación empírica.
+
+Además, este efecto interactúa con la correlación entre las dimensiones
+latentes, siendo más acusado cuanto más correlacionadas están las dimensiones.
+
+</aside>
+
+
 # Estudio de simulación
 
 <center>
@@ -787,19 +948,6 @@ diff_corr_results <- study_2_results %>%
   filter(Estadistico == "Dif. correlaciones") %>% 
   rename(`Distorión correlaciones` = Valor)
 
-blocks_plot <- diff_corr_results %>% filter(Variable %in% "Nº bloques") %>%
-  mutate(Nivel = Nivel %>% factor) %>%
-  rename(`Nº bloques / dimensión` = Nivel) %>%
-  ggplot(
-    aes(
-      `Nº bloques / dimensión`, `Distorión correlaciones`,
-      group = Variable
-    )
-  ) +
-  geom_point() + geom_line()
-
-blocks_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
 scales_plot <- diff_corr_results %>% filter(Variable %in% "Corr. escalas") %>%
   mutate(Nivel = Nivel %>% factor(levels = unique(.))) %>%
   rename(`Correlación entre escalas` = Nivel) %>%
@@ -809,9 +957,10 @@ scales_plot <- diff_corr_results %>% filter(Variable %in% "Corr. escalas") %>%
       group = Variable
     )
   ) +
-  geom_point() + geom_line()
+  geom_point(color = PALETTE.COLORS[1]) + geom_line(color = PALETTE.COLORS[1]) + ylim(-.35, 0) + ylab("Distorsión correlación") +
+  xlab("Correlación entre escalas")
 
-scales_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+scales_plot %<>% ggplotly(tooltip = c("y", "colour"))
 
 corrs_plot <- diff_corr_results %>% filter(Variable %in% "Corr. dimensiones") %>%
   mutate(Nivel = Nivel %>% factor(levels = unique(.))) %>%
@@ -822,39 +971,57 @@ corrs_plot <- diff_corr_results %>% filter(Variable %in% "Corr. dimensiones") %>
       group = Variable
     )
   ) +
-  geom_point() + geom_line()
+  geom_point(color = PALETTE.COLORS[2]) + geom_line(color = PALETTE.COLORS[2]) + ylim(-.35, 0) +
+  xlab("Correlación entre dimensiones")
 
-corrs_plot %<>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+corrs_plot %<>% ggplotly(tooltip = c("y", "colour"))
 
 ## TODO: etiquetar y fijar eje
-subplot(nrows = 1, blocks_plot, scales_plot, corrs_plot) %>%
-  config(displayModeBar = FALSE)
+subplot(nrows = 1, scales_plot, corrs_plot, shareY = TRUE) %>%
+  plotly_conf %>% layout(margin = list(t = 40))
 
 ```
 </center>
 
 
-# Estudio de simulación
+<aside class="notes">
 
-Resultados: *LSV*
+La distancia respecto de la indeterminación empírica afecta también a cómo de
+distorsionadas están las correlaciones entre los estimadores puntuales de
+rasgo latente de las personas.
 
-![](res/LSV_reliability.png)
-![](res/LSV_correlation.png)
+Sin embargo, al contrario que en la fiabilidad, esta distorsión es menos acusada
+cuanto más correlacionadas están las dimensiones.
 
-
-# Estudio de simulación
-
-Resultados: *LEV*
-
-![](res/LEV_reliability.png)
-![](res/LEV_correlation.png)
+</aside>
 
 
-# Estudio 2: Conclusiones
+# Evaluación de la sensibilidad dimensional
 
-- Diseño DBP
+</br>
 
-- Indeterminación empírica del modelo MUPP-2PL
+- _LSV_: "Least Singular Value"
+
+- _LEV_: "Least eigenvalue"
+
+
+<aside class="notes">
+
+Para evaluar la sensibilidad dimensional hemos propuesto dos índices que
+cuantifican la distancia desde la matriz de escalas de los bloques a la
+situación límite de indeterminación empírica, y se basan en su descomposición en
+valores singulares (en el caso del menor valor singular) o en autovalores (en el
+caso del menor autovalor).
+
+Este segundo índice tiene la ventaja de que incorpora información de las
+correlaciones del espacio latente.
+
+</aside>
+
+
+# Estudio 2: Discusión
+
+- El modelo MUPP-2PL puede estar empíricamente indeterminado
 
 - Índices de sensibilidad dimensional
 

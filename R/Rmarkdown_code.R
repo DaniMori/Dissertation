@@ -85,7 +85,7 @@ plotly_conf <- function(plotly_obj, zoom = FALSE) {
         showspikes = TRUE, spikethickness = .5, spikedash = "dot",
         fixedrange = !zoom
       ),
-      margin = list(l = 20, r = 20, t = 25, b = 20)
+      margin = list(l = 20, r = 20, t = 80, b = 20)
     )
 }
 
@@ -248,32 +248,26 @@ plot_MUPP_2PL_brf <- function(
   return(brf_plot)
 }
 
-#' Plot a MUPP-2PL item as a vector in a 2-dimensional space.
-#'
-#' @param blocks MUPP-2PL block parameters, given as a data.frame with 3
-#'     (double) columns: scale.1, scale.2, location
-#' @param cor double 1-length vector with the correlation of the latent space
-#'
-#' @return a ggplot of the item
 multidim_params_MUPP_2PL <- function(
-  blocks, cor, parse_blocks = TRUE,
+  blocks, cor_matrix = dims %>% length %>% diag, parse_blocks = TRUE,
   dims = blocks %>% get_MUPP_2PL_dim_names
 ) {
   assert_is_a_bool(parse_blocks)
   if(parse_blocks) blocks %>% parse_MUPP_2PL(dim_names = get_MUPP_2PL_dim_names(.))
 
-  assert_is_numeric(cor)
+  assert_is_numeric(cor_matrix)
+  assert_is_matrix(cor_matrix)
+  assert_is_symmetric_matrix(cor_matrix)
   
   assert_is_character(dims)
   assert_is_subset(blocks %>% get_MUPP_2PL_dim_names, dims)
   
-  assert_is_of_length(dims, 2, severity = "warning")
-  dims <- dims[1:2]
+  assert_is_of_length(dims, cor_matrix %>% nrow)
+  
+  dimnames(cor_matrix) <- list(dims, dims)
 
   items_MCLM <- MUPP2PL_to_MCLM(blocks, dims = dims, parse_blocks = FALSE) %>%
     select(dims, l)
-  
-  cor_matrix <- matrix(c(1, cor, cor, 1), nrow = 2)
   
   scales <- items_MCLM %>% select(dims) %>% as.matrix
   
@@ -282,18 +276,27 @@ multidim_params_MUPP_2PL <- function(
   MBL <- (MBS == 0) %>% ifelse(0, -(items_MCLM %>% pull(l)) %>% divide_by(MBS))
   
   directions <- {
-    if(MBS == 0) 0 %>% rep(dims %>% length) %>% t else (scales %*% cor_matrix) %>%
-      divide_by(MBS)
-  } %>% as_tibble %>% set_names(dims)
+    zero_length <- MBS %>% equals(., 0)
+    
+    (scales %*% cor_matrix) %>% as_tibble %>% set_names(dims) %>%
+      mutate_all(~ifelse(zero_length, 0, . / MBS))
+  }
   
   multidim_params <- tibble(MBS, MBL) %>% bind_cols(directions)
   
   return(multidim_params)
 }
 
+#' Plot a MUPP-2PL item as a vector in a 2-dimensional space.
+#'
+#' @param blocks MUPP-2PL block parameters, given as a data.frame with 3
+#'     (double) columns: scale.1, scale.2, location
+#' @param cor double 1-length vector with the correlation of the latent space
+#'
+#' @return a ggplot of the item
 plot_MUPP_2PL_vectors <- function(
   blocks, cor = 0, parse_blocks = TRUE,
-  dims = c("theta_1", "theta_2"), colors = "red", alpha = 1, thickness = 1.5
+  dims = c("theta_1", "theta_2"), colors = "", alpha = 1, thickness = 1.5
 ) {
   assert_is_a_bool(parse_blocks)
   if(parse_blocks) blocks %>% parse_MUPP_2PL(dim_names = get_MUPP_2PL_dim_names(.))
@@ -306,9 +309,10 @@ plot_MUPP_2PL_vectors <- function(
   assert_is_of_length(dims, 2, severity = "warning")
   dims <- dims[1:2]
   
+  cor_matrix <- matrix(c(1, cor, cor, 1), nrow = 2)
   
   vector_blocks <- blocks %>%
-    multidim_params_MUPP_2PL(cor = cor, dims = dims, parse_blocks = FALSE)
+    multidim_params_MUPP_2PL(cor_matrix = cor_matrix, dims = dims, parse_blocks = FALSE)
   
   coords <- vector_blocks %>%
     transmute_at(dims, funs(origin = . * MBL, end = . * (MBL + MBS)))
@@ -337,11 +341,11 @@ plot_MUPP_2PL_vectors <- function(
         geom_abline(slope = cor %>% acos %>% tan, intercept = 0)
     ) +
     geom_segment(
-      arrow = arrow(angle = 20, length = unit(0.20, "inches"), type = "closed"),
+      arrow = arrow(angle = 20, length = unit(0.10, "inches"), type = "closed"),
       size = thickness, alpha = alpha
     ) +
     theme(plot.margin = unit(c(50, 20, 40, 20), "points")) +
-    scale_color_discrete(guide = "none") +
+    scale_color_manual(values = PALETTE.COLORS[c(2, 1)] %>% unname, guide = "none") +
     xlab(expression(italic(theta)[1])) + ylab(expression(italic(theta)[2]))
 
   return(vector_plot)

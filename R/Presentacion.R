@@ -55,6 +55,22 @@ study_1_results <- tribble(
 ) %>% mutate_if(is.character, as.factor)
 
 
+## ---- empirical_reliabilities ----
+
+emp_rels <- tribble(
+  ~Rasgo,                      ~`Método`, ~Fiabilidad,
+   "Estabilidad emocional",     "MCMC",    .721,
+   "Estabilidad emocional",     "CFA",     .654,
+   "Extraversión",              "MCMC",    .722,
+   "Extraversión",              "CFA",     .645,
+   "Apertura a la experiencia", "MCMC",    .579,
+   "Apertura a la experiencia", "CFA",     .531,
+   "Amabilidad",                "MCMC",    .592,
+   "Amabilidad",                "CFA",     .541,
+   "Responsabilidad",           "MCMC",    .669,
+   "Responsabilidad",           "CFA",     .656
+) %>% mutate(`Método`= `Método` %>% factor(levels = unique(.)))
+
 ############################ STUDY 2 ############################
 
 ## ---- load_LEV_LSV_sims ----
