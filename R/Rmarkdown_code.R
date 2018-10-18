@@ -130,6 +130,31 @@ irf_2PL <- function(theta, a, b) {
   return(ir_probability)
 }
 
+irf_GGUM <- function(theta, a, d, t) {
+  
+  num <- exp(a * ((theta - d) - t)) + exp(a * (2 * (theta - d) - t))
+  num_0 <- 1 + exp(a * 3 * (theta - d))
+  
+  ir_probability <- num / (num_0 + num)
+  
+  return(ir_probability)
+}
+
+irf_GRM <- function(theta, a, b) {
+  
+  cum_probs <- b %>% map(~(1 - irf_2PL(theta, a, .)))
+  
+  icf <- cum_probs %>% { map2(.[-1], .[-length(.)], ~(.x - .y)) }
+  icf %<>% append(cum_probs[1], after = 0) %>% append((1 - cum_probs %>% last) %>% list)
+
+  icf %<>% bind_cols() %>%
+    rename_all(str_replace, pattern = "V", replacement = "Cat_") %>%
+    gather(`Categoría`, Probabilidad) %>%
+    add_column(Theta = theta %>% rep(length(b) + 1))
+  
+  return(icf)
+}
+
 parse_MUPP_2PL <- function(block, dim_names = c("theta_1", "theta_2")) {
   
   assert_is_character(dim_names)
@@ -998,11 +1023,11 @@ scales.scatter.plot <- function(
       x = `Item scale`, y = `Block scale`,
       group = Block_code,
       text = paste0(
-        "</br>Position: ", Position,
-        "</br>Trait: ", Trait,
-        "</br>Trait other: ", `Trait other`,
-        "</br>Polarity: ", Polarity,
-        "</br>Polarity other: ", `Polarity other`
+        "</br>Posición: ", Position,
+        "</br>Rasgo: ", Rasgo,
+        "</br>Rasgo pareja: ", `Trait other`,
+        "</br>Polaridad: ", Polarity,
+        "</br>Polaridad pareja: ", `Polarity other`
       ),
       color = Color, label = Labels
     )
@@ -1020,7 +1045,7 @@ scales.scatter.plot <- function(
   }
 
   if(!missing(labels))
-    scatter.plot <- scatter.plot + geom_label_repel(size = 2.7, min.segment.length = 0, family = "serif", show.legend = FALSE)
+    scatter.plot <- scatter.plot + geom_label(size = 2.7, min.segment.length = 0, family = "serif", show.legend = FALSE)
 
   if(filename %>% is_not_null)
     scatter.plot %>% scatter.plot.style(
@@ -1383,7 +1408,8 @@ scatter.plot.style <- function(
   output = c("plotly", "ggplot"), base_size = 11
 ) {
 
-  fig.margins <- list(l = 40, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0)
+  # fig.margins <- list(l = 40, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0)
+  fig.margins <- list(l = 40, b = 40, t = 50, pad = 0)
 
   output <- match.arg(output)
 

@@ -28,7 +28,6 @@ editor_options:
 library(tidyverse)
 library(magrittr)
 library(knitr)
-library(gridExtra)
 
 "R/Rmarkdown_code.R" %>% source(encoding = 'UTF-8')
 
@@ -85,15 +84,15 @@ lubridate::today() %>% format('%d de %B de %Y') %>% p
 
 <aside class="notes">
 
-Buenos días.
+Buenos días, mi nombre es Daniel Morillo.  El título de mi proyecto de tesis es
+Modelos de Teoría de Respuesta al Ítem para cuestionarios de elección forzosa.
+
 Ante todo muchas gracias a los miembros del tribunal por acceder a evaluar el
 trabajo de mi tesis doctoral, así como al público por estar aquí y darme la
 oportunidad de exponer públicamente los resultados de mi investigación
-predoctoral.
-
-Mi nombre es Daniel Morillo, y el título de mi proyecto de tesis es
-Vamos a comenzar haciendo una breve introducción para establecer el contexto
-teórico.
+predoctoral, desarrollada en los últimos 4 años en la Universidad Autónoma de Madrid,
+así como en las dos estancias predoctorales que he realizado en la Universidad de Kent
+en Reino Unido y en la Universidad de California en Los Ángeles.
 
 </aside>
 
@@ -105,6 +104,14 @@ teórico.
 main_layout("Introducción:", "Marco teórico")
 
 ```
+
+
+<aside class="notes">
+
+Vamos a comenzar haciendo una breve introducción, para establecer el contexto
+teórico.
+
+</aside>
 
 
 # El formato de Elección Forzosa multidimensional
@@ -120,10 +127,17 @@ main_layout("Introducción:", "Marco teórico")
 
 <aside class="notes">
 
-El formato EF multidimensional se utiliza cada vez más, la industria demanda
-aplicaciones del mismo, principalmente con el objetivo de controlar los sesgos
-de respuesta en cuestionarios para la medición de rasgos no cognitivos, con el
-objeto de controlar los sesgos de respuseta, y por tanto aumentar su validez.
+El formato EF multidimensional es un formato de respuesta para cuestionarios.
+
+Es decir, instrumentos de evaluación de rasgos no cognitivos, como personalidad,
+actitudes o intereses.
+
+Cada vez es más utilizado, y sus aplicaciones demandadas por la industria,
+principalmente con el objetivo aumentar la validez de las medidas mediatne el
+control de los sesgos de respuesta.
+
+Ahora bien, la ipsatividad de las puntuaciones clásicas de estos instrumentos
+supone también un tipo de amenaza a la validez de las mismas.
 
 </aside>
 
@@ -132,41 +146,49 @@ objeto de controlar los sesgos de respuseta, y por tanto aumentar su validez.
 
 <br>
 
+- Puntuaciones intra-persona
+
 - Estructura del espacio latente distorsionada [@clemans_analytical_1966]:
 
 - Fiabilidad reducida [@hicks_properties_1970]
 
 - Validez predictiva distorsionada
 
-- Puntuaciones intra-persona
-
 
 <aside class="notes">
 
-Las puntuaciones de estos instrumentos serían intra-persona, es decir,
-permitirían comparar diferentes niveles en diferentes rasgos para una misma
-persona, pero no permitirían comparar el mismo rasgo entre diferentes personas
+La ipsatividad es una propiedad que permite comparar las puntuaciones en los
+niveles de diferentes rasgos para una misma persona, pero no comparar un mismo
+rasgo entre diferentes personas, ya que carece de información normativa.
+
+Además, esta propiedad da lugar a una distorsión de la estructura correlacional
+del espacio latente,
+
+una reducción de la fiabilidad,
+
+y una distorsión a su vez de la validez predictiva de las puntuaciones.
 
 </aside>
 
 
 # Justificación {data-transition="slide-in fade-out"}
 
-</br>
 <center>Aplicación de la Teoría de Respuesta al Ítem</center>
 
 </br>
 
 - Desarrollo y aplicación del modelo MUPP-2PL
 
-    - Propuesta de método de estimación
-
-    - Aplicación a bloques EF de ítems emparejados
-    
     - Abordaje teórico de sus propiedades
+
+    - Propuesta de método de estimación
 
 - Basado en el modelo MUPP [@stark_irt_2005]
 
+    - Aplicación a bloques EF de ítems emparejados
+    
+    - Supuesto de medida de _dominancia_
+    
 
 <aside class="notes">
 
@@ -175,16 +197,25 @@ de teoría de respuesta al ítem, con el objeto de solucionar los problemas de
 derivados de la ipsatividad de las puntuaciones en cuestionarios de EF
 multidimensionales.
 
+El desarrollo implica tanto el abordaje teórico de sus propiedades, como veremos
+en los diferentes estudios,
+
+como la propuesta de un método de estimación.
+
 Está basado en el modelo MUPP, propuesto originalmente por Stark, Chernyshenko y
 Drasgow. Este modelo ya ha sido planteado anteriormente para solucionar los
-problemas de ipsatividad de este tipo de instrumentos.
+problemas de ipsatividad de este tipo de instrumentos,
+
+y consiste en un modelo para bloques de elección forzosa por pares,
+
+pero aplicando un supuesto de medida de dominancia en lugar del modelo de punto
+ideal del MUPP original.
 
 </aside>
 
 
 # Justificación {data-transition="fade-in slide-out"}
 
-</br>
 <center>Aplicación de la Teoría de Respuesta al Ítem</center>
 
 </br>
@@ -208,15 +239,15 @@ $$
 
 <aside class="notes">
 
-El modelo se basa en el supuesto de que la persona evaluada toma
-la decisión de acuerdo o desacuerdo con cada una de las dos opciones de
-respuesta de manera independiente.
+El supuesto de independencia del modelo MUPP implica que al responder a un
+bloque, una persona decide su acuerdo o desacuerdo con cada uno de los ítems que
+constituyen las dos opciones de respuesta de manera independiente.
 
 Sin embargo, el modelo MUPP original está basado en un modelo de medida de punto
 ideal, con una formulación compleja y gran número de parámetros, mientras que
 nuestra propuesta asume un modelo de medida de dominancia, que supone que la
 probabilidad de acuerdo con cada una de las dos opciones sigue un modelo
-logístico de dos parámetros.
+logístico de dos parámetros en lugar de un modelo de "unfolding" o punto ideal.
 
 </aside>
 
@@ -228,38 +259,52 @@ logístico de dos parámetros.
 </br>
 
 <div class="container">
-  <div class="col">
+<div class="col">
   
-  <small>
-    
+<small>
 $$
 \textrm{P}_i \left(X_{ij} = 1 | \theta_j \right) = \Phi_L \left(a_i\theta_j + b_i \right)
 $$
-  </small>
-  </div>
+</small>
+</div>
   
-  <div class="col">
+<div class="col">
   
 ```{r 2PL, fig.width=4, fig.height=3.5, cache=FALSE}
 
+## TODO: posibilidad de incluir curva y ecuación del GGUM?
+
 theta_vector <- seq(-3, 3, 0.1)
 
-probs <- irf_2PL(theta_vector, 1.8, 0)
+probs_2PL <- irf_2PL(theta_vector, 1.8, 0)
+
+probs_GGUM <- irf_GGUM(theta_vector, 1.6, 0.4, -1.3)
 
 irf <- tibble(
   theta = theta_vector,
-  prob  = probs,
+  prob  = probs_2PL,
   lab   = paste0(
     "P<sub>i</sub>(", theta %>% format(digits = 1), ") = ", prob %>% round(3)
+  ),
+  Modelo = "2PL"
+) %>% bind_rows(
+  tibble(
+    theta = theta_vector,
+    prob  = probs_GGUM,
+    lab   = paste0(
+      "P<sub>i</sub>(", theta %>% format(digits = 1), ") = ", prob %>% round(3)
+    ),
+    Modelo = "GGUM"
   )
 )
 
 irf_plot <- irf %>% ggplot(
-  mapping = aes(x = theta, y = prob, text = lab, group = NA)
-) + geom_path(color = "darkblue", size = 1) +
+  mapping = aes(x = theta, y = prob, text = lab, group = Modelo, color = Modelo)
+) + geom_path(size = 1) +
   ggtitle("Curva característica del ítem") +
   scale_x_continuous(expand = expand_scale()) +
-  scale_y_continuous(expand = expand_scale(.01))
+  scale_y_continuous(expand = expand_scale(.01)) +
+  scale_color_manual(values = PALETTE.COLORS[1:2] %>% unname)
 
 irf_plot %>% ggplotly(tooltip = "text") %>%
   plotly::layout(
@@ -268,16 +313,15 @@ irf_plot %>% ggplotly(tooltip = "text") %>%
   ) %>% plotly_conf
 
 ```
-  </div>
+</div>
 </div>
 
 
 <aside class="notes">
 
-Este modelo es más simple y con más desarrollos teóricos previos que el modelo
-de medida de punto ideal, lo que permite formular un modelo más parsimonioso,
-más sencillo de abordar teóricamente, y con un mayor soporte teórico en el
-ámbito de la medición de rasgos de personalidad.
+Este modelo es más simple y parsimonioso, más sencillo de abordar
+analíticamente, y con un mayor soporte teórico en el ámbito de la medición de
+rasgos de personalidad.
 
 </aside>
 
@@ -297,7 +341,24 @@ más sencillo de abordar teóricamente, y con un mayor soporte teórico en el
 
 <aside class="notes">
 
-Conclusiones en inglés
+(La tesis está estructurada en forma de tres manuscritos independientes aunque
+relacionados entre sí, cada uno de ellos presentando un estudio.
+A continuación haré una exposición de cada uno de estos tres estudios.)
+
+En el primero de ellos trata sobre la propesta del modelo junto con el algoritmo
+de estimación.
+
+En el segundo tratamos teóricamente algunos problemas relacionados con la medida
+del modelo en condiciones que denominamos de restricción dimensional.
+
+Y en el tercero ponemos a prueba los supuestos básicos del modelo MUPP-2PL,
+comprobando si los parámetros de los ítems no cambian ser emparejados en
+bloques de elección forzosa.
+
+Tras presentar los tres estudios, expondré las conclusiones principales de la
+tesis.
+De acuerdo con la normativa para la obtención de la mención
+internacional, esta parte será realizada en inglés.
 
 </aside>
 
@@ -314,6 +375,175 @@ main_layout(
 ```
 
 
+# Introducción {data-transition="slide-in fade-out"}
+
+</br>
+<small>
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+</small>
+
+<div class="container fragment">
+<div class="column">
+```{r MUPP_2PL_BRF, cache=FALSE, fig.width=4.2, fig.height=4}
+
+block <- tibble(
+  a1 = 1, a2 = 1, l = 0, pol1 = "+", pol2 = "+",
+  dim1 = "theta_1", dim2 = "theta_2"
+)
+DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
+
+block %>% plot_MUPP_2PL_brf(pov = DEFAULT_POV)
+
+```
+</div>
+
+<div class="column">
+```{r MUPP_2PL_vector, cache=FALSE, fig.width=4.2, fig.height=4, dependson="MUPP_2PL_BRF"}
+
+block %>% plot_MUPP_2PL_vectors(cor = 0)
+
+```
+</div>
+
+
+<aside class = "notes">
+
+(En este primer estudio, tras introducir y aplicar los supuestos, llegamos a la
+siguiente formulación simplificada del modelo.
+Ésta tiene un parámetro de estcala por cada una de las dimensiones medidas por
+el bloque, correspondiente a cada uno de los ítems, y un parámetro l de
+intersección del bloque, siendo éste combinación lineal de los parámetros de
+posición de los dos ítems, que no estarían identificados individualmente.)
+
+Aquí vemos la representación de la superficie de respuseta de un bloque
+homopolar, formado por dos ítems directos,
+
+</aside>
+
+
+# Introducción {data-transition="fade-in fade-out"}
+
+</br>
+<small>
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+</small>
+
+<div class="container">
+<div class="column">
+```{r MUPP_2PL_BRF_dir_inv, cache=FALSE, fig.width=4.2, fig.height=4}
+
+block <- tibble(
+  a1 = 1, a2 = 1, l = 0, pol1 = "+", pol2 = "-",
+  dim1 = "theta_1", dim2 = "theta_2"
+)
+DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
+
+block %>% plot_MUPP_2PL_brf(pov = DEFAULT_POV)
+
+```
+</div>
+
+<div class="column">
+```{r MUPP_2PL_vector_dir_inv, cache=FALSE, fig.width=4.2, fig.height=4, dependson="MUPP_2PL_BRF_dir_inv"}
+
+block %>% plot_MUPP_2PL_vectors(cor = 0)
+
+```
+</div>
+
+
+<aside class = "notes">
+
+mientras que esta sería la representación de un bloque heteropolar, formado por
+un ítem directo y uno inverso, en este caso,
+
+</aside>
+
+
+# Introducción {data-transition="fade-in slide-out"}
+
+</br>
+<small>
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+</small>
+
+<div class="container">
+<div class="column">
+```{r MUPP_2PL_BRF_inv_dir, cache=FALSE, fig.width=4.2, fig.height=4}
+
+block <- tibble(
+  a1 = 1, a2 = 1, l = 0, pol1 = "-", pol2 = "+",
+  dim1 = "theta_1", dim2 = "theta_2"
+)
+DEFAULT_POV <- c(x = -.3, y = -2.25, z = 1.25)
+
+block %>% plot_MUPP_2PL_brf(pov = DEFAULT_POV)
+
+```
+</div>
+
+<div class="column">
+```{r MUPP_2PL_vector_inv_dir, cache=FALSE, fig.width=4.2, fig.height=4, dependson="MUPP_2PL_BRF_inv_dir"}
+
+block %>% plot_MUPP_2PL_vectors(cor = 0)
+
+```
+</div>
+
+
+<aside class = "notes">
+
+o uno inverso y uno directo.
+
+</aside>
+
+
+# Introducción
+
+<center>
+Equivalencia entre modelos
+</center>
+
+</br>
+
+- Modelo Logístico Multidimensional Compensatorio
+
+</br>
+
+- Thurstonian IRT model:
+
+<div class="fragment">
+<small>
+$$
+\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_N\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
+$$
+</small>
+</div>
+
+
+<aside class = "notes">
+
+Una propiedad que resulta de utilidad para estudiar algunas propiedades del
+modelo MUPP-2PL desde un punto de vista teórico es que es algebraicamente
+equivalente a un modelo logístico multidimensional compensatorio, que tiene una
+equivalencia prácticamente igual salvo por el signo negativo del segundo
+parámetro de escala.
+
+Asimismo, hay una cuasi-equivalencia con el modelo TIRT, que se diferencia
+únciamente por la función de enlace, que en el TIRT es la función de
+probabilidad acumulada en lugar de la función logística.
+Esto nos permite también basarnos en desarrollos teóricos previos del modelo
+TIRT, así como generalizar algunos de los hallazgos.
+
+</aside>
+
+
 # Objetivos
 
 </br>
@@ -325,54 +555,30 @@ main_layout(
 
 - Comparación con estimación factorial
 
+    - Estudio de simulación
+    
+    - Estudio empírico (cuestionario Big Five)
+
 
 <aside class="notes">
 
-El objetivo del estudio 1 es estudiar las propiedades teóricas del modelo, así
-como la estimación del mismo mediante el método Bayesiano propuesto.
+El objetivo del estudio 1 es, aparte de proponer el modelo y estudiar sus
+propiedades,
 
-Asimismo, como existe una equivalencia práctica entre el modelo MUPP-2PL
-y el modelo TIRT como veremos, esto nos permite comparar los dos métodos de
-estimación, el Bayesiano planteado en este capítulo, basado en información
-completa, y el método frecuentista, basado en Análisis Factorial Confirmatorio
-de la información bivariada.
+estudiar su estimación mediante el método Bayesiano propuesto.
+Nos interesará poner a prueba la estimación principalmente
+en condiciones que en la literatura previa se han considerado desfavorables.
 
-Por lo tant, se han puesto a prueba ambos métodos de estimación en un estudio de
-simulación y en datos empíricos para comprobar cómo afectan las condiciones
-(sobre todo las supuestamente desfavorables según la literatura previa)
+Por otro lado, al existir una equivalencia práctica entre el modelo MUPP-2PL
+y el modelo TIRT, podemos comparar los dos métodos de estimación, el Bayesiano
+planteado en este estudio, basado en información completa, y el método
+frecuentista, basado en el Análisis Factorial Confirmatorio de la información
+bivariada.
 
-</aside>
+Esta comparación se ha hecho tanto en un estudio de simulación,
 
-
-# Equivalencia entre modelos
-
-</br>
-<div class="fragment">
-$$
-\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
-$$
-</div>
-
-- Modelo Logístico Multidimensional Compensatorio
-
-- Thurstonian IRT model:
-
-<div class="fragment">
-$$
-\textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_N\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
-$$
-</div>
-
-
-<aside class = "notes">
-
-El modelo propuesto es algebraicamente equivalente a un modelo logístico
-multidimensional compensatorio, una propiedad muy útil para estudiar
-posteriormente algunas de sus propiedades desde un punto de vista teórico
-
-Asimismo, hay una cuasi-equivalencia con el modelo TIRT, que se diferencia
-únciamente por la función de enlace, que es la función de probabilidad acumulada
-en lugar de la función logística.
+como en datos empíricos obtenidos mediante un cuestionario de Elección Forzosa
+de personalidad diseñado siguiendo el Modelo Big Five de personalidad.
 
 </aside>
 
@@ -394,27 +600,27 @@ en lugar de la función logística.
 
 <aside class="notes">
 
-La estimación Bayesiana ha sido implementada en un algoritmo Markov-Chain
-Monte Carlo para muestrear la distribución posterior.
+En cuanto a la estimación Bayesiana, ha sido implementada en un algoritmo
+Markov-Chain Monte Carlo para muestrear la distribución posterior.
+
 Este algoritmo utiliza la información completa de los vectores de respuesta,
 lo que previsiblemente dará lugar a una mejor recuperación del espacio latente.
 
 Además, gracias a que se estima la distribución conjunta de los parámetros
 estructurales e incidentales, esperamos una mayor precisión en la estimación de
-la incertidumbre de los parámetros incidentales respecto a los procedimientos
-que estiman los parámetros estructurales y después dan sus valores como
-conocidos, utilizando los estimadores puntuales, para estimar los parámetros
-incidentales.
+la incertidumbre de los parámetros incidentales, respecto a otros procedimientos,
+como el factorial, que estiman los parámetros estructurales y después dan sus
+valores como conocidos utilizando los estimadores puntuales, a la hora de
+estimar los parámetros incidentales.
 
-Sin profundizar en los detalles técnicos, hemos aplicado un muestreados de Gibbs
-con un paso Metropolis por cada tipo de parámetro.  Esto permite reducir la
-dimensionalidad de cada paso mejorando la convergencia.
-También para mejorar la convergencia el muestreo se ha implementado mediante un
-algoritmo de adaptativo de la tasa de aceptación.
+Sin profundizar en los detalles técnicos, el algoritmo implementa un muestreador
+de Gibbs con un paso Metropolis por cada tipo de parámetro.
+Esto permite reducir la dimensionalidad de cada paso, lo cual junto con la
+adaptación de la tasa de aceptación ayuda a mejorar la convergencia.
 
-Para obtener los estimadores puntuales hemos utilizado el estadístico EAP de la
-distribución posterior, que se puede calcular de manera muy sencilla una vez
-se han generado las muestras y comprobado los criterios de calidad.
+Por último para calcular los estimadores puntuales utilizamos el estadístico EAP
+de la distribución posterior, que se puede calcular de manera muy sencilla una
+vez se han generado las muestras y comprobado los criterios de calidad.
 
 </aside>
 
@@ -434,66 +640,22 @@ se han generado las muestras y comprobado los criterios de calidad.
 
 </div>
 
-- Comparación con estimación basada en CFA
-
 
 <aside class="notes">
 
-Interés en poner a prueba la estimación en condiciones supuestamente
-desfavorables.
+(Como hemos comentado, nos interesa poner a prueba la estimación del modelo en
+condiciones supuestamente desfavorables.)
 
-Por un lado, se argumenta la necesidad de utilizar bloques unidimensionales para
-identificar la métrica, pero esta afirmación no está teóricamente justificada.
-Puesto que el MUPP-2PL no parece plantear problemas de identificación, su
-aplicación práctica es limitada, e implica complicaciones adicionales, obviamos
-la inclusión de bloques unidimensionales, en previsión de que serían
-innecesarios.
+En la literatura se argumenta que en general existe una necesidad de utilizar
+bloques unidimensionales para identificar la métrica, pero esta afirmación no
+está teóricamente justificada.
+El análsis del MUPP-2PL no parece plantear problemas de identificación de
+métrica. Dada además la limitación práctica de los bloques unidimensionales y
+las complicaciones adicionales que implican, obviamos su inclusión.
 
 Los resultados de las simulaciones así lo demuestran, permitiendo estimar los
 parámetros del modelo de forma precisa, tanto con el algoritmo MCMC como con
 análisis factorial confirmatorio.
-
-</aside>
-
-
-# Estudio de simulación
-
-<center>Resultados: Rasgo latente (incertidumbre)</center>
-
-</br>
-
-<center>
-```{r simulation_recovery_results_lt_CrI, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
-
-lt_CrI_plots <- study_1_results %>%
-  filter(Parametro == "Rasgo latente", Variable == "QL") %>%
-  mutate(Valor = Valor * 100) %>%
-  rename(`Longitud cuestionario (nº ítems)` = Nivel) %>%
-  ggplot(
-    aes(
-      `Longitud cuestionario (nº ítems)`, Valor,
-      group = Algoritmo, color = Algoritmo
-    )
-  ) + geom_point(alpha = .5) + geom_line(alpha = .75) + ylim(c(90, 100)) +
-  ylab("% cobertura del parámetro verdadero") +
-  ggtitle("Intervalo de credibilidad del rasgo latente")
-  
-
-lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
-
-```
-</center>
-
-<aside class="notes">
-
-Por otro lado, debido a la estimación conjunta, la incertidumbre en la
-estimación de los parámetros incidentales, operativizada como el porcentaje de
-cobertura de los intervalos de credibilidad, es más precisa con el algoritmo
-MCMC.
-
-El análisis factorial confirmatorio sin embargo infraestima la incertidumbre de
-los parámetros incidentales, y además se ve afectado por algunas condiciones de
-estimación, como el número de bloques.
 
 </aside>
 
@@ -515,11 +677,14 @@ estimación, como el número de bloques.
 
 <aside class="notes">
 
-Por otro, nos interesa evaluar la necesidad de incluir bloques heteropolares,
-dados los problemas metodológicos que conllevaría ese diseño en la medida en
-contextos de altas consecuencias, donde es necesario controlar los sesgos, ya
-que en la literatura se ha argumentado que es necesario incluirlos siempre para
-evitar problemas de convergencia en la estimación.
+Por otro lado, nos interesa evaluar la estimación sólo con bloques homopolares,
+dado que este diseño de instrumentos sería robusto a los sesgos de respuesta.
+
+Sin embargo, se ha argumentado la necesidad de incluir bloques
+heteropolares, es decir, que combinan un ítem directo y uno inverso
+(o codificado positiva y negativamente), dado que se ha argumentado que es
+necesario incluirlos siempre para evitar problemas de convergencia en la
+estimación.
 
 </aside>
 
@@ -553,12 +718,11 @@ corrs_RMSE_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 <aside class="notes">
 
-Los resultados muestran que la estructura del espacio latente se estima con
-mayor error cuando sólo hay bloques homopolares, pero el algoritmo MCMC pierde
-menos precisión.
-Presumiblemente, esto sería debido a la estimación conjunta de parámetros
-estructurales e incidentales, a las propiedades de la estimación Bayesiana, o a
-ambas.
+Los resultados muestran que la estructura correlacional del espacio latente se
+estima con mayor error cuando sólo hay bloques homopolares, aunque el algoritmo
+MCMC pierde menos precisión.
+Presumiblemente, debido a la estimación conjunta de parámetros estructurales e
+incidentales, a las propiedades de la estimación Bayesiana, o a ambas.
 
 </aside>
 
@@ -596,9 +760,51 @@ lt_rel_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 <aside class="notes">
 
-Además vemos que la fiabilidad decrece cuando sólo hay bloques homopolares.
-Sin embargo, el algoritmo MCMC arroja fiabilidades ligeramente superiores, que
-estarían dentro de los márgenes aceptables.
+Además, la fiabilidad de los parámetros incidentales decrece apreciablemente
+cuando sólo hay bloques homopolares.
+Las fiabilidades de las estimaciones del algoritmo MCMC son ligeramente
+superiores, y podrían consisderarse como dentro del margen aceptable.
+
+</aside>
+
+
+# Estudio de simulación
+
+<center>Resultados: Rasgo latente (incertidumbre)</center>
+
+</br>
+
+<center>
+```{r simulation_recovery_results_lt_CrI, fig.align='center', dependson="simulation_recovery_result_matrix", cache=FALSE}
+
+lt_CrI_plots <- study_1_results %>%
+  filter(Parametro == "Rasgo latente", Variable == "QL") %>%
+  mutate(Valor = Valor * 100) %>%
+  rename(`Longitud cuestionario (nº ítems)` = Nivel) %>%
+  ggplot(
+    aes(
+      `Longitud cuestionario (nº ítems)`, Valor,
+      group = Algoritmo, color = Algoritmo
+    )
+  ) + geom_point(alpha = .5) + geom_line(alpha = .75) + ylim(c(90, 100)) +
+  ylab("% cobertura del parámetro verdadero") +
+  ggtitle("Intervalo de credibilidad del rasgo latente")
+  
+
+lt_CrI_plots %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</center>
+
+<aside class="notes">
+
+Por último, debido probablemente a la estimación conjunta, la incertidumbre en
+la estimación de los parámetros incidentales, operativizada como el porcentaje
+de cobertura de los intervalos de credibilidad, es más precisa con el algoritmo
+MCMC.
+El análisis factorial confirmatorio en cambio infraestima esta incertidumbre,
+que además se ve afectada por algunas condiciones como el número de bloques que
+forman el cuestionario.
 
 </aside>
 
@@ -610,13 +816,11 @@ estarían dentro de los márgenes aceptables.
 
 </br>
 
-- Mejor convergencia de estimaciones
-
 - Fiabilidades mayores
 
 <div class="fragment">
 <center>
-```{r empirical_reliabilities_plot, dependson="empirical_reliabilities", fig.height=3.5}
+```{r empirical_reliabilities_plot, dependson="empirical_reliabilities", fig.height=4}
 
 emp_rels %>% plot_ly(
   r = ~Fiabilidad, split = ~`Método`, theta = ~Rasgo,
@@ -627,22 +831,25 @@ emp_rels %>% plot_ly(
   hoverinfo = "text"
 ) %>% plotly_conf() %>% layout(
   polar = list(radialaxis = list(visible = TRUE, range = 0:1)),
-  magin = list(t = 40)
+  magin = list(t = 20, b = 100)
 )
 
 ```
 </center>
 </div>
 
+- Mejor convergencia de estimaciones
+
 
 <aside class="notes">
 
-Esto también queda ilustrado en la aplicación a datos empíricos en un
-cuestionario de Elección Forzosa de personalidad para el Modelo Big Five,
-donde encontramos mayores fiabilidades con el algoritmo MCMC.
+Estos resultados también quedan ilustrados en la aplicación a datos empíricos,
+donde encontramos mayores fiabilidades con el algoritmo MCMC para todas las
+dimensiones del modelo (algunas por poco, pero también).
 
-Aparte de una mejor convergencia de los parámetros estructurales cuando la
-información empírica es escasa.
+Y además ofrece una mejor convergencia de los parámetros estructurales en
+condiciones de escasez de información empírica, presumiblemente debido a las
+propiedades Bayesianas del algoritmo.
 
 </aside>
 
@@ -662,15 +869,21 @@ información empírica es escasa.
 
 <aside class="notes">
 
-El modelo MUPP-2PL es algebraicamente equivalente al modelo Multidimensional
-Logístico Compensatorio, lo que permite establecer analogías y generalizar
-resultados, y al modelo TIRT aplicado a pares, permitiendo comparar métodos de
-estimación y hacer generalizaciones.
+Bien.  Hemos visto que el modelo MUPP-2PL es algebraicamente equivalente al
+modelo Multidimensional Logístico Compensatorio, lo que permite establecer
+analogías y generalizar resultados, y al modelo TIRT aplicado a pares,
+permitiendo comparar métodos de estimación y hacer generalizaciones.
 
-En cuanto a la estimación, vemos que el algoritmo MCMC da mejores resultados en
-algunos indicadores de recuperación de parámetros. También, que es posible
-estimar el modelo MUPP-2PL sin bloques unidimensionales y sin bloques
-heteropolares.
+En cuanto a la estimación, el algoritmo MCMC da mejores resultados en
+algunos indicadores de recuperación de parámetros.
+
+También, concluimos que es posible estimar el modelo MUPP-2PL sin bloques
+unidimensionales,
+
+y sin bloques heteropolares.  Aunque los estimadores de los parámetros se
+resienten en esta condición, el algoritmo MCMC es más robusto.
+A este respecto, por lo tanto, encontramos discrepancias entre nuestros
+resultados y los encontrados por Brown y Maydeu-Olivares en su artículo de 2011.
 
 </aside>
 
@@ -689,9 +902,9 @@ main_layout(
 
 <aside class="notes">
 
-En lo que a los bloques heteropolares se refiere, encontramos por lo tanto una
-discrepancia entre nuestros resultados y los encontrados por Brown y
-Maydeu-Olivares en su artículo de 2011.
+Este es el problema que abordamos en el estudio 2, el cual trata sobre el
+estudio y la evaluación de la sensibilidad dimensional de los cuestionarios de
+elección forzosa.
 
 </aside>
 
@@ -759,13 +972,19 @@ tibble(
 
 <aside class="notes">
 
-Los desarrollos teóricos del Capítulo 3, plasmados en los dos teoremas, dan a
-entender que esto se debe al problema que denominamos restricción dimensional,
-que ocurre cuando sólo tenemos bloques homopolares.
+El problema en cuestión es que ormalmente, cuando diseñamos un cuestionario,
+queremos que mida ciertos rasgos, para lo cual debe ser sensible a un número D
+de dimensiones latentes, una por rasgo, como en este ejemplo donde supuestamente
+los bloques son una medida de un espacio bidimensional.
+Esto será así si las direcciones de los bloques están bien distribuidas en el
+espacio, dando lugar a una matriz de información multivariada de rango completo.
 
-En estos casos, corremos el riesgo de que la dirección de medida sea muy similar
-en todos los bloques, siendo el cuestionario prácticamente unidimensional, cosa
-que no puede ocurrir en presencia de bloques heteropolares.
+Ahora bien, cuando sólo tenemos bloques homopolares, corremos el riesgo de que
+las direcciones de medida sean muy similares.  En el ejemplo bidimensional, esto
+daría lugar a un instrumento unidimensional en la práctica,
+
+cosa que cuando tenemos bloques homopolares y heteropolares no podría ocurrir,
+como se ve en este ejemplo.
 
 </aside>
 
@@ -774,10 +993,73 @@ que no puede ocurrir en presencia de bloques heteropolares.
 
 </br>
 
-<center>
-```{r MUPP-2PL_underidentification_3D, cache=FALSE, fig.align='center', dependson="MUPP_2PL_heteropolar_blocks", fig.width=8, fig.height=6}
+<div class="container">
+<div class="column">
+```{r MUPP-2PL_3D, cache=FALSE, fig.align='center', dependson="MUPP_2PL_heteropolar_blocks", fig.width=4, fig.height=4.2}
 
-SCALE_CORR_3 <- .95
+scales <- rbvlnorm(
+  N_BLOCKS, location = c(.25, .25),
+  bvlnorm.scale(c(.25, .25), SCALE_CORR_1)
+)
+
+underidentified_scales_3D <- tibble(
+  a1 = scales[, 1], a2 = scales[, 2], l = LOCATION_PARAMS,
+  pol1 = "+", pol2 = "+",
+  dim1 = c("theta_1" %>% rep(N_BLOCKS * 2 / 3), "theta_2" %>% rep(N_BLOCKS / 3)),
+  dim2 = c("theta_2" %>% rep(N_BLOCKS / 3), "theta_3" %>% rep(N_BLOCKS * 2 / 3))
+)
+
+MCLM_blocks <- underidentified_scales_3D %>% MUPP2PL_to_MCLM
+multidim_blocks <- underidentified_scales_3D %>%
+  multidim_params_MUPP_2PL(diag(3))
+
+origin_coords <- multidim_blocks %>%
+  transmute_at(vars(starts_with("theta")), "*", .$MBL) %>%
+  rename_all(str_replace, pattern = "theta", replacement = "coord") %>%
+  rowid_to_column(var = "Item") %>% mutate(Point = "origin")
+
+end_coords <- multidim_blocks %>%
+  transmute_at(vars(starts_with("theta")), "*", (.$MBL + .$MBS)) %>%
+  rename_all(str_replace, pattern = "theta", replacement = "coord") %>%
+  rowid_to_column(var = "Item") %>% mutate(Point = "end")
+
+segment_coords <- bind_rows(origin_coords, end_coords)
+
+tip_coords <- bind_cols(
+  end_coords,
+  multidim_blocks %>% select(starts_with("theta"))
+)
+
+segment_coords %>% plot_ly(
+  type= "scatter3d", mode = "lines",
+  x = ~coord_1, y = ~coord_2, z = ~coord_3,
+  split = ~Item, hoverinfo = "none", color = I(PALETTE.COLORS[4])
+) %>%
+  add_trace(
+    type = "cone", data = tip_coords,
+    x = ~coord_1, y = ~coord_2, z = ~coord_3,
+    u = ~theta_1, v = ~theta_2, w = ~theta_3,
+    hoverinfo = "none", color = I(PALETTE.COLORS[2]),
+    showscale = FALSE
+  ) %>%
+  layout(
+    scene = list(
+      aspectmode = "cube",
+      xaxis = list(title = HTML("\u03B81")),
+      yaxis = list(title = HTML("\u03B82")),
+      zaxis = list(title = HTML("\u03B83"))
+    ),
+    showlegend = FALSE,
+    title = "Condición favorable"
+  ) %>% plotly_conf
+      
+```
+</div>
+
+<div class="container">
+```{r MUPP-2PL_underidentification_3D, cache=FALSE, fig.align='center', dependson="MUPP_2PL_heteropolar_blocks", fig.width=4, fig.height=4.2}
+
+SCALE_CORR_3 <- .99
 
 scales <- rbvlnorm(
   N_BLOCKS, location = c(.25, .25),
@@ -831,23 +1113,20 @@ segment_coords %>% plot_ly(
       yaxis = list(title = HTML("\u03B82")),
       zaxis = list(title = HTML("\u03B83"))
     ),
-    showlegend = FALSE
-  )
+    showlegend = FALSE,
+    title = "Condición desfavorable"
+  ) %>% plotly_conf
       
 ```
-</center>
+</div>
 
 
 <aside class="notes">
 
-Cuando el cuestionario de elección forzosa mide tres dimensiones latentes,
-es más difícil visualizar el problema, pero podemos ver que los bloques tienden
-a concentrarse en un único plano.
-
-Y con más de tres dimensiones es imposible representarlo, pero básicamente si el
-cuestionario está diseñado para medir D dimensiones, en condiciones de
-restricción dimensional solamente puede obtener D-1 parámetros de rasgo latente
-independientes para cada persona.
+Cuando el cuestionario mide tres dimensiones latentes, el problema es más
+difícil de visualizar, pero podemos ver que lo deseable sería que los bloques
+se distribuyan en tres planos ortogonales, pero en condiciones desfavorables
+dimensional tienden a concentrarse en un único plano.
 
 </aside>
 
@@ -862,32 +1141,52 @@ independientes para cada persona.
 
 - Indeterminación empírica
 
-- "Ipdatividad" en puntuaciones de rasgo latente
+- "Ipsatividad" en puntuaciones de rasgo latente
 
 
 <aside class="notes">
 
-Esta condición constituye una indeterminación empírica que hemos denominado
-"restricción dimensional", y consiste en una reducción de la
-"sensibilidad dimensional" del instrumento, que en el caso
-límite viene dada por la condición expresada en los
-teoremas 1 y 2 del capítulo tercero.
+(Con más de tres dimensiones es imposible representarlo, pero básicamente si el
+cuestionario está diseñado para medir D dimensiones, en estas condiciones,)
 
-En estas condiciones, lo que se observa es que las puntuaciones de rasgo latente
-obtenidas mediante TRI tienen las mismas propiedades que las puntuaciones
-ipsativas, y por lo tanto conviene evitar esta indeterminación ya que no
-estaríamos solucionando los problemas de la ipsatividad.
+que denominamos restricción dimensional, solamente se puede obtener D-1
+parámetros de rasgo latente independientes para cada persona.
+
+Esta condición consiste en una reducción de la sensibilidad dimensional del
+instrumento, que en el caso límite viene dada por la indeterminación empírica
+expresada en los teoremas 1 y 2 del capítulo tercero.
+
+Cuando se da la indeterminación, lo que se observa es que las puntuaciones de
+rasgo latente tienen las mismas propiedades que las puntuaciones ipsativas, y
+por lo tanto conviene evitar esta situación, ya que no estaríamos solucionando
+los problemas de ipsatividad.
 
 </aside>
 
 
 # Objetivos
 
+</br>
+
 - Estudiar la estimación del modelo MUPP-2PL en condiciones de restricción
 dimensional
 
+</br>
+
 - Proponer y probar indicadores para evaluar la calidad del instrumento en
 condiciones de restricción dimensional
+
+
+<aside class="notes">
+
+El objetivo de este estudio por tanto, es estudiar la estimación del modelo en
+condiciones de restricción dimensional, más o menos próximas a la
+indeterminación empírica,
+
+y además proponer índices de sensibilidad dimensional, y evaluar su
+comportamiento en condiciones de restricción dimensional.
+
+</aside>
 
 
 # Estudio de simulación
@@ -917,9 +1216,11 @@ rel_plot <- rel_results %>%
       group = `Correlación entre dimensiones`, color = `Correlación entre dimensiones`
     )
   ) +
-  geom_point() + geom_line()
+  geom_point() + geom_line() +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
 
-rel_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+rel_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf %>%
+  layout(margin = list(r = 95))
 
 ```
 </center>
@@ -927,10 +1228,9 @@ rel_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 <aside class="notes">
 
-Al poner a prueba cómo afecta la indeterminación empírica a la fiabilidad
-mediante un estudio de simulación, vemos que ésta decrece considerablemente
-cuanto más nos aproximamos a la indeterminación empírica.
-
+Esto lo hacemos mediante un estudio de simulación, donde vemos que la
+fiabilidad decrece considerablemente cuanto más nos aproximamos a la
+indeterminación empírica.
 Además, este efecto interactúa con la correlación entre las dimensiones
 latentes, siendo más acusado cuanto más correlacionadas están las dimensiones.
 
@@ -942,7 +1242,9 @@ latentes, siendo más acusado cuanto más correlacionadas están las dimensiones
 <center>
 Resultados: Distorsión de correlaciones
 
-```{r simulation_corr_distortion, fig.height=4, fig.width=9, dependson="study_2_simulation_results", cache=FALSE}
+<div class = "container">
+<div class = "column">
+```{r simulation_corr_distortion, fig.height=4, fig.width=4.2, dependson="study_2_simulation_results", cache=FALSE}
 
 diff_corr_results <- study_2_results %>%
   filter(Estadistico == "Dif. correlaciones") %>% 
@@ -960,7 +1262,13 @@ scales_plot <- diff_corr_results %>% filter(Variable %in% "Corr. escalas") %>%
   geom_point(color = PALETTE.COLORS[1]) + geom_line(color = PALETTE.COLORS[1]) + ylim(-.35, 0) + ylab("Distorsión correlación") +
   xlab("Correlación entre escalas")
 
-scales_plot %<>% ggplotly(tooltip = c("y", "colour"))
+scales_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
+
+```
+</div>
+
+<div class = "column fragment">
+```{r simulation_corr_distortion_2, fig.height=4, fig.width=4.2, dependson="simulation_corr_distortion", cache=FALSE}
 
 corrs_plot <- diff_corr_results %>% filter(Variable %in% "Corr. dimensiones") %>%
   mutate(Nivel = Nivel %>% factor(levels = unique(.))) %>%
@@ -974,61 +1282,210 @@ corrs_plot <- diff_corr_results %>% filter(Variable %in% "Corr. dimensiones") %>
   geom_point(color = PALETTE.COLORS[2]) + geom_line(color = PALETTE.COLORS[2]) + ylim(-.35, 0) +
   xlab("Correlación entre dimensiones")
 
-corrs_plot %<>% ggplotly(tooltip = c("y", "colour"))
+corrs_plot %>% ggplotly(tooltip = c("y", "colour")) %>% plotly_conf
 
 ## TODO: etiquetar y fijar eje
-subplot(nrows = 1, scales_plot, corrs_plot, shareY = TRUE) %>%
-  plotly_conf %>% layout(margin = list(t = 40))
+# subplot(nrows = 1, scales_plot, corrs_plot, shareY = TRUE) %>%
+#   plotly_conf %>% layout(margin = list(t = 40))
 
 ```
+</div>
+</div>
 </center>
 
 
 <aside class="notes">
 
-La distancia respecto de la indeterminación empírica afecta también a cómo de
-distorsionadas están las correlaciones entre los estimadores puntuales de
-rasgo latente de las personas.
+Por otro lado, la distancia respecto de la indeterminación empírica afecta
+también a cómo de distorsionadas están las correlaciones entre los estimadores
+puntuales de rasgo latente de los parámetros incidentales.
 
-Sin embargo, al contrario que en la fiabilidad, esta distorsión es menos acusada
+Sin embargo, al contrario que en la fiabilidad, esta distorsión es menor
 cuanto más correlacionadas están las dimensiones.
 
 </aside>
 
 
-# Evaluación de la sensibilidad dimensional
+# Evaluación de la sensibilidad dimensional {data-transition="slide-in fade-out"}
 
 </br>
 
 - _LSV_: "Least Singular Value"
 
+</br>
+
 - _LEV_: "Least eigenvalue"
+
+```{r study_2_load_sim_data}
+```
 
 
 <aside class="notes">
 
-Para evaluar la sensibilidad dimensional hemos propuesto dos índices que
-cuantifican la distancia desde la matriz de escalas de los bloques a la
-situación límite de indeterminación empírica, y se basan en su descomposición en
-valores singulares (en el caso del menor valor singular) o en autovalores (en el
-caso del menor autovalor).
+(Para evaluar la sensibilidad dimensional proponemos como decíamos dos índices
+que cuantifican la distancia desde la matriz de parámetros de escala de los
+bloques a la situación límite de indeterminación empírica, que está expresada
+por la condición del teorema 1)
 
+Estos índices se basan en la descomposición de esa matriz en valores singulares
+(en el caso del menor valor singular),
+
+o en autovalores (en el caso del menor
+autovalor).
 Este segundo índice tiene la ventaja de que incorpora información de las
 correlaciones del espacio latente.
 
 </aside>
 
 
+# Evaluación de la sensibilidad dimensional {data-transition="fade-in fade-out"}
+
+<center>
+Resultados: Fiabilidad vs. _LSV_ y _LEV_
+
+<div class="container">
+<div class="column">
+```{r reliability_LSV, fig.height=4, fig.width=4.2, cache=FALSE, dependson="study_2_load_sim_data"}
+
+LSV_rel_plot <- result.table.3D %>%
+  ggplot(aes(LSV, Fiabilidad, color = `Corr. escalas`)) +
+  geom_point(alpha = .5, size = .5) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
+
+LSV_rel_plot %>% ggplotly %>% plotly_conf %>%
+  layout(margin = list(r = 100), title = NULL)
+
+```
+</div>
+
+<div class="column">
+```{r reliability_LEV, fig.height=4, fig.width=4.2, cache=FALSE, dependson="study_2_load_sim_data"}
+
+LEV_rel_plot <- result.table.3D %>%
+  ggplot(aes(LEV, Fiabilidad, color = `Corr. escalas`)) +
+  geom_point(alpha = .5, size = .5) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
+
+LEV_rel_plot %>% ggplotly %>% plotly_conf %>%
+  layout(margin = list(r = 100), title = NULL)
+
+```
+</div>
+</div>
+
+</center>
+
+
+<aside class="notes">
+
+Cuando observamos cómo se relacionan los índices de sensibilidad dimensional con
+la fiabilidad, vemos que las replicas de las diferentes condiciones tienen
+cierta dispersión, pues están afectadas por otros factores aparte de la
+correlación entre escalas, que es la manipulación experimental que nos permite
+producir diferentes grados de sensibilidad dimensional.
+En este caso la condición de correlación 0.7 sería la peor, donde vemos que
+ambos índices serían relativamente bajos, pero no distinguirían bien entre
+valores altos y bajos de fiabilidad.
+
+</aside>
+
+
+# Evaluación de la sensibilidad dimensional {data-transition="fade-in slide-out"}
+
+<center>
+Resultados: Distorsión de correlaciones vs. _LSV_ y _LEV_
+
+<div class="container">
+<div class="column">
+```{r corr_dist_LSV, fig.height=4, fig.width=4.2, cache=FALSE, dependson="study_2_load_sim_data"}
+
+LSV_corrdist_plot <- result.table.3D %>%
+  ggplot(aes(LSV, `Distorsión correlaciones`, color = `Corr. escalas`)) +
+  geom_point(alpha = .5, size = .5) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
+
+LSV_corrdist_plot %>% ggplotly %>% plotly_conf %>%
+  layout(margin = list(r = 100), title = NULL)
+
+```
+</div>
+
+<div class="column">
+```{r corr_dist_LEV, fig.height=4, fig.width=4.2, cache=FALSE, dependson="study_2_load_sim_data"}
+
+LEV_corrdist_plot <- result.table.3D %>%
+  ggplot(aes(LEV, `Distorsión correlaciones`, color = `Corr. escalas`)) +
+  geom_point(alpha = .5, size = .5) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
+
+LEV_corrdist_plot %>% ggplotly %>% plotly_conf %>%
+  layout(margin = list(r = 100), title = NULL)
+
+```
+</div>
+</div>
+
+</center>
+
+
+<aside class="notes">
+
+La distorsión dimensional en cambio está más relacionada con estos índices,
+observándose que la condición desfavorable siempre da valores bajos, y que
+además se puede establecer un punto de corte más preciso que permitiría asegurar
+distorsiones por debajo de cierto umbral de calidad.
+Como era de esperar, también observamos una mayor relación más fuerte, aunque
+no lineal, con el LEV que con el LSV, por tener en cuenta el primero la
+información de las correlaciones del espacio latente.
+
+</aside>
+
+
 # Estudio 2: Discusión
 
-- El modelo MUPP-2PL puede estar empíricamente indeterminado
+</br>
 
-- Índices de sensibilidad dimensional
+- Indeterminación empírica sólo con bloques homopolares
+
+- Índices de sensibilidad dimensional como criterios de calidad
 
 - Generalizabilidad de resultados
 
 
-# Estudio 3:<br>Comprobación del supuesto de invarianza del modelo MUPP-2PL
+<aside class="notes">
+
+A modo de conclusión, planteamos que el modelo MUPP-2PL puede estar
+empíricamente indeterminado, cuando diseñamos un instrumento sólo con bloques
+homopolares.  Esto es muy importante, ya que debemos tener cuidado en diseños
+de este tipo, que se suelen utilizar para el control de los sesgos de respuesta,
+lo cual recordemos que era uno de los motivos principales para el uso de
+cuestionarios de elección forzosa.
+
+También hemos visto que los índices de sensibilidad dimensional, y
+particularmente el LEV, permiten establecer criterios de calidad para estos
+instrumentos.
+Sin embargo, aunque nos permiten asegurar un mínimo de calidad, no es
+recomendable utilizarlos como criterio a maximizar.
+
+Por último, estos resultados son generalizables al modelo TIRT, al menos
+aplicado a pares.  Fuera del ámbito de elección forzosa, asumimos que también
+pueden aplicarse al modelo Multidimensional Logsítico Compensatorio dada la
+equivalencia algebraica, y en cuanto al modelo MUPP original no está claro que
+sean directamente generalizables.
+
+</aside>
+
+
+---
+
+```{r study_3_title_slide}
+
+main_layout(
+  "Estudio 3:",
+  "Comprobación del supuesto de invarianza del modelo MUPP-2PL"
+)
+
+```
 
 ```{r data_load, include=FALSE}
 ```
@@ -1046,110 +1503,142 @@ correlaciones del espacio latente.
 ```
 
 
-# Objetivos
+<aside class="notes">
 
-- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
+El tercer estudio trata sobre la comprobación del supuesto de invarianza del
+modelo, algo muy importante desde el punto de vista práctico, para el diseño de
+instrumentos.
 
-- Explorar los factores que potencialmente influyen en la violación del supuesto
+</aside>
 
 
-# Supuesto de invarianza
+# Introducción
 
+<center>Supuesto de invarianza</center>
+
+<div class="fragment">
 MUPP-2PL:
 
+<small>
 $$
 \textrm{P}_i\left(Y_{ij} = 1 | {\bf \unicode[Times]{x3B8}}\right) = \Phi_L\left(a_{i_1}\theta_{\tilde{i_1}j} - a_{i_2}\theta_{\tilde{i_2}j} + l_i\right)
 $$
+</small>
+</div>
 
+<div class="fragment">
 Ítem 1:
 
+<small>
 $$
 \textrm{P}_{i_1}\left(X_{i_1j} = 1 | \theta_\tilde{i_1}\right) = \Phi_L\left(a_{i_1}^*\left(\theta_{\tilde{i_1}j} - b_{i_1}\right)\right)
 $$
+</small>
 
 Ítem 2:
 
+<small>
 $$
 \textrm{P}_{i_2}\left(X_{i_2j} = 1 | \theta_\tilde{i_2}\right) = \Phi_L\left(a_{i_2}^*\left(\theta_{\tilde{i_2}j} - b_{i_2}\right)\right)
 $$
+</small>
+</div>
 
 
-# Supuesto de invarianza
+<aside class="notes">
+
+Recordemos que el modelo tiene un parámetro de escala para cada dimensión
+medida por el bloque, y un parámetro de intersección.
+
+Si asumimos que los dos ítems, aplicados de manera individual, estarían
+expresados por las dos siguientes expresiones,
+
+</aside>
+
+
+# Introducción
+
+<center>Supuesto de invarianza</center>
 
 <br>
 
 <center>
 
-- $a_{i_1}^*\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_1}$
+<div class="fragment">
+$a_{i_1}^*\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_1}$
+</div>
 
 <br>
 
-- $a_{i_2}^*\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_2}$
+<div class="fragment">
+$a_{i_2}^*\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\longrightarrow a_{i_2}$
+</div>
 
 <br>
 
-- $a_{i_2}^*b_{i_2}-a_{i_1}^*b_{i_1}\longrightarrow l_i$
+<div class="fragment">
+$a_{i_2}^*b_{i_2}-a_{i_1}^*b_{i_1}\longrightarrow l_i$
+</div>
 
 </center>
 
 
-# Supuesto de invarianza
-
-### Con ítems de escala graduada (i.e. Likert):
-
-<!-- TODO: [imagen umbrales Likert] -->
-
-$$a_{i_2}^*b_{i_2k'}-a_{i_1}^*b_{i_1k'}\longrightarrow l_i$$
-
-
-# Prueba de invarianza
-
-- Test razón de verosimilitud de modelos anidados (por parámetro)
-
-<!-- TODO: [Imagen de modelos CFA con parámetros libres / restringidos] -->
-
-
-- Estadístico: $SB-\chi^2$ robusto estrictamente positivo [@satorra_ensuring_2010]
-
-
 <aside class="notes">
 
-Para calcular este estadístico y realizar el test de razón de verosimilitudes
-es necesario estimación CFA (Mplus; no algoritmo MCMC)
+vemos que existe una equivalencia entre parámetros.
+El modelo predice por tanto que los parámetros del bloque se pueden predecir a
+partir de los parámetros de los ítems, estimados a partir de su aplicación en
+formato dicotómico, tal y como se muestra en estas expresiones.
 
 </aside>
 
 
-# Prueba de invarianza
+# Objetivos
 
-### Conjunto de datos:
+</br>
 
-- Test de personalidad "Big Five"
+- Comprobar el supuesto de invarianza de los parámetros del modelo MUPP-2PL
 
-- Respuestas de 695 - 396 estudiantes
+</br>
 
-- Ítems Likert y bloques EF
+- Explorar los factores que potencialmente influyen en la violación del supuesto
 
-- Emparejamiento de rasgos balanceado
 
-- Bloques homopolares y heteropolares
+<aside class="notes">
+
+El objetivo de este estudio es, por tanto, comprobar si se cumple este supuesto,
+que denominamos de invarianza, del modelo MUPP-2PL.
+Para poner a prueba este supuesto hemos utilizado un test de razón de
+verosimilitudes, aplicando la restricción de igualdad para cada parámetro.
+
+Además, en los casos en los que no se cumple, hemos explorado qué factores
+pueden ayudar a explicar la violación de este supuesto.
+
+</aside>
 
 
 # Resultados
 
 <center>
-### Parámetros de escala
+Parámetros de escala
 
-```{r joint_scatter_plot_scales_per_item_trait, dependson="all_stats_table", cache=FALSE}
+```{r joint_scatter_plot_scales_per_item_trait, dependson="all_stats_table", cache=FALSE, fig.width=4.5}
 
-scales.joint.collapsed %>% rename(`Block_code` = Block) %>%
+scales.joint.collapsed %>% rename(`Block_code` = Block, Rasgo = Trait) %>%
+  mutate(
+    Rasgo = Rasgo %>%
+      factor(levels = levels(.), labels = TRAIT.LEVELS[c(-2, -6)]),
+    `Trait other` = `Trait other` %>%
+      factor(levels = levels(.), labels = TRAIT.LEVELS[c(-2, -6)])
+  ) %>%
   left_join(
     block.item.params.joint %>% select(`Block_code` = Block, Bloque)
   ) %>%
   mutate(Label = NI %>% if_else(Bloque, NA_character_)) %>%
-  scales.scatter.plot(
-    Trait, labels = Label,
-    width = 6, height = 5.2, units = "in", dpi = "print"
+  scales.scatter.plot(Rasgo, labels = Label) %>%
+  layout(
+    xaxis = list(title = "Escala del ítem"),
+    yaxis = list(title = "Escala del bloque")
   )
 
 ```
@@ -1158,60 +1647,84 @@ scales.joint.collapsed %>% rename(`Block_code` = Block) %>%
 
 <aside class="notes">
 
-Se cumple el supuesto de invarianza en casi todos los casos, menos en dos
-parámetros.
-
-Esto imposibilita el estudio de la invarianza a nivel de ítems y bloques
-
-A nivel de cuestionario:
-
-"Compresión" del rango
-Desplazamiento del origen
+Hemos utilizado datos tomados de una muestra con un instrumento diseñado para
+medir los cinco rasgos del Big Five, donde vemos que hay una ligera compresión o
+desplazamiento hacia el cero los valores estimados en los parámetros de escala
+de los bloques respecto a su predicción a partir de los ítems.
+Aparte de esto, se cumple el supuesto de invarianza prácticamente en todos los
+parámetros, salvo en dos, lo que imposibilita el estudio de la
+violación de la invarianza a nivel de bloque.
 
 </aside>
 
 
-# Resultados
+# Invarianza de la intersección
+
+<center>Modelo de respuesta graduada [@samejima_estimation_1968]</center>
 
 <center>
-### Parámetros de posición
+```{r likert_model, cache=FALSE, fig.align='center'}
 
-```{r joint_threshold_plot_per_block, dependson="all_stats_table", fig.width=9, cache=FALSE}
+theta_vector <- seq(-3, 3, 0.1)
 
-threshold_1 <- block.item.params.joint %>% plot_joint_threshold_per_block(
-  `Intersección`, `Predicción umbral 1`
-)
-threshold_2 <- block.item.params.joint %>% plot_joint_threshold_per_block(
-  `Intersección`, `Predicción umbral 2`
-)
-threshold_3 <- block.item.params.joint %>% plot_joint_threshold_per_block(
-  `Intersección`, `Predicción umbral 3`
-)
-threshold_4 <- block.item.params.joint %>% plot_joint_threshold_per_block(
-  `Intersección`, `Predicción umbral 4`
+probs <- irf_GRM(theta_vector, 2.3, c(-4, -1.4, .8, 4.5))
+
+probs %<>% mutate(
+  lab   = paste0(
+    "P<sub>i", str_extract(`Categoría`, "[0-9]"),
+    "</sub>(", Theta %>% format(digits = 1), ") = ", Probabilidad %>% round(3)
+  ),
+  `Categoría` = `Categoría` %>%
+    factor(
+      levels = unique(.),
+      labels = c("Muy en desacuerdo", "En desacuerdo", "Indiferente",
+                 "De acuerdo", "Muy de acuerdo")
+    )
 )
 
-subplot(
-  threshold_1, threshold_2, threshold_3, threshold_4,
-  nrows = 1, shareX = TRUE, shareY = TRUE
-)
+icf_plot <- probs %>% ggplot(
+  mapping = aes(
+    x = Theta, y = Probabilidad,
+    group = `Categoría`, color = `Categoría`,
+    text = lab
+  )
+) + geom_path(size = 1) +
+  ggtitle("Probabilidad de respuesta a las categorías") +
+  scale_x_continuous(expand = expand_scale()) +
+  scale_y_continuous(expand = expand_scale(.01)) +
+  scale_color_manual(values = PALETTE.COLORS %>% unname)
+
+icf_plot %>% ggplotly(tooltip = "text") %>%
+  layout(
+    xaxis = list(title = TeX("\\textrm{P}_i \\left(X_{ij} = X_k | \\theta_j \\right)")),
+    yaxis = list(title = TeX("\\theta_j"))
+  ) %>% plotly_conf
 
 ```
 </center>
 
-
-- "Compresión" del rango
-
-- "Desplazamiento" del origen
+<div class="fragment">
+$$a_{i_2}^*b_{i_2k'}-a_{i_1}^*b_{i_1k'}\longrightarrow l_i$$
+</div>
 
 
 <aside class="notes">
 
-Más violaciones de invarianza con la segunda categoría.
+En cuanto a los parámetros de interseción, un problema que nos encontramos fue
+que los ítems aplicados individualmente estaban en un formato de respuesta tipo
+Likert en lugar de un formato dicotómico.
+Si queremos utilizar estos ítems para intentar predecir los parámetros de los
+bloques, por tanto, no tenemos un parámetro de posición del ítem, sino varios
+parámetros de umbral de las categorías de respuesta cuando aplicamos un modelo
+de respuesta graduada.
+Esto puede ser un problema muy habitual al intentar diseñar cuestionarios de
+eleción forzosa, ya que si queremos predecir los parámetros de los bloques a
+partir de los de los ítems es habitual que los encontremos ya calibrados con un
+formato de respuesta tipo Likert.
 
-Cuarta categoría la que menos.
-Posible "desplazamiento" del origen: sesgo negativo en bloques, o posible
-sesgo positivo (aquiescencia) en ítems, controlado por bloques
+En este caso, lo que podemos hacer es utilizar cada uno de parámetros de umbral
+de las categorías en la fórmula de predicción de la intersección, y por tanto
+comprobar cuál de esas categorías de umbral funciona mejor.
 
 </aside>
 
@@ -1221,10 +1734,8 @@ sesgo positivo (aquiescencia) en ítems, controlado por bloques
 ```{r intercepts_preprocessing, include=FALSE, dependson="all_stats_table"}
 ```
 
-
 <center>
-### Exploración de violación del supuesto (posición)
-
+Parámetros de intersección
 
 ```{r non_invariant_intercepts_plot, dependson="intercepts_preprocessing", fig.width=9, cache=FALSE}
 
@@ -1232,7 +1743,7 @@ intercept.invariance.plot <- non.invariant.intercepts %>%
   ggplot(
     aes(Bloque, `Desviación intersección`, shape = `Rasgo 1`, color = `Rasgo 2`)
   ) +
-  geom_point(size = 2.5) + scale_shape_manual(values = c(16, 17, 15, 18)) +
+  geom_point(size = 1) + scale_shape_manual(values = c(16, 17, 15, 18)) +
   scale_color_manual(values = PALETTE.COLORS %>% unname) +
   geom_hline(yintercept = 0) +
   facet_grid(
@@ -1256,14 +1767,15 @@ intercept.invariance.plot %>% ggplotly %>% config(displayModeBar = FALSE)
 
 <aside class="notes">
 
-Los rasgos medidos por cada ítem pueden jugar un papel en la violación
-de la invarianza: más violaciones en Neuroticismo (en segunda posición) y
-Apertura (primera pos)
-
-Polaridades no parecen afectar (pero su efecto no puede separarse entre
-polaridad del ítem, y bloque, debido al diseño de bloques heteropolares)
-
-Patrón consistente para diferentes polaridades de ítems y rasgos
+Haciendo esto, vemos que la cuarta categoría de umbral, que separa las dos
+categorías de respuesta que indican mayor acuerdo, es la que parece predecir
+mejor los parámetros de intersección:
+Por un lado hay menor número de parámetros invariantes, y por otro, la
+distribución de los errores de predicción positivos y negativos está mejor
+balanceada.
+Este resultado, que habría que poner a prueba específicamente, sería compatible
+con la hipótesis de que hay un sesgo de aquiescencia operando en las respuestas
+a los ítems, que estaría controlado en las respuestas a los bloques.
 
 </aside>
 
@@ -1271,8 +1783,7 @@ Patrón consistente para diferentes polaridades de ítems y rasgos
 # Resultados
 
 <center>
-### Exploración de violación del supuesto (posición)
-
+Parámetros de intersección
 
 ```{r non_invariant_intercepts_plot_4th_threshold, dependson="intercepts_preprocessing", fig.width=9, cache=FALSE}
 
@@ -1299,98 +1810,130 @@ intercept.invariance.plot.threshold.4 %>% ggplotly %>%
 
 <aside class="notes">
 
-Asumiendo que se da el efecto de escalamiento y desplazamiento del origen,
-podemos centrarnos en la categoría 4, asumiendo que sus predicciones son más
-precisas: por un lado, tenemos el menor número de violaciones de la invarianza,
-y por otro, los errores de predicción positivos y negativos están igualmente
-distribuidos, al contrario que en otras categorías.
-
-En estas condiciones, podemos interpretar las violaciones de la
-invarianza como violacions del supuesto de independencia a su vez, posiblemente
-debido a una interacción de efectos entre rasgo y polaridad.
-(Es decir, combinar determinados ítems con rasgos y polaridades específicas
-podría afectar a la invarianza)
-
-El signo del error de predicción está asociado con la polaridad y el rasgo
-medido.
+Centrándonos en la cuarta categoría de umbral, vemos que es posible interpretar
+algunos patrones en las violaciones del supuesto de invarianza:
+Los ítems de neuroticismo están en general más involucrados en dichas
+violaciones, y dado el error de predicción negativo para los ítems de
+neuroticismo directos en la primera posición del bloque, y positivo para los
+inversos en segunda posición, parece que puede existir algún efecto de
+complejo de interacción entre rasgo y polaridad que esté favorezca la violación
+del supuesto de invarianza.
 
 </aside>
 
 
-# Conclusiones
+# Resultados
 
-- Metodología para poner a prueba el supuesto del modelo MUPP-2PL
+<center>
+Parámetros de intersección
+
+```{r joint_threshold_plot_per_block, dependson="all_stats_table", cache=FALSE, fig.width=4.5}
+
+block.item.params.joint %>% plot_joint_threshold_per_block(
+  `Intersección`, `Predicción umbral 4`
+) %>% plotly_conf
+
+```
+</center>
+
+
+<aside class="notes">
+
+Por último, también vemos el efecto global de compresión de la escala, al igual
+que en los parámetros de escala.
+
+</aside>
+
+
+# Discusión
+
+</br>
 
 - Cumplimiento general del supuesto de invarianza
 
 - Consideraciones sobre las violaciones de la invarianza
 
-    - Efecto de escalamiento
+    - Compresión de la escala
     
-    - Efecto de desplazamiento de la posición
+    - Desplazamiento del origen de la escala
     
     - Violaciones de invarianza a nivel de bloque
 
 
 <aside class="notes">
 
-El cumplimiento del supuesto de invarianza permite contruir QEFs basándose
-en las propiedades de ítems Likert precalibrados
-(Reducción de costes, optimización de criterios)
+(En este estudio introducimos una metodología para poner a prueba el supuesto de
+invarianza del modelo MUPP-2PL,)
 
-Violaciones de invarianza pueden afectar a la información:
+y vemos que este supuesto se cumple en general. Esto nos permite afirmar que
+es posible cuestionarios de elección forzosa en base a las propiedades de ítems
+Likert precalibrados, lo que conlleva una importante reducción de costes, y
+permite optimizar criterios estadísticos en base a sus parámetros.
 
-Efecto de escalamiento reduciría la información del QEF (pero predecible)
+Respecto a las violaciones del supuesto de invarianza, sabemos que pueden
+afectar a la información multivariada del instrumento, por lo que habría que
+investigar más en detalle en qué casos se pueden dar, sobre todo en los
+parámetros de intersección.
 
-Umbral usado para la estimación; por otro lado, modelos que puedan dar cuenta
-de este efecto (e.g. sesgo de aquiescencia en los ítems)
+Sabemos que puede haber un efecto de compresión de la escala, que reduciría la
+información del instrumento, aunque de forma predecible.
 
-Hipótesis a comprobar sobre los bloques, mediante ítems/bloques experimentales
-diseñados para inducir o mitigar las violaciones de invarianza
+También hemos visto que hay un posible efecto de desplazamiento de la escala.
+Esto es interesante de investigar, y se pueden aplicar modelos que por ejemplo
+postulen la existencia de un sesgo de aquiescencia,
 
-</aside>
-
-
-# Conclusions
-
-
-<aside class="notes">
-
-We have discussed the three studies separately. Now we will discuss some
-conclusions fro the results of the three studies and the relationships among
-them.
+y se pueden formular hipótesis sobre las violaciones de la invarianza a nivel de
+bloques, que se podrían probar mediante bloques experimentales, combinando por
+ejemplo ítems de distintos rasgos y polaridades en bloques diseñados para
+inducir o mitigar violaciones de la invarianza.
 
 </aside>
 
 
 ---
 
-> 1 - A variant of the MUPP model [@stark_irt_2005] under a dominance
-measurement assumption can be formulated and identified; it has been called the
-MUPP-2PL model.
+```{r conclusions_title}
 
-<br>
+main_layout("Conclusions")
 
-> 2 - When data represents responses to a multidimensional pairwise FC
-questionnaire, both the MUPP-2PL and the TIRT model [@brown_item_2011] can be
-applied. Under these conditions, the two models are quasi-equivalent.
+```
 
-<br>
-
-> 3 - A Bayesian procedure for estimating structural and incidental parameters
-jointly is feasible. The method is based on Markov-Chain Monte Carlo simulation,
-and an implementation in R [@r_core_team_r:_2017] has been developed.
-Despite its high computational intensiveness, it gives highly accurate results.
-These results are satisfactory even under two allegedly unfavorable conditions:
-without unidimensional blocks, and without blocks with different polarity
-combinations (i.e., heteropolar blocks)
 
 
 <aside class="notes">
 
-This model is more parsimonious than the original MUPP model.
-In addition, it may be more appropriate than the original when the latent
-agreement to the items in a block is a monotonical function of the trait level.
+Bien, a continuación presentaré el apartado de conclusiones, que como ya 
+mencionamos anteriormente, se hará en inglés.
+
+We have discussed the three studies separately. Now we will discuss some
+conclusions from the results of the three studies and the relationships among
+them.
+
+</aside>
+
+
+# Conclusions {data-transition="slide-in fade-out"}
+
+<div class="fragment">
+1 - A variant of the MUPP model [@stark_irt_2005] under a dominance
+measurement assumption can be formulated and identified; it has been called the
+MUPP-2PL model.
+</div>
+
+</br>
+
+<div class="fragment">
+2 - When data represents responses to a multidimensional pairwise FC
+questionnaire, both the MUPP-2PL and the TIRT model [@brown_item_2011] can be
+applied. Under these conditions, the two models are quasi-equivalent.
+</div>
+
+
+<aside class="notes">
+
+This model is more parsimonious than the original MUPP model, and may be more
+appropriate than the original when the latent agreement to the items in a block
+is a monotonical function of the trait level.
 
 Scaling factor aside, their parameters and estimation methods are
 interchangeable with negligible consequences.
@@ -1398,60 +1941,78 @@ interchangeable with negligible consequences.
 </aside>
 
 
----
+# Conclusions {data-transition="fade-in fade-out"}
 
-> 4 - The new Bayesian estimation procedure outperforms the estimation method
+3 - A Bayesian procedure for estimating structural and incidental parameters
+jointly is feasible. The method is based on Markov-Chain Monte Carlo simulation,
+and an implementation in R [@r_core_team_r:_2017] has been developed.
+Despite its high computational intensiveness, it gives highly accurate results.
+
+</br>
+
+<div class="fragment">
+4 - The new Bayesian estimation procedure outperforms the estimation method
 proposed for the TIRT model, based on analysis of bivariate information through
 confirmatory factor analysis [@brown_fitting_2012].
+</div>
+
+
+<aside class="notes">
+
+These results are satisfactory even under two allegedly unfavorable conditions:
+without unidimensional blocks, and without blocks with different polarity
+combinations which we call heteropolar blocks
+
 Particularly, it yields more accurate estimation errors for the incidental
 parameters, a better estimation of the latent space correlational structure,
 and more reasonable estimates when empirical information is scant.
 
-<br>
-
-> 5 - The direct bidimensional pairs (DBP) design for FC questionnaires,
-intended to control for bias associated with response styles,
-may suffer from an empirical underidentification we may call
-*dimensional restriction*.
-This condition necessarily leads to (a) a notable reduction of the reliability,
-and (b) distortion of the correlations among the latent trait estimates,
-in the form of negative bias.
-
-
-<aside class="notes">
-
-Arguably,
-the first result is due to the joint estimation of structural and incidental
-parameters, the second to the use of full information, and the third to the
-Bayesian features of the algorithm.
-
-These properties are the same attributed to ipsative scores. Similar to them,
-the distortion of the latent trait estimates will be worse the more positive the
-actual latent dimension correlations are.
-
 </aside>
 
 
----
+# Conclusions {data-transition="fade-in fade-out"}
 
-> 6 - A FC instrument designed under the DBP principle, although not fulfilling
+5 - The design of FC questionnaires with only homopolar direct blocks,
+intended to control for bias associated with response styles,
+may suffer from an empirical underidentification we may call
+*dimensional restriction*.
+
+</br>
+
+<div class="fragment">
+6 - A FC instrument with such a design, although not fulfilling
 the conditions for the empirical underidentification, may be close enough to it
 to have identification issues. We may refer to the distance of the instrument
 information matrix to the empirical underidentification as its dimensional
 sensitivity.
+</div>
 
-<br>
-
-> 7 - We have proposed cutoff criteria for the *LSV* and *LEV*, useful to assess
-the property of dimensional sensitivity of an instrument.
-However, neither of these indices capture all the relevant phenomena related to
-the dimensional restriction of a DBP FC instrument.
 
 <aside class="notes">
 
-This property can be quantified, and its magnitude estimated using two
+This condition necessarily leads to a notable reduction of the reliability,
+and a distortion of the correlations among the latent trait estimates,
+in the form of negative bias.
+These properties are the same attributed to ipsative scores.
+
+The magnitude of this property can be quantified using two
 proposed indices:
 the least singular value (LSV), and the least eigenvalue (LEV).
+
+</aside>
+
+
+# Conclusions {data-transition="fade-in fade-out"}
+
+</br>
+
+7 - We have proposed cutoff criteria for the *LSV* and *LEV*, useful to assess
+the property of dimensional sensitivity of an instrument.
+However, neither of these indices capture all the relevant phenomena related to
+the dimensional restriction of a FC instrument.
+
+
+<aside class="notes">
 
 Therefore, these indices should not be used for attempting to maximize the
 dimensional sensitivity.
@@ -1459,27 +2020,19 @@ dimensional sensitivity.
 </aside>
 
 
----
+# Conclusions {data-transition="fade-in fade-out"}
 
-> 8 - The invariance assumption of the MUPP-2PL model can be tested using a nested
+</br>
+
+8 - The invariance assumption of the MUPP-2PL model can be tested using a nested
 model comparison method.
 
-<br>
+</br>
 
-> 9 - This method has provided evidence in favor of the invariance assumption of
+<div class="fragment">
+9 - This method has provided evidence in favor of the invariance assumption of
 the MUPP-2PL model parameters.
-
-<br>
-
-> 10 - The item scale estimates especially fulfill the invariance assumption.
-Therefore, their predictions can be used to estimate the dimensional sensitivity
-of a pairwise multidimensional FC instrument using the *LSV* and *LEV*,
-attending to its item pairings.
-
-<br>
-
-> 11 - The violations of the invariance assumption seem to follow at least
-partially predictable patterns.
+</div>
 
 
 <aside class="notes">
@@ -1488,62 +2041,92 @@ We have showcased the Likelihood Ratio test applied to
 the dataset of empirical responses to a FC questionnaire measuring
 the Big-Five personality model.
 
-Therefore, estimates from the graded responSe model, applied to a
+Therefore, estimates from the graded response model, applied to a
 graded-scale instrument made up by the individual items of the FCQ, may yield
 accurate predictions of the MUPP-2PL model parameters.
-
-
-
-Global translation and/or scaling transformations may affect the whole FC
-format, while individual block parameters may deviate from their predictions due
-to factors such as item dimensions or polarities.
 
 </aside>
 
 
-## Limitations
+# Conclusions {data-transition="fade-in slide-out"}
+
+10 - The item scale estimates especially fulfill the invariance assumption.
+Therefore, their predictions can be used to estimate the dimensional sensitivity
+of a pairwise multidimensional FC instrument using the *LSV* and *LEV*,
+attending to its item pairings.
+
+<br>
+
+<div class="fragment">
+11 - The violations of the invariance assumption seem to follow at least
+partially predictable patterns.
+</div>
+
+
+<aside class="notes">
+
+However, one must take care, as these results have been tested on an instrument
+with both homopolar and heteropolar items, and it's yet unclear whether they
+will be equally accurate with a design with homopolar blocks only.
+
+Global translation and/or scaling transformations may affect the whole FC
+format, while individual block parameters may deviate from their predictions due
+to factors such as the latent traits tapped or polarities.
+
+</aside>
+
+
+# Limitations
 
 Regarding the model and its applications:
 
-- Theoretical develovments only applicable to *pairwise* responses
+- Theoretical developments only applicable to *pairwise* responses
 
 - Pending issues regarding robustness against *motivated distortion*
 
 - Underidentification of the item location parameters
 
-- Invariance assumption with DBP design
+- Invariance assumption with homopolar blocks
 
 
 <aside class="notes">
 
-Relevant because:
-This format is widely popular and is used in many instruments
-Lay the foundations for future theoretical developments on other formats with
-more than two items
-Consider generatlizations due to connections to the TIRT and MUPP models.
+(Among the most important limitation of the present dissertation, we may mention
+the following:
 
-DBP design not sufficient condition:
-Pairing the items according to their *preference indices*
-Impact of the pairing strategies on model properties
-Invariance under different conditions (test only with straight-take conditions)
+Regarding the model and its applications:)
 
-Major restraint for deisgn mulditidemsnional FC CATs.
-Fulfilment of the invariance assumption is a necessary condition for using
-pre-calibrated items.  Need to know pairing conditions to avoid.
+Theoretical developments only applicable to *pairwise* responses.
+However, this format is widely popular and is used in many instruments, and our
+results also lay the foundations for future theoretical developments on other
+formats with more than two items, and other possible generalizations to
+the TIRT and MUPP models.
 
-Dimensional restriction of an instrument does not imply a distortion in the
-structural parameter estimates.
-If the underidentification is local to incidental parameters,
-it may be possible that block parameters can be still accurately recovered.
+There are also some pending issues regarding the robustness against response
+biases due to motivated distortion.  For example, we have not adressed how to
+pair the items according to their *preference indices*, nor what is the impact
+of different pairing strategies on the model properties.
+
+The underidentification of the item location parameters is also an issu, and a
+major restraint for applications such as the deisgn multidimensional FC CATs.
+
+Finally, we would need to test the invariance assumption in the more restrictive
+condition of using direct homopolar blocks only.
+However, note that the dimensional restriction of an instrument does not imply a
+distortion in the structural parameter estimates, given the underidentification
+is local to the incidental parameters, so it's likely that the block parameter
+estimates can be still accurately recovered and thus found to be invariant.
 
 </aside>
 
 
-## Limitations
+# Limitations
 
 Regarding the Bayesian estimation procedure:
 
 - No model fit indices introduced
+
+- More general modeling framework (e.g. allowing restrictions and model nesting)
 
 - High technical skill required
 
@@ -1551,12 +2134,28 @@ Regarding the Bayesian estimation procedure:
 
     - Optimization strategies
 
-- More general modeling framework (e.g. allowing restrictions and model nesting)
+
+<aside class="notes">
+
+(Regarding the Bayesian estimation procedure,)
+
+no model fit indices where introduced,
+
+and also we didn't have the possibility to set restrictions on the parameters,
+which precluded its use in study 3 for testing the invariance assumptions.
+
+Also, the code is not optimized for usability,
+
+which along its computational intensivity, preclude its widespread use by the
+scientific community to a large extent.
+
+On this latter point, there are a few optimization strategies we have planned to
+work on in the near future.
+
+</aside>
 
 
-## Contributions
-
-Related to the Ph.D. project:
+# Contributions
 
 - Three co-authored papers (one as leading)
 
@@ -1571,15 +2170,13 @@ Related to the Ph.D. project:
 - Several posters in national and international conferences
 
 
-## Contributions
+---
 
-Aside from Ph.D. project:
+```{r thank_you}
 
-- Five co-authored papers as collaborations (one as senior)
+main_layout("Muchas gracias por su atención")
 
-- Seven communications in national and international conferences (one as speaker)
-
-- Several posters in national and international conferences
+```
 
 
-# Bibliografía seleccionada {.small}
+# Bibliografía seleccionada

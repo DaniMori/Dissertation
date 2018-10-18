@@ -73,30 +73,30 @@ emp_rels <- tribble(
 
 ############################ STUDY 2 ############################
 
-## ---- load_LEV_LSV_sims ----
-
-load("res/LEV_LSV_simulations.Rdata")
-
-results %<>% as_tibble() %>%
-  mutate(
-    items.dim = items.dim %>%
-      factor(labels = paste(unique(.), "items/dimensión")),
-    n.dims = factor(n.dims),
-    a.scales.corr = factor(a.scales.corr)
-  ) %>% bind_cols(
-    evrs[, , "0"] %>% as.data.frame,
-    evrs[, , "0.3"] %>% as.data.frame,
-    evrs[, , "0.6"] %>% as.data.frame,
-    evrs[, , "0.9"] %>% as.data.frame
-  ) %>%
-  rename(
-    `Nº dimensiones` = n.dims, `Correlación entre escalas` = a.scales.corr,
-    LSV = mean.ls, LEV_corr_0 = mean.ls1, LEV_corr_0.3 = mean.ls2,
-    LEV_corr_0.6 = mean.ls3, LEV_corr_0.9 = mean.ls4
-  )
-
-LEV_max <- results %>% select(starts_with("LEV_corr")) %>%
-  summarize_all(max) %>% max
+# ## ---- load_LEV_LSV_sims ----
+# 
+# load("res/LEV_LSV_simulations.Rdata")
+# 
+# results %<>% as_tibble() %>%
+#   mutate(
+#     items.dim = items.dim %>%
+#       factor(labels = paste(unique(.), "items/dimensión")),
+#     n.dims = factor(n.dims),
+#     a.scales.corr = factor(a.scales.corr)
+#   ) %>% bind_cols(
+#     evrs[, , "0"] %>% as.data.frame,
+#     evrs[, , "0.3"] %>% as.data.frame,
+#     evrs[, , "0.6"] %>% as.data.frame,
+#     evrs[, , "0.9"] %>% as.data.frame
+#   ) %>%
+#   rename(
+#     `Nº dimensiones` = n.dims, `Correlación entre escalas` = a.scales.corr,
+#     LSV = mean.ls, LEV_corr_0 = mean.ls1, LEV_corr_0.3 = mean.ls2,
+#     LEV_corr_0.6 = mean.ls3, LEV_corr_0.9 = mean.ls4
+#   )
+# 
+# LEV_max <- results %>% select(starts_with("LEV_corr")) %>%
+#   summarize_all(max) %>% max
 
 
 ## ---- study_2_simulation_results ----
@@ -129,6 +129,22 @@ study_2_results <- tribble(
   "BSC x LTC", " .7 x .25",         "Fiabilidad",           .570,
   "BSC x LTC", " .7 x .50",         "Fiabilidad",           .530
 )
+
+
+## ---- study_2_load_sim_data ----
+
+load("res/Summary_results_3D_to_SPSS.Rdata")
+
+result.table.3D <- result.table[result.table$Dimensions == 3, ] %>%
+  as_tibble %>% rename(
+    Fiabilidad                 = `mean empirical reliability`,
+    `Distorsión correlaciones` = `mean true-estimates corr diff`,
+    `Corr. escalas`            = `Item condition`
+  ) %>%
+  mutate(
+    `Corr. escalas` = `Corr. escalas` %>%
+      factor(levels = levels(.), labels = c("-.7", " .0", " .7"))
+  )
 
 
 ############################ STUDY 3 ############################
