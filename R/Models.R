@@ -104,15 +104,6 @@ OPTIM.CONSTRAINT.NAMES <- c(
   paste0(BIG.FIVE.TRAITS, "_inverse"),
   "Total direct", "Total inverse"
 )
-# OPTIM.CONSTRAINT.NAMES <- c(
-#   paste0(BIG.FIVE.TRAITS, "_total"),
-#   paste0(BIG.FIVE.TRAITS[-1], "_direct"),
-#   paste0(BIG.FIVE.TRAITS, "_inverse"),
-#   "Total direct", "Total inverse",
-#   "Total DD blocks",
-#   "Valid blocks",
-#   "Total inverse blocks"
-# )
 
 # MODEL CONSTRAINTS:
 ITEMS.BY.POLARITY <- c(285, 95)
@@ -707,7 +698,6 @@ create.item.selection <- function(loading.estimates, angles) {
       n.ES.pos.items <- nrow(selected.pos.loadings$Neuroticismo)
       pos.loading.vars <- get.general.factor.variances(selected.pos.loadings)
       abs.loading.mins <- get.abs.loading.min(selected.loadings)
-      # selected.angle.vars <- get.total.angle.vars(selected.angles)
       selected.angle.vars <- get.gen.angle.vars(selected.angles)
       
       criteria <- c(selected.angle.vars, -abs.loading.mins, -pos.loading.vars, -n.ES.pos.items)
@@ -868,22 +858,7 @@ summarize.item.selection.result <- function(optim.result, loading.estimates) {
   all.items.by.trait <- codes.from.vars(loading.estimates, chosen.items)
   
   ## PARALLEL ANALYSIS
-#   pa.data <- sapply(
-#     BIG.FIVE.TRAITS,
-#     function(trait) {
-#       
-#       pa.items <- all.items.by.trait[[trait]]
-#       
-#       responses <- RESPONSE.DATA[, pa.items]
-#       
-#       parallel.analysis <- fa.parallel(responses, fa = "fa", cor = 'poly')
-#       
-#       return(parallel.analysis)
-#     },
-#     USE.NAMES = TRUE, simplify = FALSE
-#   )
-#   save(pa.data, file = paste0(OUTPUT.PATH, "optim_pa.Rdata"))
-  
+
   return(chosen.items)
 }
 
@@ -1006,18 +981,14 @@ create.block.set <- function(loading.estimates, angles) {
       selected.angles <- vars.in.codes(angles, sel.item.codes)
       
       ## Item selection criteria:
-      # n.ES.pos.items <- nrow(selected.pos.loadings$Neuroticismo)
       n.ES.pos.items <- nrow(vars.in.codes(pos.loadings, sel.item.codes)$Neuroticismo)
-      # pos.loading.vars <- get.general.factor.variances(selected.pos.loadings)
       abs.loading.mins <- get.abs.loading.min(selected.loadings)
-      # selected.angle.vars <- get.total.angle.vars(selected.angles)
       selected.angle.vars <- get.gen.angle.vars(selected.angles)
       
       pos.loading.matrix <- get.loading.matrix(blocks, selected.pos.loadings)
       pos.loadings.LSV <- if(nrow(pos.loading.matrix) > 0) svd(pos.loading.matrix)$d[ncol(pos.loading.matrix)]
       else 0
       
-      # criteria <- c(selected.angle.vars, -abs.loading.mins, -pos.loading.vars, -n.ES.pos.items)
       criteria <- c(
         selected.angle.vars,
         -abs.loading.mins,
@@ -1027,9 +998,6 @@ create.block.set <- function(loading.estimates, angles) {
         max(heteropolar.by.trait) - min(heteropolar.by.trait)
       )
       names(criteria) <- OPTIM.CRITERIA.BLOCKS
-      
-#       n.iters <<- n.iters + 1
-#       cat("Iteration ", n.iters, "\n")
       
       return(criteria)
     }
@@ -1049,9 +1017,7 @@ create.block.set <- function(loading.estimates, angles) {
       dd.blocks <- sum(pol.per.block == "++")
       ii.blocks <- sum(pol.per.block == "--")
       
-      # traits.per.block <- dec.vars$traits.per.block[, colnames(dec.vars$valid.block.codes)]
-      
-      
+
       selected.per.trait <- sapply(vars.in.codes(loading.estimates, selected), nrow)
       
       selected.pos.loadings <- vars.in.codes(pos.loadings, selected)
@@ -1137,40 +1103,6 @@ create.block.set <- function(loading.estimates, angles) {
     
     solution <- get.solutions(optim.result$par)
     
-#     selected <- t(
-#       sapply(
-#         seq_len(POP.SIZE),
-#         function(solution) return(item.codes[indexes[solution, ]]),
-#         simplify = all(items.per.sol == ITEMS.BY.TRAIT * length(BIG.FIVE.TRAITS))
-#       )
-#     )
-    
-#     n.selected.pos <- t(
-#       apply(
-#         selected, 1,
-#         function(items) {
-#           
-#           loadings <- vars.in.codes(pos.loadings, items)
-#           n.loadings <- sapply(loadings, nrow)
-#           
-#           return(n.loadings)
-#         }
-#       )
-#     )
-    
-#     n.selected.neg <- t(
-#       apply(
-#         selected, 1,
-#         function(items) {
-#           
-#           loadings <- vars.in.codes(neg.loadings, items)
-#           n.loadings <- sapply(loadings, nrow)
-#           
-#           return(n.loadings)
-#         }
-#       )
-#     )
-    
     # Flag the solutions with wrong number of items
     flags <- sapply(
       solution$selected.items,
@@ -1205,22 +1137,6 @@ create.block.set <- function(loading.estimates, angles) {
     all.items.by.trait <- codes.from.vars(loading.estimates, chosen.items)
     
     ## PARALLEL ANALYSIS
-#     pa.data <- sapply(
-#       BIG.FIVE.TRAITS,
-#       function(trait) {
-#         
-#         pa.items <- all.items.by.trait[[trait]]
-#         
-#         responses <- RESPONSE.DATA[, pa.items]
-#         
-#         parallel.analysis <- fa.parallel(responses, fa = "fa", cor = 'poly')
-#         
-#         return(parallel.analysis)
-#       },
-#       USE.NAMES = TRUE, simplify = FALSE
-#     )
-#     save(pa.data, file = paste0(OUTPUT.PATH, "optim_pa.Rdata"))
-    
     blocks <- t(solution$valid.blocks[[best.sol]])
     
     traits <- items$trait[which(items$code %in% blocks)]
@@ -1335,7 +1251,6 @@ block.set.from.items <- function(loading.estimates, item.codes) {
       svd(pos.loading.matrix)$d[ncol(pos.loading.matrix)]
     } else 0
     
-    # criteria <- c(selected.angle.vars, -abs.loading.mins, -pos.loading.vars, -n.ES.pos.items)
     criteria <- c(
       -pos.loadings.LSV,
       max(dd.by.trait.pair) - min(dd.by.trait.pair),
@@ -1358,17 +1273,6 @@ block.set.from.items <- function(loading.estimates, item.codes) {
     dd.blocks <- sum(pol.per.block == "++")
     ii.blocks <- sum(pol.per.block == "--")
 
-#     traits.per.block <- dec.vars$traits.per.block[, colnames(dec.vars$valid.block.codes)]
-#     
-#     
-#     selected.per.trait <- sapply(vars.in.codes(loading.estimates, item.codes), nrow)
-#     
-#     selected.pos.loadings <- vars.in.codes(pos.loadings, item.codes)
-#     direct.selected <- sapply(selected.pos.loadings, nrow)
-#     inverse.selected <- selected.per.trait - direct.selected
-#     
-#     total.inverse.selected <- sum(inverse.selected)
-    
     constraints <- c(
       -abs(times.item - 1) + 1,
       -abs(dd.blocks - DD.BLOCKS) + 1,

@@ -15,8 +15,6 @@ library(ggrepel)
 
 source("R/Models.R")
 source("R/Bivariate_lognormal_toolbox.R")
-# source("R/Functions.R")
-# source("R/IRT_ipsative_toolbox.R")
 
 
 ### GLOBAL CONSTANTS: ----------------------------------------------------------
@@ -58,7 +56,6 @@ names(TRAIT.NAMES) <- get.model.name.from.trait(trait = BIG.FIVE.TRAITS, abbrevi
 ESTIMATOR <- "ML"
 
 names(BIG.FIVE.TRAITS) <- TRAIT.NAMES
-# INVERT.DIMS <- BIG.FIVE.TRAITS[c("Neuroticism", "Agreeableness")]
 INVERT.DIMS <- BIG.FIVE.TRAITS[c("Agreeableness")]
 
 POLARITIES <- c("-", "+")
@@ -89,21 +86,6 @@ plotly_conf <- function(plotly_obj, zoom = FALSE) {
     )
 }
 
-### Commented block ----
-# render_response_scale <- function() {
-#   
-#   GS.RESPONSE.SCALE <- c(
-#     "Muy en desacuerdo", "En desacuerdo", "Neutral",
-#     "De acuerdo", "Muy de acuerdo"
-#   )
-#   
-#   1:5 %>% t %>% kable(col.names = GS.RESPONSE.SCALE, align = 'c')
-# }
-# 
-# render_FC_block <- function(option_1, option_2) {
-#   
-#   c(option_1, option_2) %>% t %>% kable(col.names = 1:2, align = 'c')
-# }
 
 main_layout <- function(title, subtitle = NULL) {
 
@@ -474,24 +456,6 @@ get.ev <- function(
 }
 
 
-# # TODO: function header
-# save.plot <- function(
-#   file.name, width = 3 * length(ITEMS.DIM),
-#   height = 7, call, ...
-# ) {
-#   
-#   # Open the file, setting the canvas properties
-#   png(
-#     paste0(FIG.PATH, file.name, ".png"),
-#     width = width, height = height, units = "in", res = 600, type = "cairo-png"
-#   )
-#   
-#   tryCatch(
-#     call(...), # Call the plot function
-#     finally = dev.off() # Close the file
-#   )
-# }
-
 plot.svr.conditions <- function(
   type = c('ls', 'rt'), plot.err.bars = TRUE,
   ylim = range(get.result(paste("mean", type, sep = '.')), na.rm = TRUE),
@@ -755,105 +719,6 @@ load.vars <- function() {
   return(list(items = items, blocks = blocks))
 }
 
-### Commented block ----
-# load.independent.estimates <- function(blocks) {
-#   
-#   load("output/Final_fit_results_ML.Rdata")
-#   
-#   item.loading.estimates <- tibble()
-#   item.threshold.estimates <- tibble()
-#   for(trait in names(gsq.models)) {
-#     
-#     new.loadings <- gsq.models[[trait]]$loadings[[trait]]
-#     
-#     item.loading.estimates %<>% bind_rows(
-#       new.loadings %>% data.frame %>% rownames_to_column(var = "Item") %>% add_column(Trait = trait)
-#     )
-#     
-#     item.threshold.estimates <- bind_rows(
-#       item.threshold.estimates,
-#       gsq.models[[trait]]$thresholds %>% data.frame %>% rownames_to_column(var = "collapsed") %>%
-#         separate(collapsed, into = c("Item", "Threshold"), sep = "\\$") %>%
-#         add_column(Trait = trait)
-#     )
-#   }
-#   
-#   item.parameters <- item.loading.estimates %>%
-#     rename(`scale estimate` = estimate, `scale sd.err` = std.err) %>%
-#     full_join(
-#       item.threshold.estimates %>% filter(Threshold == 1) %>%
-#         select(Item, `threshold 1 estimate` = estimate, `threshold 1 sd.err` = std.err)
-#     ) %>% 
-#     full_join(
-#       item.threshold.estimates %>% filter(Threshold == 2) %>%
-#         select(Item, `threshold 2 estimate` = estimate, `threshold 2 sd.err` = std.err)
-#     ) %>% 
-#     full_join(
-#       item.threshold.estimates %>% filter(Threshold == 3) %>%
-#         select(Item, `threshold 3 estimate` = estimate, `threshold 3 sd.err` = std.err)
-#     ) %>% 
-#     full_join(
-#       item.threshold.estimates %>% filter(Threshold == 4) %>%
-#         select(Item, `threshold 4 estimate` = estimate, `threshold 4 sd.err` = std.err)
-#     )
-#   
-#   block.parameters <- fcq.model$loadings$estimate %>% data.frame %>% rownames_to_column(var = "Block") %>%
-#     rename(`Block scale 1 estimate` = item.1, `Block scale 2 estimate`= item.2) %>%
-#     full_join(
-#       fcq.model$loadings$std.err %>% data.frame %>% rownames_to_column(var = "Block") %>% 
-#         rename(`Block scale 1 sd.err` = item.1, `Block scale 2 sd.err`= item.2)
-#     ) %>%
-#     full_join(
-#       fcq.model$thresholds %>% data.frame %>% rownames_to_column(var = "Block") %>% 
-#         rename(`Intercept estimate` = estimate, `Intercept sd.err` = std.err)
-#     ) %>%
-#     full_join(blocks, .)
-#   
-#   total.params <- block.parameters %>% 
-#     left_join(
-#       item.parameters %>% rename_at(vars(matches("(threshold|scale)")), ~str_c("Item 1 ",.)) %>% 
-#         select(starts_with("Item")),
-#       by  = c(`Item 1` = "Item")
-#     ) %>% 
-#     left_join(
-#       item.parameters %>% rename_at(vars(matches("(threshold|scale)")), ~str_c("Item 2 ",.)) %>% 
-#         select(starts_with("Item")),
-#       by  = c(`Item 2` = "Item")
-#     )
-#   
-#   total.params %<>% mutate(
-#     `Threshold 1 diff estimate` = `Item 1 threshold 1 estimate` - `Item 2 threshold 1 estimate`,
-#     `Threshold 2 diff estimate` = `Item 1 threshold 2 estimate` - `Item 2 threshold 2 estimate`,
-#     `Threshold 3 diff estimate` = `Item 1 threshold 3 estimate` - `Item 2 threshold 3 estimate`,
-#     `Threshold 4 diff estimate` = `Item 1 threshold 4 estimate` - `Item 2 threshold 4 estimate`,
-#     `Threshold 1 diff sd.err` = sqrt(`Item 1 threshold 1 sd.err`^2 + `Item 2 threshold 1 sd.err`^2),
-#     `Threshold 2 diff sd.err` = sqrt(`Item 1 threshold 2 sd.err`^2 + `Item 2 threshold 2 sd.err`^2),
-#     `Threshold 3 diff sd.err` = sqrt(`Item 1 threshold 3 sd.err`^2 + `Item 2 threshold 3 sd.err`^2),
-#     `Threshold 4 diff sd.err` = sqrt(`Item 1 threshold 4 sd.err`^2 + `Item 2 threshold 4 sd.err`^2),
-#     `Scale 1 diff estimate` = `Block scale 1 estimate` - `Item 1 scale estimate`,
-#     `Scale 2 diff estimate` = `Block scale 2 estimate` - `Item 2 scale estimate`,
-#     `Scale 1 diff sd.err` = sqrt(`Block scale 1 sd.err`^2 + `Item 1 scale sd.err`^2),
-#     `Scale 2 diff sd.err` = sqrt(`Block scale 2 sd.err`^2 + `Item 2 scale sd.err`^2),
-#     `Intercept - threshold 1 diff estimate` = `Intercept estimate` - `Threshold 1 diff estimate`,
-#     `Intercept - threshold 2 diff estimate` = `Intercept estimate` - `Threshold 2 diff estimate`,
-#     `Intercept - threshold 3 diff estimate` = `Intercept estimate` - `Threshold 3 diff estimate`,
-#     `Intercept - threshold 4 diff estimate` = `Intercept estimate` - `Threshold 4 diff estimate`,
-#     `Intercept - threshold 1 diff sd.err` = sqrt(`Intercept estimate`^2 + `Threshold 1 diff sd.err`^2),
-#     `Intercept - threshold 2 diff sd.err` = sqrt(`Intercept estimate`^2 + `Threshold 2 diff sd.err`^2),
-#     `Intercept - threshold 3 diff sd.err` = sqrt(`Intercept estimate`^2 + `Threshold 3 diff sd.err`^2),
-#     `Intercept - threshold 4 diff sd.err` = sqrt(`Intercept estimate`^2 + `Threshold 4 diff sd.err`^2),
-#     `Scale 1 WT` = `Scale 1 diff estimate` / `Scale 1 diff sd.err`,
-#     `Scale 2 WT` = `Scale 2 diff estimate` / `Scale 2 diff sd.err`,
-#     `Intercept - threshold 1 WT` = `Intercept - threshold 1 diff estimate` / `Intercept - threshold 1 diff sd.err`,
-#     `Intercept - threshold 2 WT` = `Intercept - threshold 2 diff estimate` / `Intercept - threshold 2 diff sd.err`,
-#     `Intercept - threshold 3 WT` = `Intercept - threshold 3 diff estimate` / `Intercept - threshold 3 diff sd.err`,
-#     `Intercept - threshold 4 WT` = `Intercept - threshold 4 diff estimate` / `Intercept - threshold 4 diff sd.err`
-#   )
-#   
-#   return(total.params)
-# }
-# ----
-
 collapse.scale.params <- function(params, block.scale.1, block.scale.2, item.scale.1, item.scale.2) {
 
   block.scale.1 <- enquo(block.scale.1)
@@ -876,110 +741,6 @@ collapse.scale.params <- function(params, block.scale.1, block.scale.2, item.sca
 
   return(all.scale.params)
 }
-
-### Commented block ----
-# joint.estimation.block.item.params.diff <- function(params) {
-#   
-#   params %>% mutate(
-#     `Scale 1 diff` = `Block scale 1` - `Scale item 1`,
-#     `Scale 2 diff` = `Block scale 2` - `Scale item 2`,
-#     `Intercept - threshold 1 diff` = Intercept - `Threshold 1 diff`,
-#     `Intercept - threshold 2 diff` = Intercept - `Threshold 2 diff`,
-#     `Intercept - threshold 3 diff` = Intercept - `Threshold 3 diff`,
-#     `Intercept - threshold 4 diff` = Intercept - `Threshold 4 diff`
-#   )
-# }
-# 
-# correlate.params <- function(df, param.1, param.2) {
-#   param.1 <- enquo(param.1)
-#   param.2 <- enquo(param.2)
-#   
-#   group.var <- df %>% group_vars
-#   
-#   df %<>% select(param.1 = !!param.1, param.2 = !!param.2)
-#   
-#   result <- df %>% summarize(
-#     corr = cor(param.1, param.2, use = "pairwise.complete.obs")
-#   )
-#   if(group.var %>% is_non_empty)
-#     result %<>% spread(key = group.var, value = corr)
-#   else names(result) <- param.1 %>% quo_name
-#   
-#   return(result)
-# }
-# 
-# cor.LL.Wald <- function(LL.expr, Wald.expr) {
-#   
-#   LL.ratio.tests %>% select(Block_code, LL = LL.expr) %>%
-#     full_join(
-#       Wald.tests.2 %>% select(Block_code, WT = Wald.expr),
-#       by = "Block_code"
-#     ) %>% select(-Block_code) %>%
-#     correlate.params(LL, WT) %>% magrittr::extract(1, 1)
-# }
-# 
-# invariance.correlations <- function(
-#   params,
-#   block.scale.1, block.scale.2, intercept,
-#   item.scale.1, threshold.1.item.1, threshold.2.item.1, threshold.3.item.1, threshold.4.item.1,
-#   item.scale.2, threshold.1.item.2, threshold.2.item.2, threshold.3.item.2, threshold.4.item.2
-# ) {
-#   
-#   block.scale.1				<- enquo(block.scale.1)
-#   block.scale.2				<- enquo(block.scale.2)
-#   intercept						<- enquo(intercept)
-#   item.scale.1				<- enquo(item.scale.1)
-#   item.scale.2				<- enquo(item.scale.2)
-#   threshold.1.item.1	<- enquo(threshold.1.item.1)
-#   threshold.2.item.1	<- enquo(threshold.2.item.1)
-#   threshold.3.item.1	<- enquo(threshold.3.item.1)
-#   threshold.4.item.1	<- enquo(threshold.4.item.1)
-#   threshold.1.item.2	<- enquo(threshold.1.item.2)
-#   threshold.2.item.2	<- enquo(threshold.2.item.2)
-#   threshold.3.item.2	<- enquo(threshold.3.item.2)
-#   threshold.4.item.2	<- enquo(threshold.4.item.2)
-#   
-#   params %<>% as_tibble %>% mutate(
-#     `Intercept - threshold 1` = UQ(threshold.1.item.1) - UQ(threshold.1.item.2),
-#     `Intercept - threshold 2` = UQ(threshold.2.item.1) - UQ(threshold.2.item.2),
-#     `Intercept - threshold 3` = UQ(threshold.3.item.1) - UQ(threshold.3.item.2),
-#     `Intercept - threshold 4` = UQ(threshold.4.item.1) - UQ(threshold.4.item.2)
-#   )
-#   
-#   all.scale.params <- collapse.scale.params(
-#     params, UQ(block.scale.1), UQ(block.scale.2), UQ(item.scale.1), UQ(item.scale.2)
-#   )
-#   
-#   correlations	 <- params %>% correlate.params(UQ(block.scale.1), UQ(item.scale.1))
-#   correlations.2 <- params %>% correlate.params(UQ(block.scale.2), UQ(item.scale.2))
-#   correlations %<>% bind_cols(correlations.2) %>%
-#     rename(`Block scale 1` = UQ(block.scale.1), `Block scale 2` = UQ(block.scale.2))
-#   
-#   correlations %<>% bind_cols(all.scale.params %>% correlate.params(`Block scale`, `Item scale`))
-#   
-#   correlations.2 <- params %>% correlate.params(`Intercept - threshold 1`, UQ(intercept))
-#   correlations %<>% bind_cols(correlations.2)
-#   correlations.2 <- params %>% correlate.params(`Intercept - threshold 2`, UQ(intercept))
-#   correlations %<>% bind_cols(correlations.2)
-#   correlations.2 <- params %>% correlate.params(`Intercept - threshold 3`, UQ(intercept))
-#   correlations %<>% bind_cols(correlations.2)
-#   correlations.2 <- params %>% correlate.params(`Intercept - threshold 4`, UQ(intercept))
-#   correlations %<>% bind_cols(correlations.2)
-#   
-#   correlations %<>% bind_cols(
-#     all.scale.params %>% group_by(Polarity)						%>%	correlate.params(`Block scale`, `Item scale`),
-#     all.scale.params %>% group_by(Trait)							%>%	correlate.params(`Block scale`, `Item scale`)
-#   ) %>% rename(`Scales` = `Block scale`, `Polarity -` = `-`, `Polarity +` = `+`) %>% 
-#     rename_at(vars(all.scale.params$Trait %>% levels), ~str_c("Trait ", .)) %>%
-#     bind_cols(
-#       all.scale.params %>% group_by(`Polarity other`)	%>% correlate.params(`Block scale`, `Item scale`),
-#       all.scale.params %>% group_by(`Trait other`)		%>% correlate.params(`Block scale`, `Item scale`)
-#     ) %>% rename(`Polarity other -` = `-`, `Polarity other +` = `+`) %>% 
-#     rename_at(vars(all.scale.params$Trait %>% levels), ~str_c("Trait other ", .))
-#   
-#   correlations %>% gather(key = "Parameters", value = "Value")
-# }
-# ----
 
 get.range <- function(params, ...) {
 
@@ -1114,293 +875,6 @@ intercept.threshold.scatter.plot <- function(params, intercept, threshold.diff,
   return(scatter.plot)
 }
 
-### Commented block ----
-# ll.scale.scatter.plot <- function(params, x, y, color, alpha = .05) {
-#   
-#   x <- enquo(x)
-#   y <- enquo(y)
-#   
-#   params %<>% mutate(x = UQ(x), y = UQ(y))
-#   
-#   if(!missing(color)) {
-#     
-#     color <- enquo(color)
-#     
-#     params %<>% mutate(Color = UQ(color))
-#     legend.title <- color %>% quo_name
-#     
-#   } else {
-#     
-#     params %<>% mutate(Color = "1")
-#     legend.title <- ""
-#   }
-#   
-#   scatter.plot <- params %>% mutate(diff = `Block scale` - `Item scale`) %>%  ggplot(
-#     aes(
-#       x, y,
-#       color = Color,
-#       text = paste0(
-#         "</br>LL ratio test: ", LLR %>% sprintf("%.3f", .),
-#         "</br>Block scale: ", `Block scale` %>% sprintf("%.3f", .),
-#         "</br>Param diff.: ", diff %>% sprintf("%.3f", .),
-#         "</br>Position: ", Position,
-#         "</br>Trait: ", Trait,
-#         "</br>Trait other: ", `Trait other`,
-#         "</br>Polarity: ", Polarity,
-#         "</br>Polarity other: ", `Polarity other`
-#       )
-#     )
-#   ) + xlab(x %>% quo_name) + ylab(y %>% quo_name) +
-#     theme_minimal(base_family = "serif") +
-#     geom_hline(yintercept = alpha, linetype = "dashed") +
-#     geom_vline(xintercept = 0) + 
-#     geom_point(alpha = .75) +
-#     scale_x_continuous() +
-#     scale_y_continuous(
-#       trans = scales::trans_new(
-#         name = "log10rev",
-#         transform = function(x) -log10(x),
-#         inverse = function(x) exp(-x * log(10)),
-#         breaks = function(range) { range %<>% log10 %>% round; 10^(range[1]:range[2]) }
-#       )
-#     ) +
-#     # scale_color_brewer(palette = "Set2", guide = guide_legend(title = legend.title))
-#     scale_color_manual(values = PALETTE.COLORS, guide = guide_legend(title = legend.title))
-#   
-#   scatter.plot %<>% ggplotly(tooltip = "text") %>%
-#     layout(
-#       margin = list(l = 60, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0),
-#       showlegend = legend.title %>% is_non_empty_character,
-#       hoverlabel = list(bordercolor = "white"),
-#       xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
-#       yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
-#     ) %>%
-#     config(displayModeBar = FALSE)
-#   
-#   return(scatter.plot)
-# }
-# 
-# ll.intercept.scatter.plot <- function(params, x, y, real, stat, color, alpha = .05, smooth = TRUE) {
-#   
-#   x <- enquo(x)
-#   y <- enquo(y)
-#   real <- enquo(real)
-#   stat <- enquo(stat)
-#   
-#   params %<>% mutate(x = UQ(x), y = UQ(y), stat = UQ(stat), real = UQ(real))
-#   
-#   if(!missing(color)) {
-#     
-#     color <- enquo(color)
-#     
-#     params %<>% mutate(Color = UQ(color))
-#     legend.title <- color %>% quo_name
-#     
-#   } else {
-#     
-#     params %<>% mutate(Color = "1")
-#     legend.title <- ""
-#   }
-#   
-#   scatter.plot <- params %>% mutate(diff = real - x) %>%  ggplot(
-#     aes(
-#       x, y,
-#       color = Color,
-#       text = paste0(
-#         "</br>LL ratio test: ", stat %>% sprintf("%.3f", .),
-#         "</br>Block intercept: ", real %>% sprintf("%.3f", .),
-#         "</br>Param diff.: ", diff %>% sprintf("%.3f", .),
-#         "</br>Trait 1: ", `Trait 1`,
-#         "</br>Trait 2: ", `Trait 2`,
-#         "</br>Polarity 1: ", `Polarity 1`,
-#         "</br>Polarity 2: ", `Polarity 2`
-#       )
-#     )
-#   ) + xlab(x %>% quo_name) + ylab(y %>% quo_name) +
-#     theme_minimal(base_family = "serif") +
-#     geom_hline(yintercept = alpha, linetype = "dashed") +
-#     geom_vline(xintercept = 0)
-#   
-#   if(smooth) {
-#     
-#     scatter.plot <- scatter.plot + geom_smooth(
-#       mapping = aes(text = NULL), span = 1,
-#       color = PALETTE.COLORS["yellow"], alpha = .75, size = 1, fill = PALETTE.COLORS["yellow"]
-#     )
-#   }
-#   
-#   scatter.plot <- scatter.plot + geom_point(alpha = .75) +
-#     scale_x_continuous() +
-#     scale_y_continuous(
-#       trans = scales::trans_new(
-#         name = "log10rev",
-#         transform = function(x) -log10(x),
-#         inverse = function(x) exp(-x * log(10)),
-#         breaks = function(range) { range %<>% log10 %>% round; 10^(seq(range[1], range[2], by = -2)) }
-#       )
-#     ) +
-#     # scale_color_brewer(palette = "Set2", guide = guide_legend(title = legend.title))
-#     scale_color_manual(values = PALETTE.COLORS, guide = guide_legend(title = legend.title))
-#   
-#   scatter.plot %<>% ggplotly(tooltip = "text") %>%
-#     layout(
-#       margin = list(l = 60, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0),
-#       showlegend = legend.title %>% is_non_empty_character,
-#       hoverlabel = list(bordercolor = "white"),
-#       xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
-#       yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
-#     ) %>%
-#     config(displayModeBar = FALSE)
-#   
-#   return(scatter.plot)
-# }
-# 
-# ll.params.scatter.plot <- function(params, x, y, color, chisq.sig.line = .05, axes = FALSE) {
-#   
-#   x <- enquo(x)
-#   y <- enquo(y)
-#   
-#   params %<>% mutate(x = UQ(x), y = UQ(y))
-#   
-#   if(!missing(color)) {
-#     
-#     color <- enquo(color)
-#     
-#     params %<>% mutate(Color = UQ(color))
-#     legend.title <- color %>% quo_name
-#     
-#   } else {
-#     
-#     params %<>% mutate(Color = "1")
-#     legend.title <- ""
-#   }
-#   
-#   scatter.plot <- params %>% ggplot(
-#     aes(
-#       x, y,
-#       color = Color,
-#       text = paste0(
-#         "</br>Trait 1: ", `Trait 1`,
-#         "</br>Trait 2: ", `Trait 2`,
-#         "</br>Polarity 1: ", `Polarity 1`,
-#         "</br>Polarity 2: ", `Polarity 2`
-#       )
-#     )
-#   ) + xlab(x %>% quo_name) + ylab(y %>% quo_name) +
-#     theme_minimal(base_family = "serif")
-#   
-#   if(chisq.sig.line) {
-#     
-#     chisq.val <- qchisq(chisq.sig.line, 1, lower.tail = FALSE)
-#     
-#     scatter.plot <- scatter.plot + geom_hline(yintercept = chisq.val, linetype = "dashed") +
-#       geom_vline(xintercept = chisq.val, linetype = "dashed")
-#   }
-#   
-#   if(axes) scatter.plot <- scatter.plot + geom_hline(yintercept = 0) + geom_vline(xintercept = 0)
-#   
-#   scatter.plot <- scatter.plot + geom_point(alpha = .75) +
-#     # scale_color_brewer(palette = "Set2", guide = guide_legend(title = legend.title))
-#     scale_color_manual(values = PALETTE.COLORS, guide = guide_legend(title = legend.title))
-#   
-#   scatter.plot %<>% ggplotly(tooltip = "text") %>%
-#     layout(
-#       margin = list(l = 60, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0),
-#       showlegend = legend.title %>% is_non_empty_character,
-#       hoverlabel = list(bordercolor = "white"),
-#       xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
-#       yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
-#     ) %>%
-#     config(displayModeBar = FALSE)
-#   
-#   return(scatter.plot)
-# }
-# 
-# ll.unidim.scatter.plot <- function(params, x, y, color, facet, chisq.sig.line = .05, axes = TRUE, smooth = TRUE) {
-#   
-#   x <- enquo(x)
-#   y <- enquo(y)
-#   
-#   params %<>% mutate(x = UQ(x), y = UQ(y)) %>% filter(x %>% is_not_na, y %>% is_not_na)
-#   
-#   if(!missing(color)) {
-#     
-#     color <- enquo(color)
-#     
-#     params %<>% mutate(Color = UQ(color))
-#     legend.title <- color %>% quo_name
-#     
-#   } else {
-#     
-#     params %<>% mutate(Color = "1")
-#     legend.title <- ""
-#   }
-#   
-#   if(!missing(facet)) {
-#     
-#     facet <- enquo(facet)
-#     
-#     params %<>% mutate(Facet = UQ(facet))
-#     
-#   } else {
-#     
-#     params %<>% mutate(Facet = "1")
-#   }
-#   
-#   scatter.plot <- params %>% mutate(diff = `Block scale` - `Item scale`) %>%  ggplot(
-#     aes(
-#       x, y,
-#       color = Color,
-#       text = paste0(
-#         "</br>LL ratio test: ", LLR %>% sprintf("%.3f", .),
-#         "</br>Block scale: ", `Block scale` %>% sprintf("%.3f", .),
-#         "</br>Param diff.: ", diff %>% sprintf("%.3f", .),
-#         "</br>Position: ", Position,
-#         "</br>Trait: ", Trait,
-#         "</br>Trait other: ", `Trait other`,
-#         "</br>Polarity: ", Polarity,
-#         "</br>Polarity other: ", `Polarity other`
-#       )
-#     )
-#   ) + xlab(x %>% quo_name) + ylab(y %>% quo_name) +
-#     theme_minimal(base_family = "serif")
-#   
-#   if(!missing(facet)) scatter.plot <- scatter.plot + facet_grid(. ~ Facet)
-#   
-#   if(chisq.sig.line) {
-#     
-#     scatter.plot <- scatter.plot +
-#       geom_hline(yintercept = qchisq(chisq.sig.line, 1, lower.tail = FALSE), linetype = "dashed")
-#   }
-#   
-#   if(axes) scatter.plot <- scatter.plot + geom_hline(yintercept = 0) + geom_vline(xintercept = 0)
-#   
-#   if(smooth) {
-#     
-#     scatter.plot <- scatter.plot + geom_smooth(
-#       mapping = aes(text = NULL), span = 2,
-#       color = PALETTE.COLORS["yellow"], alpha = .75, size = 1, fill = PALETTE.COLORS["yellow"]
-#     )
-#   }
-#   
-#   scatter.plot <- scatter.plot + geom_point(alpha = .75) + scale_x_continuous() + scale_y_continuous() +
-#     # scale_color_brewer(palette = "Set2", guide = guide_legend(title = legend.title))
-#     scale_color_manual(values = PALETTE.COLORS, guide = guide_legend(title = legend.title))
-#   
-#   scatter.plot %<>% ggplotly(tooltip = "text") %>%
-#     layout(
-#       margin = list(l = 60, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0),
-#       showlegend = legend.title %>% is_non_empty_character,
-#       hoverlabel = list(bordercolor = "white"),
-#       xaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot"),
-#       yaxis = list(showspikes = TRUE, spikethickness = .5, spikedash = "dot")
-#     ) %>%
-#     config(displayModeBar = FALSE)
-#   
-#   return(scatter.plot)
-# }
-# ----
-
 scatter.plot.style <- function(
   input.plot,
   range.x, range.y = range.x, legend.title = "",
@@ -1408,7 +882,6 @@ scatter.plot.style <- function(
   output = c("plotly", "ggplot"), base_size = 11
 ) {
 
-  # fig.margins <- list(l = 40, r = if(legend.title %>% is_non_empty_character) 150 else 40, b = 40, t = 50, pad = 0)
   fig.margins <- list(l = 40, b = 40, t = 50, pad = 0)
 
   output <- match.arg(output)
@@ -1423,8 +896,6 @@ scatter.plot.style <- function(
     scale_x_continuous(limits = range.x) + scale_y_continuous(limits = range.y) +
     scale_color_manual(
       values = PALETTE.COLORS %>% unname,
-      # scale_color_brewer(
-      # 	palette = "Set2",
       guide = if(legend.title == "") "none"
       else guide_legend(title = legend.title, title.hjust = .5)
     )

@@ -27,7 +27,6 @@ APRA2.CONTROL.INSTRUMENT <- "CONTROL_APRA2"
 
 
 ## APRA FILE NAMES:
-ITEM.FILE.NAME <- paste0(DATA.PATH, "Administracion - Banco items.xls")
 DATA.FILE.NAME <- paste0(DATA.PATH, "datos_826.sav")
 ITEM.SHEET <- "Banco"
 
@@ -95,79 +94,11 @@ names(FCQ.THRESHOLDS) <- FCQ.THRESHOLDS
 
 ### FUNCTIONS
 
-read.items <- function(reset = FALSE, application = APPLICATIONS) {
-  
-  application <- match.arg(application, several.ok = TRUE)
-  
-  if(APPLICATIONS["APRA"] %in% application) {
-    
-    if(is.null(ITEM.DATA) | reset) {
-      
-      item.file <- loadWorkbook(ITEM.FILE.NAME)
-      item.data <- readWorksheet(item.file, ITEM.SHEET)
-      
-      instrument <- get.instrument(item.data$Fac_Cod)
-      
-      facet <- get.facet(item.data)
-      trait <- get.trait(item.data)
-      
-      ITEM.DATA <<- data.frame(
-        code = item.data$Cod_Paco,
-        instrument = instrument,
-        trait = trait,
-        facet = facet,
-        facet.num = item.data$Item,
-        polarity = as.factor(item.data$Sentido),
-        position = item.data$Pos_Forma,
-        form = item.data$Forma,
-        stem = item.data$Enunciado,
-        stringsAsFactors = FALSE
-      )
-    }
-  }
-  
-  if(APPLICATIONS["APRA2"] %in% application) {
-    
-    warning("Functionality for importing APRA2 items not implemented yet")
-    # if(is.null(ITEM.DATA.APRA2) | reset) {
-    #   
-    #   item.file <- loadWorkbook(ITEM.FILE.NAME.APRA2)
-    #   
-    #   item.data <- list()
-    #   for(sheet in ITEM.SHEETS.APRA2) {
-    #     
-    #     item.data <- append(item.data, list(readWorksheet(item.file, sheet)))
-    #   }
-    #   names(item.data) <- ITEM.SHEETS.APRA2
-    #   
-    #   instrument <- get.instrument(item.data$Fac_Cod)
-    #   
-    #   facet <- get.facet(item.data)
-    #   trait <- get.trait(item.data)
-    #   
-    #   ITEM.DATA <<- data.frame(
-    #     code = item.data$Cod_Paco,
-    #     instrument = instrument,
-    #     trait = trait,
-    #     facet = facet,
-    #     facet.num = item.data$Item,
-    #     polarity = as.factor(item.data$Sentido),
-    #     position = item.data$Pos_Forma,
-    #     form = item.data$Forma,
-    #     stem = item.data$Enunciado,
-    #     stringsAsFactors = FALSE
-    #   )
-    # }
-  }
-  
-  return(NULL)
-}
-
 # TODO: use function read.items() adapted properly
 read.APRA2.new.items <- function(type = ITEM.TYPES) {
-  
+
   type = match.arg(type, several.ok = TRUE)
-  
+
   item.file <- loadWorkbook(ITEM.FILE.NAME.APRA2)
   sheets <- ITEM.SHEETS.APRA2[
     c(
@@ -175,19 +106,19 @@ read.APRA2.new.items <- function(type = ITEM.TYPES) {
       if(ITEM.TYPES["item"] %in% type)   c("Cuadernillo 4", "Cuadernillo 5")
     )
   ]
-  
+
   item.data <- list()
   for(sheet in sheets) {
-    
+
     item.data <- append(item.data, list(readWorksheet(item.file, sheet)))
   }
   names(item.data) <- sheets
-  
+
   facets <- BIG.FIVE.FACETS
   names(facets) <- APRA2.FACETS
-  
+
   if(ITEM.TYPES["item"] %in% type) {
-    
+
     items <- data.frame(
       type = factor(ITEM.TYPES["item"], levels = ITEM.TYPES),
       sheet = factor(ITEM.SHEETS.APRA2["Cuadernillo 4"]),
@@ -260,9 +191,9 @@ read.APRA2.new.items <- function(type = ITEM.TYPES) {
       )
     )
   }
-  
+
   if(ITEM.TYPES["block"] %in% type) {
-    
+
     suppressWarnings(
       blocks <- data.frame(
         position = item.data[[ITEM.SHEETS.APRA2["Cuadernillo 3"]]]$Posicion,
@@ -301,12 +232,12 @@ read.APRA2.new.items <- function(type = ITEM.TYPES) {
       )
     )
   }
-  
+
   result <- if(identical(type, ITEM.TYPES)) list(items = items, blocks = blocks)
             else if(identical(type, ITEM.TYPES["item"])) items
             else if(identical(type, ITEM.TYPES["block"])) blocks
             else stop("Unknown item type")
-  
+
   return(result)
 }
 
@@ -831,10 +762,7 @@ merge.reponses <- function(item.reponses, block.responses, ordering = c("items.f
 
 
 ITEM.DATA <- NULL
-# ITEM.DATA.APRA2 <- NULL
 
 RESPONSE.DATA <- NULL
-# RESPONSE.DATA.APRA2 <- NULL
 
-read.items(application = "APRA")
 read.responses(ITEM.DATA$code)

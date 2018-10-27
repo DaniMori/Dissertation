@@ -73,32 +73,6 @@ emp_rels <- tribble(
 
 ############################ STUDY 2 ############################
 
-# ## ---- load_LEV_LSV_sims ----
-# 
-# load("res/LEV_LSV_simulations.Rdata")
-# 
-# results %<>% as_tibble() %>%
-#   mutate(
-#     items.dim = items.dim %>%
-#       factor(labels = paste(unique(.), "items/dimensión")),
-#     n.dims = factor(n.dims),
-#     a.scales.corr = factor(a.scales.corr)
-#   ) %>% bind_cols(
-#     evrs[, , "0"] %>% as.data.frame,
-#     evrs[, , "0.3"] %>% as.data.frame,
-#     evrs[, , "0.6"] %>% as.data.frame,
-#     evrs[, , "0.9"] %>% as.data.frame
-#   ) %>%
-#   rename(
-#     `Nº dimensiones` = n.dims, `Correlación entre escalas` = a.scales.corr,
-#     LSV = mean.ls, LEV_corr_0 = mean.ls1, LEV_corr_0.3 = mean.ls2,
-#     LEV_corr_0.6 = mean.ls3, LEV_corr_0.9 = mean.ls4
-#   )
-# 
-# LEV_max <- results %>% select(starts_with("LEV_corr")) %>%
-#   summarize_all(max) %>% max
-
-
 ## ---- study_2_simulation_results ----
 
 study_2_results <- tribble(
@@ -244,15 +218,6 @@ scales.joint.collapsed <- block.item.params.joint %>%
   collapse.scale.params(`Block scale 1`, `Block scale 2`, `Scale item 1`, `Scale item 2`)
 
 
-## ---- parameter_correlations ----
-
-# block.item.pars.table <- block.item.params.joint %>% invariance.correlations(
-#   `Block scale 1`, `Block scale 2`, Intercept,
-#   `Scale item 1`, `Threshold 1 Item 1`, `Threshold 2 Item 1`, `Threshold 3 Item 1`, `Threshold 4 Item 1`,
-#   `Scale item 2`, `Threshold 1 Item 2`, `Threshold 2 Item 2`, `Threshold 3 Item 2`, `Threshold 4 Item 2`
-# ) %>% select(Parameters, Joint = Value)
-
-
 ## ---- unidimensionality_assessment ----
 
 unidimensionality.assessment <- assess.unidimensionality(
@@ -261,88 +226,6 @@ unidimensionality.assessment <- assess.unidimensionality(
 )
 unidimensionality.assessment$item.scales %<>%
   mutate(Polarity = Polarity %>% parse_factor(levels = POLARITY))
-
-
-## ---- multidimensionality_assessment_table ----
-
-# unidimensionality.assessment$fit %>%
-#   rownames_to_column(var = "Dimension") %>% mutate(ECV = ECV * 100) %>%
-#   select_at(1:9) %>%
-#   kable(digits = c(0, 2, 3 %>% rep(4), 2, 3, 3))
-
-
-## ---- abs_rel_bias_histogram ----
-
-# unidimensionality.assessment$item.scales %<>%
-#   mutate(`Relative bias absolute value (%)` = Rel_bias %>% abs)
-# 
-# i_ecv.histogram <- unidimensionality.assessment$item.scales %>%
-#   ggplot(mapping = aes(x = `Relative bias absolute value (%)`)) +
-#   geom_histogram(bins = 30, fill = PALETTE.COLORS["blue"]) +
-#   theme_minimal(base_family = "serif") + ylab("Absolute frequency")
-# 
-# i_ecv.histogram %>% ggsave("bifactor_unidim_bias_histogram.png", plot = .,
-#                            path = OUTPUT.PATH,
-#                            width = 6, height = 5.2, units = "in", dpi = "print")
-# 
-# i_ecv.histogram %>% ggplotly %>% 
-#   layout(hoverlabel = list(bordercolor = "white")) %>%
-#   config(displayModeBar = FALSE)
-
-
-## ---- multidimensionality_assessment_bias ----
-
-# scatter.plot <- unidimensionality.assessment$item.scales %>%
-#   ggplot(
-#     mapping = aes(
-#       Bifactor,
-#       Unidim,
-#       color = Trait
-#     )
-#   ) +
-#   theme_minimal(base_family = "serif") +
-#   xlab("Scale estimate on bi-factor general dimension") +
-#   ylab("Unidimensional scale estimate")
-# 
-# scatter.plot %>% scatter.plot.style(range.x = c(-3, 3), legend.title = "Trait",
-#                                     output = "ggplot") %>%
-#   ggsave("bifactor_unidim_scales.png", plot = ., path = OUTPUT.PATH,
-#          width = 6, height = 5.2, units = "in", dpi = "print")
-# 
-# scatter.plot %>% scatter.plot.style(range.x = c(-3, 3), legend.title = "Trait")
-
-
-## ---- rel_bias_unidimensionality ----
-
-# scatter.plot <- unidimensionality.assessment$item.scales %>%
-#   ggplot(
-#     mapping = aes(
-#       I_ECV, Rel_bias,
-#       color = Polarity
-#     )
-#   ) +
-#   geom_smooth(
-#     color = PALETTE.COLORS["yellow"], fill = PALETTE.COLORS["yellow"]
-#   ) +
-#   theme_minimal() + ylab("Relative bias (%)") + xlab("I-ECV")
-# 
-# scatter.plot %>% scatter.plot.style(
-#   range.x = 0:1,
-#   range.y = unidimensionality.assessment$item.scales %>% pull(Rel_bias) %>%
-#     range,
-#   legend.title = "Polarity",
-#   output = "ggplot"
-# ) %>%
-#   ggsave("bifactor_rel_bias_unidimensionality.png",
-#          plot = ., path = OUTPUT.PATH,
-#          width = 6, height = 4.5, units = "in", dpi = "print")
-# 
-# scatter.plot %>% scatter.plot.style(
-#   range.x = 0:1,
-#   range.y = unidimensionality.assessment$item.scales %>% pull(Rel_bias) %>%
-#     range,
-#   legend.title = "Polarity"
-# )
 
 
 ## ---- LR_tests ----
@@ -467,12 +350,6 @@ scale.stats <- scales.joint.collapsed %>% summarize(
 
 joint.estimation.stats <- scale.stats %>% bind_rows(intercept.stats)
 
-# joint.estimation.stats %>% left_join(LL.summary) %>%
-#   kable(digits = c(0, 3 %>% rep(4), 0, 2), format = "html") %>%
-#   add_header_above(
-#     c("", "Estimate statitics" = 4, "Non-invariant parameters" = 2)
-#   )
-
 block.item.params.joint %<>% rename(
   `Predicción umbral 1` =  `Threshold 1 diff`,
   `Predicción umbral 2` =  `Threshold 2 diff`,
@@ -480,53 +357,6 @@ block.item.params.joint %<>% rename(
   `Predicción umbral 4` =  `Threshold 4 diff`,
   `Intersección` = Intercept, Bloque = Block_num
 )
-
-
-## ---- LLR_results_table ----
-
-# print.LLR.tests <- LL.ratio.tests %>%
-#   filter(`Trait 1` != "Extraversion", `Trait 2` != "Extraversion") %>%
-#   select(-`Item 1`, -`Item 2`, -Block_code, -`Item 2 missing`) %>%
-#   mutate_at(
-#     vars(ends_with("p-value")),
-#     ~((. < alpha) %>% if_else(true = "\\*", false = "", missing = ""))
-#   ) %>%
-#   mutate_at(
-#     vars(starts_with("Polarity")),
-#     ~str_c("\\", .)
-#   ) %>% 
-#   rename_all(~str_remove(., " LR")) %>%
-#   mutate_at(
-#     vars(starts_with("Trait")),
-#     ~(
-#       .x %>% equals("Neuroticism") %>% if_else(
-#         true = "Ne",
-#         false = .x %>% equals("Agreeableness") %>% if_else(
-#           true = "Ag",
-#           false = .x %>% equals("Openness") %>% if_else(
-#             true = "Op",
-#             false = .x %>% equals("Conscientiousness") %>% if_else(
-#               true = "Co",
-#               false = ""
-#             )
-#           )
-#         )
-#       )
-#     )
-#   )
-# 
-# print.LLR.tests %>%
-#   kable(
-#     align = "rccccrlrlrlrlrlrl",
-#     digits = c(0 %>% rep(5), c(3, 0) %>% rep(6)),
-#     col.names = "" %>% rep(17),
-#     format = "html", escape = TRUE
-#   ) %>%
-#   add_header_above(
-#     c(1 %>% rep(5), 2 %>% rep(6)) %>% set_names(
-#       print.LLR.tests %>% names %>% magrittr::extract(c(1:6, 8, 10, 12, 14, 16))
-#     )
-#   )
 
 
 ## ---- intercepts_preprocessing ----
@@ -546,15 +376,6 @@ block.item.params.joint %<>% rename(`Block_code` = Block) %>%
       (`Trait 2` == "Openness"),
     `Agreeableness block` = (`Trait 1` == "Agreeableness") |
       (`Trait 2` == "Agreeableness"),
-    # Traits = (`Neuroticism block` & `Conscientiousness block`) %>%
-    #   if_else(
-    #     "Both",
-    #     `Neuroticism block` %>%
-    #       if_else(
-    #         "Neuroticism",
-    #         `Conscientiousness block` %>% if_else("Conscientiousness", "None")
-    #       )
-    #   ),
     Polarity = (`Polarity 1` %>% as.character == `Polarity 2` %>% as.character) %>%
       if_else("Homopolar", "Heteropolar")
   )
@@ -633,22 +454,6 @@ intercept.predictions <- block.item.params.joint %>%
     Block = Block %>% parse_factor(NULL)
   )
 
-# intercept.predictions.reverse.Neuroticism <- intercept.predictions %>%
-#   mutate(
-#     `Polarity 1` = (`Trait 1` == "Neuroticism") %>% if_else(
-#       (`Polarity 1` == "+") %>% if_else("-", "+") %>%
-#         parse_factor(levels = c("+", "-")),
-#       `Polarity 1`
-#     ),
-#     `Polarity 2` = (`Trait 2` == "Neuroticism") %>% if_else(
-#       (`Polarity 2` == "+") %>% if_else("-", "+") %>%
-#         parse_factor(levels = c("+", "-")),
-#       `Polarity 2`
-#     ),
-#     Polarity = (`Polarity 1` == `Polarity 2`) %>%
-#       if_else("Homopolar", "Heteropolar")
-#   )
-
 non.invariant.intercepts <- intercept.predictions %>%
   filter(`Non-invariant`) %>%
   mutate(
@@ -662,53 +467,3 @@ non.invariant.intercepts <- intercept.predictions %>%
     Bloque = Block, `Desviación intersección` = `Intercept deviation`,
     `Rasgo 1` = `Trait 1`, `Rasgo 2` = `Trait 2`
   )
-
-# ni.stems <- non.invariant.intercepts %>%
-#   filter(`Threshold category` == "Umbral 4") %>% select(Bloque, Block_code) %>%
-#   left_join(
-#     blocks %>%
-#       select(
-#         Block_code = Block, `Trait 1`, `Trait 2`,
-#         `Polarity 2`, `Item 1`, `Item 2`)
-#   ) %>%
-#   left_join(items %>% select(`Item 1` = Item, `Stem 1` = stem)) %>%
-#   left_join(items %>% select(`Item 2` = Item, `Stem 2` = stem)) %>%
-#   arrange(`Polarity 2`)
-
-# non.invariant.intercepts.rev.Ne <- intercept.predictions.reverse.Neuroticism %>%
-#   filter(`Non-invariant`)
-
-
-## ---- non_invariant_intercepts_table ----
-
-# non.invariant.table <- non.invariant.intercepts %>%
-# {
-#   bind_rows(
-#     count(., `Threshold category`) %>% rename(`Total`= n),
-#     full_join(
-#       count(., `Trait 1`, `Threshold category`) %>%
-#         rename(Trait = `Trait 1`, `Item 1`= n),
-#       count(., `Trait 2`, `Threshold category`) %>%
-#         rename(Trait = `Trait 2`, `Item 2`= n)
-#     ) %>%
-#       mutate(
-#         Total = `Item 1` + `Item 2`,
-#         Trait = Trait %>% parse_factor(trait.levels)
-#       ) %>% arrange(Trait),
-#     count(., Polarity , `Threshold category`) %>%
-#       rename(Trait = Polarity, `Total`= n)
-#   )
-# }
-# 
-# non.invariant.table %>% mutate(fill1 = NA, fill2 = NA) %>%
-#   select(
-#     Trait, fill1, `Threshold category`, fill2, Total, `Item 1`, `Item 2`
-#   ) %>%
-#   kable(
-#     .,
-#     row.names = FALSE,
-#     col.names = c(
-#       "Trait", "", "Threshold category", "", "Total", "Item 1", "Item 2"
-#     ),
-#     format = "html"
-#   ) %>% add_header_above(header = c("", "", "", "", "Nº of parameters" = 3))
